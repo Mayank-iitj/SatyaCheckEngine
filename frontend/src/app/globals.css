@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-sans: 'Plus Jakarta Sans', sans-serif;
+    --font-serif: 'Fraunces', serif;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: theme('colors.parchment.100');
+    color: theme('colors.ink.900');
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer components {
+  /* Beanro Pill Button */
+  .btn-primary {
+    @apply px-8 py-3.5 bg-bronze text-white font-medium rounded-full 
+           hover:bg-bronze-hover transition-all duration-300 
+           active:scale-[0.98] transform tracking-wide text-sm uppercase shadow-sm;
+  }
+
+  .btn-secondary {
+    @apply px-8 py-3.5 border border-ink-900/10 bg-transparent text-ink-900 
+           font-medium rounded-full hover:bg-parchment-200 
+           transition-all duration-300 active:scale-[0.98] transform tracking-wide text-sm uppercase;
+  }
+
+  .btn-danger {
+    @apply px-8 py-3.5 bg-brand-revoked text-white font-medium rounded-full
+           hover:bg-red-900 transition-all duration-300
+           active:scale-[0.98] transform tracking-wide text-sm uppercase;
+  }
+
+  /* Input styling - Beanro minimal lines */
+  .input-field {
+    @apply w-full px-4 py-3 bg-parchment-50 border border-parchment-300 
+           rounded-2xl text-ink-900 placeholder-ink-500/50 
+           focus:outline-none focus:ring-1 focus:ring-bronze focus:border-bronze
+           transition-all duration-200 shadow-sm;
+  }
+
+  /* Beanro Card */
+  .beanro-card {
+    @apply bg-parchment-50 rounded-[2rem] p-8 border border-parchment-200 shadow-sm transition-transform duration-300;
+  }
+
+  /* Status badges */
+  .badge-valid {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 
+           text-brand-valid text-xs font-semibold rounded-full border border-emerald-200 uppercase tracking-wider;
+  }
+
+  .badge-revoked {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 bg-red-50 
+           text-brand-revoked text-xs font-semibold rounded-full border border-red-200 uppercase tracking-wider;
+  }
+
+  .badge-pending {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 
+           text-brand-pending text-xs font-semibold rounded-full border border-amber-200 uppercase tracking-wider;
+  }
+
+  /* Global Grid Lines Background */
+  .bg-grid-lines {
+    background-image: 
+      linear-gradient(to right, theme('colors.parchment.300') 1px, transparent 1px);
+    background-size: 25% 100%;
+    background-position: center;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

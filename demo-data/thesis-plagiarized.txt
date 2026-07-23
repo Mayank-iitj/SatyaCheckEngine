@@ -1,0 +1,18 @@
+Title: Machine Learning in Decentralized Networks
+Author: Eve Smith
+Institution: Unknown University
+
+Abstract:
+This thesis explores the intersection of machine learning and decentralized networks, focusing on how artificial intelligence models can be trained across distributed nodes without centralized data aggregation. We propose a novel consensus mechanism that incorporates gradient updates directly into the block validation process.
+
+Introduction:
+The rapid expansion of blockchain technologies has opened new avenues for distributed computing. However, training large-scale artificial intelligence models typically requires massive centralized data silos, which poses privacy and security risks. By leveraging federated learning techniques over a blockchain protocol, we demonstrate that it is possible to achieve near-parity in model accuracy while maintaining strict data localization.
+
+Methodology:
+Our approach utilizes a modified Proof of Work algorithm where the computational effort is directed toward solving localized epochs of backpropagation. Nodes broadcast their updated weights, and the network reaches consensus on the aggregated model state.
+
+Results:
+Through extensive simulation on a 1000-node network, our decentralized AI consensus algorithm achieved 94% accuracy on standard benchmark datasets, compared to 95.2% for the centralized equivalent, but with zero instances of data leakage.
+
+Conclusion:
+Decentralized networks provide a robust foundation for the future of privacy-preserving machine learning. Future work will explore optimizations for lower bandwidth environments.

@@ -1,0 +1,19 @@
+{
+  "name": "proofmind",
+  "version": "1.0.0",
+  "description": "Blockchain-backed academic credential verification platform",
+  "private": true,
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:contracts": "cd contracts && npx hardhat node",
+    "deploy:contracts": "cd contracts && npx hardhat run scripts/deploy.js --network localhost",
+    "seed:backend": "cd backend && npx prisma db seed",
+    "db:migrate": "cd backend && npx prisma migrate dev",
+    "db:push": "cd backend && npx prisma db push",
+    "test:contracts": "cd contracts && npx hardhat test",
+    "install:all": "cd contracts && npm install && cd ../backend && npm install && cd ../frontend && npm install"
+  },
+  "keywords": ["blockchain", "credentials", "verification", "education", "polygon"],
+  "license": "MIT"
+}
