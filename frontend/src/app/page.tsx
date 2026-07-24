@@ -13,6 +13,9 @@ import RotatingText from "../components/RotatingText";
 import ScrollFloat from "../components/ScrollFloat";
 import ScrollStack, { ScrollStackItem } from "../components/ScrollStack";
 import Dock from "../components/Dock";
+import ScrollVelocity from "../components/ScrollVelocity";
+import FlowingMenu from "../components/FlowingMenu";
+import ShapeBlur from "../components/ShapeBlur";
 
 export default function LandingPage() {
   const { scrollYProgress } = useScroll();
@@ -186,9 +189,32 @@ export default function LandingPage() {
         </ScrollFloat>
       </section>
 
+      {/* ── Scroll Velocity Divider ────────────────────────────────────── */}
+      <section className="py-12 bg-bronze/10 overflow-hidden">
+        <ScrollVelocity
+          texts={['ABSOLUTE TRUST', 'IMMUTABLE RECORDS', 'VERIFIED CAREERS']} 
+          velocity={80}
+          className="text-bronze font-display font-black uppercase tracking-tighter mx-4"
+          numCopies={4}
+          damping={100}
+          stiffness={800}
+        />
+      </section>
+
       {/* ── Brand Philosophy ───────────────────────────────────────────── */}
-      <section id="problem" className="py-24 lg:py-40 px-6 relative z-10">
-        <div className="max-w-5xl mx-auto text-center">
+      <section id="problem" className="py-24 lg:py-40 px-6 relative z-10 overflow-hidden">
+        <div className="absolute inset-0 z-0 opacity-80">
+          <ShapeBlur
+            variation={0}
+            pixelRatioProp={typeof window !== 'undefined' ? window.devicePixelRatio : 2}
+            shapeSize={1.2}
+            roundness={0.4}
+            borderSize={0.05}
+            circleSize={0.3}
+            circleEdge={0.5}
+          />
+        </div>
+        <div className="max-w-5xl mx-auto text-center relative z-10 pointer-events-none">
           <motion.p 
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -405,15 +431,21 @@ export default function LandingPage() {
               </p>
             </div>
             
-            <div className="flex flex-col gap-4 font-display font-bold text-lg uppercase">
-              <Link href="/about" className="hover:text-bronze transition-colors">ABOUT</Link>
-              <Link href="/blog" className="hover:text-bronze transition-colors">BLOG</Link>
-              <Link href="/verify" className="hover:text-bronze transition-colors">VERIFY</Link>
-              <Link href="/sign-in" className="hover:text-bronze transition-colors">LOGIN</Link>
+            <div className="flex flex-col gap-4 font-display font-bold text-lg uppercase h-[300px] relative w-[200px]">
+              <FlowingMenu 
+                items={[
+                  { link: '/about', text: 'ABOUT', image: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop' },
+                  { link: '/blog', text: 'BLOG', image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070&auto=format&fit=crop' },
+                  { link: '/verify', text: 'VERIFY', image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=2070&auto=format&fit=crop' },
+                  { link: '/sign-in', text: 'LOGIN', image: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=2070&auto=format&fit=crop' }
+                ]}
+                bgColor="transparent"
+                textColor="#D8C8B8" /* parchment-100 */
+                borderColor="#3F3F46" /* ink-800 */
+                marqueeBgColor="#8B5E34" /* bronze */
+                marqueeTextColor="#FCF9F6"
+              />
             </div>
-
-
-
             <div className="flex flex-col gap-4 font-display font-bold text-lg uppercase text-right">
               <a href="https://github.com/proofmind" className="hover:text-bronze transition-colors">GITHUB</a>
               <a href="https://linkedin.com/company/proofmind" className="hover:text-bronze transition-colors">LINKEDIN</a>

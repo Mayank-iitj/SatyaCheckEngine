@@ -2,3 +2,4 @@ declare module "*/RotatingText"; declare module "*/StaggeredMenu"; declare modul
 declare module "*/Dock";
 declare module "*/FlowingMenu";
 declare module "*/ScrollVelocity";
+declare module "*/ShapeBlur";
