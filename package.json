@@ -12,6 +12,8 @@
     "db:migrate": "cd backend && npx prisma migrate dev",
     "db:push": "cd backend && npx prisma db push",
     "test:contracts": "cd contracts && npx hardhat test",
+    "rebuild:chain": "cd backend && npx tsx scripts/rebuildFromChain.ts",
+    "rebuild:chain:dry": "cd backend && npx tsx scripts/rebuildFromChain.ts --dry-run",
     "install:all": "cd contracts && npm install && cd ../backend && npm install && cd ../frontend && npm install"
   },
   "keywords": ["blockchain", "credentials", "verification", "education", "polygon"],

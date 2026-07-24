@@ -8,10 +8,12 @@ import {
   ShieldCheck, Wallet, LogOut, FileCheck, Share2, Target, Briefcase, Award, RotateCcw,
   CheckCircle2, XCircle, Copy, Check, Download, QrCode, Building2
 } from "lucide-react";
-import { credentialsAPI, shareAPI, skillsAPI, jobsAPI, recoveryAPI } from "@/lib/api";
+import { credentialsAPI, shareAPI, skillsAPI, jobsAPI, recoveryAPI, digilockerAPI } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { formatDate, getCredentialTypeLabel, truncateHash } from "@/lib/utils";
 import { toast } from "sonner";
+import { DigiLockerBadge } from "@/components/DigiLockerBadge";
+import { UserButton } from "@clerk/nextjs";
 
 export default function StudentDashboard() {
   const router = useRouter();
@@ -42,14 +44,15 @@ export default function StudentDashboard() {
 
   useEffect(() => {
     if (!user) {
-      router.push("/auth/login");
+      router.push("/sign-in");
       return;
     }
     if (user.role !== "STUDENT") {
-      router.push("/");
+      router.push("/dashboard");
       return;
     }
     
+
     if (activeTab === "credentials") loadCredentials();
     if (activeTab === "skills") loadSkills();
     if (activeTab === "jobs") loadJobs();
@@ -57,14 +60,29 @@ export default function StudentDashboard() {
   }, [user, router, activeTab]);
 
   const loadCredentials = async () => {
-    setLoading(true);
     try {
       const data = await credentialsAPI.mine();
       setCredentials(data);
     } catch (err) {
-      toast.error("Failed to load credentials");
+      console.error("Failed to load credentials:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDigilockerConnect = async () => {
+    try {
+      toast.loading("Connecting to DigiLocker...", { id: "digilocker" });
+      const res = await digilockerAPI.consent({ docType: "Academic Records" });
+      toast.dismiss("digilocker");
+      if (res.consentUrl) {
+        window.location.href = res.consentUrl;
+      } else {
+        toast.error("Failed to connect DigiLocker");
+      }
+    } catch (err: any) {
+      toast.dismiss("digilocker");
+      toast.error("DigiLocker connect error: " + err.message);
     }
   };
 
@@ -157,7 +175,7 @@ export default function StudentDashboard() {
         <div className="max-w-[90rem] mx-auto px-6 h-20 flex items-center justify-between relative">
           <div className="flex items-center gap-6">
             <Link href="/" className="flex items-center gap-2 group">
-              <ShieldCheck className="w-6 h-6 text-bronze group-hover:rotate-12 transition-transform duration-500" />
+              <img src="/logo.svg" alt="ProofMind Logo" className="w-6 h-6 group-hover:scale-110 transition-transform duration-500" />
               <span className="font-display font-black text-xl tracking-tight text-ink-900 uppercase hidden sm:block">
                 Proof<span className="text-bronze">Mind</span>
               </span>
@@ -170,9 +188,7 @@ export default function StudentDashboard() {
           </div>
           <div className="flex items-center gap-4">
             <span className="text-xs font-bold uppercase tracking-widest text-ink-600 hidden sm:block">{user?.name}</span>
-            <button onClick={() => { clearAuth(); router.push("/auth/login"); }} className="p-2 text-ink-400 hover:text-brand-revoked transition-colors">
-              <LogOut className="w-5 h-5" />
-            </button>
+            <UserButton />
           </div>
         </div>
       </header>
@@ -205,11 +221,19 @@ export default function StudentDashboard() {
           {/* TAB: CREDENTIALS */}
           {activeTab === "credentials" && (
             <motion.div key="credentials" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-              <div className="mb-8">
-                <h1 className="font-display font-black text-4xl uppercase text-ink-900 mb-2">My Digital Wallet</h1>
-                <p className="text-ink-600 font-medium max-w-2xl text-sm leading-relaxed uppercase tracking-widest">
-                  Manage and share your cryptographically secured academic achievements.
-                </p>
+              <div className="mb-8 flex flex-col sm:flex-row justify-between items-start gap-4">
+                <div>
+                  <h1 className="font-display font-black text-4xl uppercase text-ink-900 mb-2">My Digital Wallet</h1>
+                  <p className="text-ink-600 font-medium max-w-2xl text-sm leading-relaxed uppercase tracking-widest">
+                    Manage and share your cryptographically secured academic achievements.
+                  </p>
+                </div>
+                <button 
+                  onClick={handleDigilockerConnect}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold uppercase tracking-widest text-xs flex items-center gap-2 transition-colors shadow-md hover:shadow-lg flex-shrink-0 border border-blue-500"
+                >
+                  <ShieldCheck className="w-4 h-4" /> Import from DigiLocker
+                </button>
               </div>
 
               {loading ? (
@@ -238,13 +262,19 @@ export default function StudentDashboard() {
                         </div>
                       )}
                       
-                      <div className="flex justify-between items-start mb-6">
+                      <div className="flex justify-between items-start mb-4">
                         <span className={cred.status === "VALID" ? "badge-valid" : "badge-revoked"}>
                           {cred.status === "VALID" ? "✓ Valid on Polygon" : "✗ Revoked"}
                         </span>
-                        <span className="text-[10px] font-bold text-ink-400 uppercase tracking-widest">
-                          {formatDate(cred.issueDate)}
-                        </span>
+                        <div className="flex flex-col items-end gap-1">
+                          <span className="text-[10px] font-bold text-ink-400 uppercase tracking-widest">
+                            {formatDate(cred.issueDate)}
+                          </span>
+                          {/* DigiLocker badge for government-attested credentials */}
+                          {(cred.source === "DIGILOCKER_VERIFIED") && (
+                            <DigiLockerBadge size="sm" />
+                          )}
+                        </div>
                       </div>
 
                       <div className="mb-6 flex-grow">
@@ -289,17 +319,30 @@ export default function StudentDashboard() {
                               </>
                             )}
                           </button>
-                          {cred.ipfsCid && (
-                            <a 
-                              href={`http://127.0.0.1:8080/ipfs/${cred.ipfsCid}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="btn-secondary !py-2.5 flex items-center justify-center gap-2"
-                            >
-                              <Download className="w-4 h-4" /> PDF
-                            </a>
-                          )}
+                          {/* Sealed PDF download — always serves the watermarked, signed official copy */}
+                          <a 
+                            href={`/api/credentials/${cred.credentialId || cred.id}/sealed-pdf`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn-secondary !py-2.5 flex items-center justify-center gap-2"
+                            title="Download the sealed, digitally-signed official copy"
+                          >
+                            <Download className="w-4 h-4" /> Sealed PDF
+                          </a>
                         </div>
+
+                        {/* Verification URL */}
+                        {(cred.credentialId || cred.id) && (
+                          <a
+                            href={`/verify/${cred.credentialId || cred.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-ink-400 hover:text-bronze transition-colors"
+                          >
+                            <QrCode className="w-3 h-3" />
+                            Public Verification URL ↗
+                          </a>
+                        )}
 
                         {activeShareLink === cred.id && shareLink && (
                           <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mt-3 bg-white p-3 rounded-xl border border-bronze/30 shadow-sm">

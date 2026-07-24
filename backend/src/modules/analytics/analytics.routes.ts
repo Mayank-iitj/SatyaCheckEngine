@@ -84,7 +84,8 @@ router.get("/overview", authenticate, requireRole("ADMIN"), async (req: Request,
     });
   } catch (error: any) {
     console.error("Analytics overview error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Internal server error" });
+    return;
   }
 });
 
@@ -101,7 +102,8 @@ router.get("/institution/:id", authenticate, async (req: Request, res: Response)
     });
 
     if (!institution) {
-      return res.status(404).json({ error: "Institution not found" });
+      res.status(404).json({ error: "Institution not found" });
+    return;
     }
 
     const [totalIssued, validCount, revokedCount] = await Promise.all([
@@ -134,7 +136,8 @@ router.get("/institution/:id", authenticate, async (req: Request, res: Response)
     });
   } catch (error: any) {
     console.error("Institution analytics error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Internal server error" });
+    return;
   }
 });
 
@@ -157,10 +160,12 @@ router.get("/audit", authenticate, requireRole("ADMIN"), async (req: Request, re
       prisma.auditEvent.count(),
     ]);
 
-    return res.json({ events, total, page, limit });
+    res.json({ events, total, page, limit });
+    return;
   } catch (error: any) {
     console.error("Audit log error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Internal server error" });
+    return;
   }
 });
 

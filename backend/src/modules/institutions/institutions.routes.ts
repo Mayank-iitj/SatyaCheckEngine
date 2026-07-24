@@ -18,11 +18,13 @@ router.post("/apply", authenticate, requireRole("UNIVERSITY"), async (req: Reque
     });
 
     if (!institution) {
-      return res.status(404).json({ error: "Institution profile not found" });
+      res.status(404).json({ error: "Institution profile not found" });
+    return;
     }
 
     if (institution.verified) {
-      return res.status(400).json({ error: "Institution already verified" });
+      res.status(400).json({ error: "Institution already verified" });
+    return;
     }
 
     // Update with additional details
@@ -46,10 +48,12 @@ router.post("/apply", authenticate, requireRole("UNIVERSITY"), async (req: Reque
       },
     });
 
-    return res.json({ institution: updated, message: "Application submitted for review" });
+    res.json({ institution: updated, message: "Application submitted for review" });
+    return;
   } catch (error: any) {
     console.error("Institution apply error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Internal server error" });
+    return;
   }
 });
 
@@ -74,10 +78,12 @@ router.get("/", async (req: Request, res: Response) => {
       orderBy: { createdAt: "desc" },
     });
 
-    return res.json(institutions);
+    res.json(institutions);
+    return;
   } catch (error: any) {
     console.error("List institutions error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Internal server error" });
+    return;
   }
 });
 
@@ -95,7 +101,8 @@ router.patch("/:id/approve", authenticate, requireRole("ADMIN"), async (req: Req
     });
 
     if (!institution) {
-      return res.status(404).json({ error: "Institution not found" });
+      res.status(404).json({ error: "Institution not found" });
+    return;
     }
 
     const updated = await prisma.institution.update({
@@ -131,7 +138,8 @@ router.patch("/:id/approve", authenticate, requireRole("ADMIN"), async (req: Req
     });
   } catch (error: any) {
     console.error("Approve institution error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Internal server error" });
+    return;
   }
 });
 
@@ -151,13 +159,16 @@ router.get("/:id", async (req: Request, res: Response) => {
     });
 
     if (!institution) {
-      return res.status(404).json({ error: "Institution not found" });
+      res.status(404).json({ error: "Institution not found" });
+    return;
     }
 
-    return res.json(institution);
+    res.json(institution);
+    return;
   } catch (error: any) {
     console.error("Get institution error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Internal server error" });
+    return;
   }
 });
 

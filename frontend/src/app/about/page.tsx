@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ShieldCheck, ArrowRight, Building2, Globe, Shield, Zap } from "lucide-react";
+import { ShieldCheck, ArrowRight, Building2, Globe, Shield, Zap, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function AboutPage() {
@@ -13,7 +13,7 @@ export default function AboutPage() {
       <header className="bg-parchment-100/90 backdrop-blur-md border-b border-parchment-200 sticky top-0 z-40">
         <div className="max-w-[90rem] mx-auto px-6 h-20 flex items-center justify-between relative">
           <Link href="/" className="flex items-center gap-2 group">
-            <ShieldCheck className="w-8 h-8 text-bronze group-hover:rotate-12 transition-transform duration-500" />
+            <img src="/logo.svg" alt="ProofMind Logo" className="w-8 h-8 group-hover:scale-110 transition-transform duration-500" />
             <span className="font-display font-black text-2xl tracking-tight text-ink-900 uppercase">
               Proof<span className="text-bronze">Mind</span>
             </span>
@@ -21,7 +21,7 @@ export default function AboutPage() {
           <nav className="hidden md:flex items-center gap-8">
             <Link href="/" className="text-xs font-bold uppercase tracking-widest hover:text-bronze transition-colors">Home</Link>
             <Link href="/verify" className="text-xs font-bold uppercase tracking-widest hover:text-bronze transition-colors">Verify</Link>
-            <Link href="/auth/login" className="btn-primary">Sign In</Link>
+            <Link href="/sign-in" className="btn-primary">Sign In</Link>
           </nav>
         </div>
       </header>
@@ -96,10 +96,10 @@ export default function AboutPage() {
               Ready to secure the future?
             </h2>
             <div className="flex flex-col sm:flex-row justify-center gap-4 relative z-10">
-              <Link href="/auth/register" className="btn-primary flex items-center justify-center gap-2">
-                Join as Student <ArrowRight className="w-4 h-4" />
+              <Link href="/sign-up" className="btn-primary flex items-center justify-center gap-2">
+                Join Network <ChevronRight className="w-4 h-4" />
               </Link>
-              <Link href="/auth/register?role=uni" className="px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest transition-colors border border-parchment-200/20 hover:bg-parchment-100/10 flex items-center justify-center">
+              <Link href="/sign-up?role=uni" className="px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest transition-colors border border-parchment-200/20 hover:bg-parchment-100/10 flex items-center justify-center">
                 Register Institution
               </Link>
             </div>

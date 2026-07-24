@@ -169,7 +169,7 @@ function VerifyContent() {
         <div className="max-w-[90rem] mx-auto px-6 h-20 flex items-center justify-between relative">
           <div className="flex items-center gap-6">
             <Link href="/" className="flex items-center gap-2 group">
-              <ShieldCheck className="w-6 h-6 text-bronze group-hover:rotate-12 transition-transform duration-500" />
+              <img src="/logo.svg" alt="ProofMind Logo" className="w-6 h-6 group-hover:scale-110 transition-transform duration-500" />
               <span className="font-display font-black text-xl tracking-tight text-ink-900 uppercase hidden sm:block">
                 Proof<span className="text-bronze">Mind</span>
               </span>
@@ -181,8 +181,8 @@ function VerifyContent() {
             </div>
           </div>
           <div>
-            <Link href="/auth/login" className="text-[10px] font-bold uppercase tracking-widest text-ink-500 hover:text-bronze transition-colors border border-parchment-300 px-4 py-2 rounded-full hover:bg-parchment-200">
-              Issuer Login
+            <Link href="/sign-in" className="text-[10px] font-bold uppercase tracking-widest text-ink-500 hover:text-bronze transition-colors border border-parchment-300 px-4 py-2 rounded-full hover:bg-parchment-200">
+              Sign In
             </Link>
           </div>
         </div>

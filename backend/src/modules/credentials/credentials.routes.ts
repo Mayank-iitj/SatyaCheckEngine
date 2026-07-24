@@ -1,10 +1,11 @@
 import { Router, Request, Response } from "express";
 import multer from "multer";
 import asyncHandler from "express-async-handler";
+import { v4 as uuidv4 } from "uuid";
 import { prisma } from "../../lib/prisma";
-import { authenticate, requireRole } from "../../middleware/auth";
+import { authenticate, requireRole, optionalAuth } from "../../middleware/auth";
 import { hashCredentialPayload, hashFile, signData } from "../../lib/hash";
-import { uploadToIPFS } from "../../lib/ipfs";
+import { uploadToIPFS, getIPFSUrl } from "../../lib/ipfs";
 import { issueCredentialOnChain, revokeCredentialOnChain } from "../../lib/blockchain";
 import { generateQRDataURL, getVerificationUrl } from "../../lib/qr";
 import { config } from "../../config";
@@ -12,6 +13,9 @@ import { validateRequest } from "../../middleware/validate";
 import { issueCredentialSchema } from "./credentials.schemas";
 import { BadRequestError, ForbiddenError, NotFoundError } from "../../lib/errors";
 import { buildMerkleTree, getMerkleProof } from "../../lib/merkle";
+import { canonicalizeDocument, computeCanonicalHash } from "../../lib/canonicalize";
+import { runForensicsPipeline } from "../../lib/pdf-forensics";
+import { generateSealedPDF } from "../../lib/sealed-pdf";
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
@@ -72,13 +76,36 @@ router.post(
     let credentialHash: string;
     let ipfsCID: string | null = null;
     let metadataURI: string | null = null;
+    let forensicsReport: any = null;
 
     if (req.file) {
-      // File-based credential
-      credentialHash = hashFile(req.file.buffer);
+      // File-based credential: use canonical hash (strips volatile PDF metadata)
+      const canonResult = computeCanonicalHash(
+        req.file.buffer,
+        {
+          institutionId: institution.id,
+          studentId: student.id,
+          credentialType: credentialType || "DEGREE",
+          issueDate: issueDate || new Date().toISOString(),
+        },
+        req.file.mimetype
+      );
+      credentialHash = canonResult.hash;
+
+      // Upload original file to IPFS
       const ipfsResult = await uploadToIPFS(req.file.buffer, req.file.originalname);
       ipfsCID = ipfsResult.cid;
       metadataURI = ipfsResult.uri;
+
+      // Run forensics pipeline (non-blocking for response speed)
+      // Result is stored back to DB after credential is created
+      runForensicsPipeline(req.file.buffer, institution.id)
+        .then((report) => {
+          forensicsReport = report;
+        })
+        .catch(() => {
+          // Non-fatal
+        });
     } else {
       // Form-based credential
       credentialHash = hashCredentialPayload({
@@ -117,9 +144,14 @@ router.post(
     }
 
     // Save to database
+    // Generate a human-shareable UUID v4 credentialId (separate from DB primary key)
+    // This is what gets printed on physical certificates and used in public verification URLs
+    const credentialId = uuidv4();
+
     const credential = await prisma.credential.create({
       data: {
         credentialHash,
+        credentialId,          // NEW: human-shareable UUID
         studentId: student.id,
         institutionId: institution.id,
         credentialType: credentialType || "DEGREE",
@@ -133,6 +165,8 @@ router.post(
         txHash,
         signature,
         status: "VALID",
+        source: "MANUAL",     // NEW: source field
+        integrityChecked: !!req.file, // NEW: mark as checked if file-based
       },
       include: {
         student: { select: { id: true, email: true, name: true } },
@@ -140,9 +174,50 @@ router.post(
       },
     });
 
-    // Generate QR code
-    const qrCode = await generateQRDataURL(credentialHash, credential.id);
-    const verificationUrl = getVerificationUrl(credentialHash, credential.id);
+    // ── Async post-issuance jobs (non-blocking) ─────────────────────────
+    // 1. Store forensics report (if we ran it above)
+    // 2. Generate and pin sealed PDF
+    setImmediate(async () => {
+      try {
+        // Wait for forensics to complete (it was kicked off above)
+        await new Promise((r) => setTimeout(r, 2000));
+
+        const updateData: any = {};
+        if (forensicsReport) {
+          updateData.forensicsReport = forensicsReport;
+        }
+
+        // Generate sealed PDF
+        if (req.file || true) { // Always generate sealed PDF, even for form-based
+          const sealResult = await generateSealedPDF(
+            req.file?.buffer || Buffer.alloc(0),
+            {
+              credentialId: credential.credentialId || credential.id,
+              credentialHash: credential.credentialHash,
+              institutionName: credential.institution.name,
+              recipientName: credential.recipientName,
+              issueDate: credential.issueDate,
+              txHash: credential.txHash,
+            }
+          );
+          updateData.sealedCopyCID = sealResult.sealedCopyCID;
+          updateData.sealedCopyHash = sealResult.sealedCopyHash;
+        }
+
+        if (Object.keys(updateData).length > 0) {
+          await prisma.credential.update({
+            where: { id: credential.id },
+            data: updateData,
+          });
+        }
+      } catch (err) {
+        console.error("Post-issuance async job failed (non-fatal):", err);
+      }
+    });
+
+    // Generate QR code — use credentialId as the primary identifier in URLs
+    const qrCode = await generateQRDataURL(credentialHash, credential.credentialId || credential.id);
+    const verificationUrl = `${config.appUrl}/verify/${credential.credentialId || credential.id}`;
 
     // Create audit event
     await prisma.auditEvent.create({
@@ -153,6 +228,7 @@ router.post(
         entityId: credential.id,
         metadata: {
           credentialHash,
+          credentialId: credential.credentialId,
           txHash,
           studentEmail,
           credentialType,
@@ -161,11 +237,89 @@ router.post(
     });
 
     res.status(201).json({
-      credential,
+      credential: {
+        ...credential,
+        credentialId: credential.credentialId || credential.id,
+      },
       qrCode,
       verificationUrl,
       txHash,
     });
+  })
+);
+
+/**
+ * GET /api/credentials/:id/sealed-pdf
+ * Download the sealed, non-editable official copy of a credential.
+ * Sealed PDFs have a visual watermark, QR code, credentialHash fingerprint,
+ * and digital signature block. Students always receive this — never the raw original.
+ */
+router.get(
+  "/:id/sealed-pdf",
+  optionalAuth,
+  asyncHandler(async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+
+    // Look up by credentialId (UUID) or DB id
+    const credential = await prisma.credential.findFirst({
+      where: {
+        OR: [{ credentialId: id }, { id }],
+      },
+      include: {
+        institution: { select: { name: true, logoUrl: true } },
+        student: { select: { name: true } },
+      },
+    });
+
+    if (!credential) {
+      throw new NotFoundError("Credential not found");
+    }
+
+    // If sealed PDF is already generated and on IPFS, redirect there
+    if ((credential as any).sealedCopyCID) {
+      const cid = (credential as any).sealedCopyCID as string;
+      if (!cid.startsWith("local_")) {
+        const gateway = config.pinataGateway || "gateway.pinata.cloud";
+        res.redirect(`https://${gateway}/ipfs/${cid}`);
+    return;
+      }
+    }
+
+    // Generate sealed PDF on-the-fly
+    const sealResult = await generateSealedPDF(
+      Buffer.alloc(0), // No source file available at download time — overlay-only
+      {
+        credentialId: (credential as any).credentialId || credential.id,
+        credentialHash: credential.credentialHash,
+        institutionName: credential.institution.name,
+        recipientName: credential.recipientName,
+        issueDate: credential.issueDate,
+        txHash: credential.txHash,
+      }
+    );
+
+    // Store sealed copy CID for future requests
+    prisma.credential.update({
+      where: { id: credential.id },
+      data: {
+        sealedCopyCID: sealResult.sealedCopyCID,
+        sealedCopyHash: sealResult.sealedCopyHash,
+      },
+    }).catch(() => {});
+
+    // Stream PDF to client
+    const fileName = `ProofMind-Sealed-${(credential as any).credentialId || credential.id}.pdf`;
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment; filename="${fileName}"`,
+      "Content-Length": sealResult.sealedPdfBuffer.length,
+      "X-Credential-Id": (credential as any).credentialId || credential.id,
+      "X-Credential-Hash": credential.credentialHash,
+      "X-Sealed-Copy-Hash": sealResult.sealedCopyHash,
+    });
+
+    res.send(sealResult.sealedPdfBuffer);
+    return;
   })
 );
 

@@ -8,12 +8,14 @@ import {
   ShieldCheck, Briefcase, LogOut, Users, Search, Target,
   CheckCircle2, Plus, Sparkles
 } from "lucide-react";
-import { jobsAPI, getStoredUser, clearAuth } from "@/lib/api";
+import { jobsAPI, clearAuth } from "@/lib/api";
+import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
+import { UserButton } from "@clerk/nextjs";
 
 export default function RecruiterDashboard() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const { user, isLoaded } = useAuth();
   
   const [activeTab, setActiveTab] = useState<"jobs" | "post">("jobs");
 
@@ -37,14 +39,17 @@ export default function RecruiterDashboard() {
   });
 
   useEffect(() => {
-    const u = getStoredUser();
-    if (!u || u.role !== "RECRUITER") {
-      router.push("/auth/login");
+    if (!isLoaded) return;
+    if (!user) {
+      router.push("/sign-in");
       return;
     }
-    setUser(u);
+    if (user.role !== "RECRUITER") {
+      router.push("/dashboard");
+      return;
+    }
     loadJobs();
-  }, []);
+  }, [user, isLoaded, router]);
 
   const loadJobs = async () => {
     setLoading(true);
@@ -93,7 +98,7 @@ export default function RecruiterDashboard() {
       setActiveTab("jobs");
       loadJobs();
       setJobForm({
-        title: "", company: user.name || "", location: "", description: "",
+        title: "", company: user?.name || "", location: "", description: "",
         requiredCredTypes: "DEGREE", requiredKeywords: "", minReputationScore: 80, salaryRange: ""
       });
     } catch (err: any) {
@@ -117,7 +122,7 @@ export default function RecruiterDashboard() {
         <div className="max-w-[90rem] mx-auto px-6 h-20 flex items-center justify-between relative">
           <div className="flex items-center gap-6">
             <Link href="/" className="flex items-center gap-2 group">
-              <ShieldCheck className="w-6 h-6 text-bronze group-hover:rotate-12 transition-transform duration-500" />
+              <img src="/logo.svg" alt="ProofMind Logo" className="w-6 h-6 group-hover:scale-110 transition-transform duration-500" />
               <span className="font-display font-black text-xl tracking-tight text-ink-900 uppercase hidden sm:block">
                 Proof<span className="text-bronze">Mind</span>
               </span>
@@ -130,9 +135,7 @@ export default function RecruiterDashboard() {
           </div>
           <div className="flex items-center gap-4">
             <span className="text-xs font-bold uppercase tracking-widest text-ink-600 hidden sm:block">{user?.name}</span>
-            <button onClick={() => { clearAuth(); router.push("/auth/login"); }} className="p-2 text-ink-400 hover:text-brand-revoked transition-colors">
-              <LogOut className="w-5 h-5" />
-            </button>
+            <UserButton />
           </div>
         </div>
       </header>

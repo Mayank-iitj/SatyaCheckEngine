@@ -24,7 +24,8 @@ datasource db {
 model User {
   id            String    @id @default(uuid())
   email         String    @unique
-  passwordHash  String
+  clerkId       String?   @unique
+  passwordHash  String?
   name          String
   role          String
   walletAddress String?
@@ -75,6 +76,9 @@ model Institution {
 model Credential {
   id              String    @id @default(uuid())
   credentialHash  String    @unique
+  // Human-shareable ID — UUID v4, safe to print on physical certificate
+  // This is NOT the cryptographic fingerprint; it reveals nothing about document contents
+  credentialId    String?   @unique
   studentId       String
   institutionId   String
   credentialType  String
@@ -99,6 +103,15 @@ model Credential {
   thesisFingerprint String?
   // Expiry tracking
   expiryStatus    String    @default("ACTIVE") // ACTIVE | EXPIRING_SOON | EXPIRED | NEEDS_RENEWAL
+  // ── Verification-Integrity Module ───────────────────────────────────────
+  // Source of issuance: MANUAL (uploaded) | DIGILOCKER_VERIFIED (government-attested)
+  source          String    @default("MANUAL")
+  // Sealed PDF (rasterized, watermarked, digitally signed)
+  sealedCopyCID   String?   // IPFS CID of the sealed PDF
+  sealedCopyHash  String?   // SHA-256 of the sealed PDF itself
+  // Forensics pipeline result (stored as JSON for quick retrieval)
+  forensicsReport Json?
+  integrityChecked Boolean  @default(false)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
@@ -356,4 +369,22 @@ model PlatformStats {
   updatedAt            DateTime @updatedAt
 
   @@map("platform_stats")
+}
+
+// ── NEW: DigiLocker Consent Sessions (mock adapter) ─────────────────────
+
+model DigiLockerConsent {
+  id           String   @id @default(uuid())
+  studentId    String
+  consentToken String   @unique
+  // PENDING | APPROVED | EXPIRED | USED
+  status       String   @default("PENDING")
+  docType      String?  // e.g. "DEGREE", "TRANSCRIPT"
+  expiresAt    DateTime
+  approvedAt   DateTime?
+  // Simulated DigiLocker student ID (like an Aadhar-linked digilocker account)
+  digiLockerId String?
+  createdAt    DateTime @default(now())
+
+  @@map("digilocker_consents")
 }

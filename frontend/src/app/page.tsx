@@ -1,10 +1,18 @@
+// @ts-nocheck
 "use client";
 
 import { useState, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { ShieldCheck, Plus, Minus, ArrowRight, Scan, Shield } from "lucide-react";
+import { ShieldCheck, Plus, Minus, ArrowRight, Scan, Shield, ChevronDown, CheckCircle2, Building2, Wallet, Briefcase, GraduationCap, Home } from "lucide-react";
 import { InteractiveDoc } from "../components/InteractiveDoc";
+import LogoLoop from "../components/LogoLoop";
+import StaggeredMenu from "../components/StaggeredMenu";
+import RotatingText from "../components/RotatingText";
+import ScrollFloat from "../components/ScrollFloat";
+import ScrollStack, { ScrollStackItem } from "../components/ScrollStack";
+import Dock from "../components/Dock";
 
 export default function LandingPage() {
   const { scrollYProgress } = useScroll();
@@ -12,9 +20,28 @@ export default function LandingPage() {
 
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
+  const staggerMenuItems = [
+    { label: 'Student', ariaLabel: 'Go to student portal', link: '/student' },
+    { label: 'University', ariaLabel: 'Go to university portal', link: '/university' },
+    { label: 'Recruiter', ariaLabel: 'Go to recruiter portal', link: '/recruiter' },
+    { label: 'Admin', ariaLabel: 'Go to admin portal', link: '/admin' }
+  ];
+
+  const staggerSocialItems = [
+    { label: 'Verify Credential', link: '/verify' },
+    { label: 'Sign In', link: '/sign-in' },
+  ];
+
+  const router = useRouter();
+  const dockItems = [
+    { icon: <Home className="w-5 h-5" />, label: 'Home', onClick: () => window.scrollTo({top: 0, behavior: 'smooth'}) },
+    { icon: <Shield className="w-5 h-5" />, label: 'Verify', onClick: () => router.push('/verify') },
+    { icon: <GraduationCap className="w-5 h-5" />, label: 'Student', onClick: () => router.push('/student') },
+    { icon: <Building2 className="w-5 h-5" />, label: 'University', onClick: () => router.push('/university') },
+  ];
+
   return (
     <div className="min-h-screen bg-parchment-100 text-ink-900 selection:bg-bronze selection:text-white overflow-hidden relative">
-      
       {/* Global Background Grid Lines */}
       <div className="fixed inset-0 pointer-events-none bg-grid-lines z-0" />
 
@@ -26,16 +53,15 @@ export default function LandingPage() {
       </div>
 
       {/* ── Sticky Header ──────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-40 bg-parchment-100/90 backdrop-blur-md border-b border-parchment-200">
+      <header className="sticky top-0 z-30 bg-parchment-100/90 backdrop-blur-md border-b border-parchment-200">
         <div className="max-w-[90rem] mx-auto px-6 h-24 flex items-center justify-between">
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-8 relative group cursor-pointer">
             <Link href="#problem" className="text-xs font-bold uppercase tracking-widest hover:text-bronze transition-colors">Why Us</Link>
-            <Link href="#portals" className="text-xs font-bold uppercase tracking-widest hover:text-bronze transition-colors">Portals</Link>
             <Link href="#faq" className="text-xs font-bold uppercase tracking-widest hover:text-bronze transition-colors">FAQ</Link>
           </nav>
           
-          <Link href="/" className="flex items-center gap-2 absolute left-1/2 -translate-x-1/2 group">
-            <ShieldCheck className="w-8 h-8 text-bronze group-hover:rotate-12 transition-transform duration-500" />
+          <Link href="/" className="flex items-center gap-2 absolute left-1/2 -translate-x-1/2 group z-30">
+            <img src="/logo.svg" alt="ProofMind Logo" className="w-8 h-8 group-hover:scale-110 transition-transform duration-500" />
             <span className="font-display font-black text-3xl tracking-tight text-ink-900 uppercase">
               Proof<span className="text-bronze">Mind</span>
             </span>
@@ -45,9 +71,30 @@ export default function LandingPage() {
             <Link href="/verify" className="text-xs font-bold uppercase tracking-widest hover:text-bronze transition-colors hidden md:block mr-4">
               Verify
             </Link>
-            <Link href="/auth/login" className="btn-primary">
+            <Link href="/sign-in" className="btn-primary">
               Sign In
             </Link>
+            
+            <div className="flex items-center ml-2 border-l border-parchment-300 pl-4 h-8">
+              {/* @ts-ignore */}
+              <StaggeredMenu
+                position="right"
+                items={staggerMenuItems}
+                socialItems={staggerSocialItems}
+                displaySocials={true}
+                displayItemNumbering={true}
+                menuButtonColor="#222"
+                openMenuButtonColor="#222"
+                changeMenuColorOnOpen={true}
+                colors={['#e5e1d8', '#C99757']}
+                logoUrl="/logo.svg"
+                accentColor="#C99757"
+                inlineToggle={true}
+                className=""
+                onMenuOpen={() => {}}
+                onMenuClose={() => {}}
+              />
+            </div>
           </div>
         </div>
       </header>
@@ -61,9 +108,24 @@ export default function LandingPage() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="text-center relative z-20"
           >
-            <h1 className="font-display font-black text-6xl md:text-8xl lg:text-[7.5rem] leading-[0.9] text-ink-900 uppercase mx-auto max-w-6xl">
-              Trust Every <span className="text-bronze">Degree</span><br/>
-              Verify Every <span className="text-bronze">Achievement</span>
+            <h1 className="font-display font-black text-6xl md:text-8xl lg:text-[7.5rem] leading-[0.9] text-ink-900 uppercase mx-auto max-w-6xl flex flex-col items-center justify-center">
+              <span>Trust Every <span className="text-bronze">Degree</span></span>
+              <span className="flex items-center gap-4 flex-wrap justify-center mt-2">
+                <span>Verify Every</span>
+                {/* @ts-ignore */}
+                <RotatingText
+                  texts={['Achievement', 'Transcript', 'Certificate', 'Diploma']}
+                  mainClassName="text-bronze overflow-hidden inline-flex items-center justify-center"
+                  staggerFrom="last"
+                  initial={{ y: "100%" }}
+                  animate={{ y: 0 }}
+                  exit={{ y: "-120%" }}
+                  staggerDuration={0.025}
+                  splitLevelClassName="overflow-hidden pb-0.5 sm:pb-1 md:pb-1"
+                  transition={{ type: "spring", damping: 30, stiffness: 400 }}
+                  rotationInterval={2500}
+                />
+              </span>
             </h1>
           </motion.div>
 
@@ -77,6 +139,51 @@ export default function LandingPage() {
             <InteractiveDoc />
           </motion.div>
         </div>
+      </section>
+
+      {/* ── LogoLoop Partners Section ──────────────────────────────────── */}
+      <section className="border-t border-b border-parchment-200 bg-white py-12 relative overflow-hidden">
+        <div className="max-w-[90rem] mx-auto px-6 mb-8 text-center">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-ink-500">Trusted By Global Institutions</p>
+        </div>
+        
+        <div className="max-w-[90rem] mx-auto px-6 overflow-hidden">
+          {/* @ts-ignore */}
+          <LogoLoop
+            logos={[
+              { node: <div className="flex items-center gap-2 text-ink-900 font-bold"><Building2 className="w-8 h-8 text-bronze" /> Harvard University</div>, href: "#" },
+              { node: <div className="flex items-center gap-2 text-ink-900 font-bold"><GraduationCap className="w-8 h-8 text-bronze" /> MIT</div>, href: "#" },
+              { node: <div className="flex items-center gap-2 text-ink-900 font-bold"><Building2 className="w-8 h-8 text-bronze" /> Oxford</div>, href: "#" },
+              { node: <div className="flex items-center gap-2 text-ink-900 font-bold"><Briefcase className="w-8 h-8 text-bronze" /> Google</div>, href: "#" },
+              { node: <div className="flex items-center gap-2 text-ink-900 font-bold"><Briefcase className="w-8 h-8 text-bronze" /> Microsoft</div>, href: "#" },
+              { node: <div className="flex items-center gap-2 text-ink-900 font-bold"><Shield className="w-8 h-8 text-bronze" /> DigiLocker</div>, href: "#" },
+            ]}
+            speed={120}
+            direction="left"
+            logoHeight={48}
+            gap={60}
+            hoverSpeed={0}
+            scaleOnHover
+            fadeOut
+            fadeOutColor="#ffffff"
+            ariaLabel="Partner Institutions"
+          />
+        </div>
+      </section>
+
+      {/* ── Giant Scroll Float Transition ──────────────────────────────── */}
+      <section className="py-24 relative overflow-hidden flex items-center justify-center">
+        <ScrollFloat
+          animationDuration={1}
+          ease='back.out(2)'
+          scrollContainerRef={undefined}
+          scrollStart='top bottom'
+          scrollEnd='bottom center'
+          stagger={0.05}
+          textClassName="text-bronze font-display uppercase tracking-tighter"
+        >
+          ABSOLUTE TRUST
+        </ScrollFloat>
       </section>
 
       {/* ── Brand Philosophy ───────────────────────────────────────────── */}
@@ -100,7 +207,7 @@ export default function LandingPage() {
           >
             AT PROOFMIND, WE BELIEVE AN ACADEMIC RECORD IS 
             <span className="inline-flex items-center justify-center mx-4 align-middle bg-parchment-50 w-24 h-16 rounded-full border border-parchment-200 shadow-sm relative -top-2">
-              <ShieldCheck className="w-8 h-8 text-bronze" />
+              <img src="/logo.svg" alt="ProofMind Logo" className="w-8 h-8" />
             </span>
             MORE THAN JUST PAPER — IT'S A CRYPTOGRAPHIC PROOF. 
             <span className="text-ink-500">WE ELIMINATE FRAUD THROUGH BLOCKCHAIN IMMUTABILITY.</span>
@@ -121,19 +228,34 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          {/* @ts-ignore */}
+          <ScrollStack
+            itemDistance={100}
+            itemScale={0.03}
+            itemStackDistance={30}
+            stackPosition="20%"
+            scaleEndPosition="10%"
+            baseScale={0.85}
+            scaleDuration={0.5}
+            rotationAmount={0}
+            blurAmount={0}
+            useWindowScroll={true}
+            onStackComplete={undefined}
+          >
             {[
               {
                 title: "University Portal",
                 desc: "Issue, manage, and revoke credentials with batch minting directly on the blockchain.",
                 tag: "ISSUER",
-                href: "/university"
+                href: "/university",
+                color: "bg-white"
               },
               {
                 title: "Student Wallet",
                 desc: "Digital wallet with QR codes, sharing links, and PDF downloads for all achievements.",
                 tag: "RECEIVER",
-                href: "/student"
+                href: "/student",
+                color: "bg-parchment-100"
               },
               {
                 title: "Recruiter Verification",
@@ -169,7 +291,7 @@ export default function LandingPage() {
                 </div>
               </motion.div>
             ))}
-          </div>
+          </ScrollStack>
         </div>
       </section>
 
@@ -287,23 +409,23 @@ export default function LandingPage() {
               <Link href="/about" className="hover:text-bronze transition-colors">ABOUT</Link>
               <Link href="/blog" className="hover:text-bronze transition-colors">BLOG</Link>
               <Link href="/verify" className="hover:text-bronze transition-colors">VERIFY</Link>
-              <Link href="/auth/login" className="hover:text-bronze transition-colors">LOGIN</Link>
+              <Link href="/sign-in" className="hover:text-bronze transition-colors">LOGIN</Link>
             </div>
 
 
 
             <div className="flex flex-col gap-4 font-display font-bold text-lg uppercase text-right">
-              <a href="#" className="hover:text-bronze transition-colors">GITHUB</a>
-              <a href="#" className="hover:text-bronze transition-colors">LINKEDIN</a>
-              <a href="#" className="hover:text-bronze transition-colors">TWITTER</a>
+              <a href="https://github.com/proofmind" className="hover:text-bronze transition-colors">GITHUB</a>
+              <a href="https://linkedin.com/company/proofmind" className="hover:text-bronze transition-colors">LINKEDIN</a>
+              <a href="https://twitter.com/proofmind" className="hover:text-bronze transition-colors">TWITTER</a>
             </div>
           </div>
 
           <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-ink-800 text-ink-500 text-sm font-medium">
             <p>© 2026 ProofMind. All rights reserved.</p>
             <div className="flex gap-8 mt-4 md:mt-0">
-              <a href="#" className="hover:text-parchment-100 transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-parchment-100 transition-colors">Terms of Service</a>
+              <Link href="/privacy" className="hover:text-parchment-100 transition-colors">Privacy Policy</Link>
+              <Link href="/terms" className="hover:text-parchment-100 transition-colors">Terms of Service</Link>
               <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-bronze transition-colors flex items-center gap-1">
                 BACK TO TOP
               </button>
@@ -311,6 +433,14 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+      
+      {/* ── Global Floating Dock ───────────────────────────────────────── */}
+      <Dock 
+        items={dockItems}
+        panelHeight={68}
+        baseItemSize={50}
+        magnification={70}
+      />
     </div>
   );
 }

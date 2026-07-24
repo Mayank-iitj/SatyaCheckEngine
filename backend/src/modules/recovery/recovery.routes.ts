@@ -104,7 +104,7 @@ router.get(
     const requests = await prisma.recoveryRequest.findMany({
       where,
       include: {
-        student: { select: { name: true, email: true } },
+        studentId: { select: { name: true, email: true } },
         institution: { select: { name: true } },
       },
       orderBy: { createdAt: "desc" },
@@ -128,7 +128,7 @@ router.post(
 
     const request = await prisma.recoveryRequest.findUnique({
       where: { id },
-      include: { institution: true, student: true },
+      include: { institution: true, studentId: true },
     });
 
     if (!request) throw new NotFoundError("Recovery request not found");

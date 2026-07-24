@@ -5,8 +5,6 @@ import rateLimit from "express-rate-limit";
 import path from "path";
 import { config } from "./config";
 
-// Import routes
-import authRoutes from "./modules/auth/auth.routes";
 import institutionRoutes from "./modules/institutions/institutions.routes";
 import credentialRoutes from "./modules/credentials/credentials.routes";
 import verifyRoutes from "./modules/verify/verify.routes";
@@ -25,6 +23,11 @@ import notificationsRoutes from "./modules/notifications/notifications.routes";
 import bridgeRoutes from "./modules/bridge/bridge.routes";
 import leaderboardRoutes from "./modules/leaderboard/leaderboard.routes";
 import offlineRoutes from "./modules/offline/offline.routes";
+
+// Verification-Integrity Module
+import integrityRoutes from "./modules/integrity/integrity.routes";
+import forensicsRoutes from "./modules/forensics/forensics.routes";
+import digilockerRoutes from "./modules/digilocker/digilocker.routes";
 
 import { requestLogger } from "./middleware/logger";
 import { errorHandler, notFoundHandler } from "./middleware/error";
@@ -79,7 +82,6 @@ app.get("/api/health", (req, res) => {
 });
 
 // ── API Routes ──────────────────────────────────────────────────────────
-app.use("/api/auth", apiLimiter, authRoutes);
 app.use("/api/institutions", apiLimiter, institutionRoutes);
 app.use("/api/credentials", apiLimiter, credentialRoutes);
 app.use("/api/verify", verifyLimiter, verifyRoutes);
@@ -98,6 +100,11 @@ app.use("/api/notifications", apiLimiter, notificationsRoutes);
 app.use("/api/bridge", apiLimiter, bridgeRoutes);
 app.use("/api/leaderboard", leaderboardRoutes); // public, no strict limit
 app.use("/api/offline", apiLimiter, offlineRoutes);
+
+// ── Verification-Integrity Module Routes ────────────────────────────────
+app.use("/api/integrity", apiLimiter, integrityRoutes);
+app.use("/api/forensics", apiLimiter, forensicsRoutes);
+app.use("/api/digilocker", apiLimiter, digilockerRoutes);
 
 // ── 404 Handler ─────────────────────────────────────────────────────────
 app.use(notFoundHandler);

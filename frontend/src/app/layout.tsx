@@ -1,3 +1,4 @@
+import {ClerkProvider} from "@clerk/nextjs";
 import "./globals.css";
 import type { Metadata } from "next";
 
@@ -25,11 +26,13 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </head>
       <body className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased">
-        <Toaster position="top-right" richColors closeButton />
-        {children}
+        <ClerkProvider>
+          <Toaster position="top-right" richColors closeButton />
+          {children}
+        </ClerkProvider>
       </body>
     </html>
   );

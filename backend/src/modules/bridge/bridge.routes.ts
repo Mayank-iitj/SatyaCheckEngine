@@ -47,7 +47,8 @@ router.post(
     });
 
     if (existing) {
-      return res.json({ message: "Bridge already exists or is pending", bridgeRequest: existing });
+      res.json({ message: "Bridge already exists or is pending", bridgeRequest: existing });
+    return;
     }
 
     // Create bridge request (simulated — in production this would trigger Chainlink CCIP)

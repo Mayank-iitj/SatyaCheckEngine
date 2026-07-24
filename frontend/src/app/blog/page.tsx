@@ -12,7 +12,7 @@ export default function BlogPage() {
       <header className="bg-parchment-100/90 backdrop-blur-md border-b border-parchment-200 sticky top-0 z-40">
         <div className="max-w-[90rem] mx-auto px-6 h-20 flex items-center justify-between relative">
           <Link href="/" className="flex items-center gap-2 group">
-            <ShieldCheck className="w-8 h-8 text-bronze group-hover:rotate-12 transition-transform duration-500" />
+            <img src="/logo.svg" alt="ProofMind Logo" className="w-8 h-8 group-hover:scale-110 transition-transform duration-500" />
             <span className="font-display font-black text-2xl tracking-tight text-ink-900 uppercase">
               Proof<span className="text-bronze">Mind</span>
             </span>
@@ -20,7 +20,7 @@ export default function BlogPage() {
           <nav className="hidden md:flex items-center gap-8">
             <Link href="/about" className="text-xs font-bold uppercase tracking-widest hover:text-bronze transition-colors">About</Link>
             <Link href="/verify" className="text-xs font-bold uppercase tracking-widest hover:text-bronze transition-colors">Verify</Link>
-            <Link href="/auth/login" className="btn-primary">Sign In</Link>
+            <Link href="/sign-in" className="btn-primary">Sign In</Link>
           </nav>
         </div>
       </header>

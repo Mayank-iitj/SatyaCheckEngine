@@ -8,13 +8,15 @@ import {
   ShieldCheck, Building2, FileCheck, Plus, LogOut,
   CheckCircle2, XCircle, Upload, Eye, RotateCcw, Activity
 } from "lucide-react";
-import { credentialsAPI, getStoredUser, clearAuth, recoveryAPI } from "@/lib/api";
+import { credentialsAPI, clearAuth, recoveryAPI } from "@/lib/api";
+import { useAuth } from "@/lib/auth";
 import { formatDate, getCredentialTypeLabel, truncateHash } from "@/lib/utils";
 import { toast } from "sonner";
+import { UserButton } from "@clerk/nextjs";
 
 export default function UniversityDashboard() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const { user, isLoaded } = useAuth();
   
   const [activeTab, setActiveTab] = useState<"credentials" | "recovery" | "reputation">("credentials");
 
@@ -40,15 +42,18 @@ export default function UniversityDashboard() {
   const [loadingRecovery, setLoadingRecovery] = useState(false);
 
   useEffect(() => {
-    const u = getStoredUser();
-    if (!u || u.role !== "UNIVERSITY") {
-      router.push("/auth/login");
+    if (!isLoaded) return;
+    if (!user) {
+      router.push("/sign-in");
       return;
     }
-    setUser(u);
+    if (user.role !== "UNIVERSITY") {
+      router.push("/dashboard");
+      return;
+    }
     loadCredentials();
     loadRecovery();
-  }, []);
+  }, [user, isLoaded, router]);
 
   const loadCredentials = async () => {
     try {
@@ -134,7 +139,7 @@ export default function UniversityDashboard() {
         <div className="max-w-[90rem] mx-auto px-6 h-20 flex items-center justify-between relative">
           <div className="flex items-center gap-6">
             <Link href="/" className="flex items-center gap-2 group">
-              <ShieldCheck className="w-6 h-6 text-bronze group-hover:rotate-12 transition-transform duration-500" />
+              <img src="/logo.svg" alt="ProofMind Logo" className="w-6 h-6 group-hover:scale-110 transition-transform duration-500" />
               <span className="font-display font-black text-xl tracking-tight text-ink-900 uppercase hidden sm:block">
                 Proof<span className="text-bronze">Mind</span>
               </span>
@@ -146,10 +151,15 @@ export default function UniversityDashboard() {
             </div>
           </div>
           <div className="flex items-center gap-4">
+            {/* Forensics Dashboard shortcut */}
+            <Link
+              href="/university/forensics"
+              className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest border border-parchment-300 text-ink-600 hover:border-bronze hover:text-bronze transition-all"
+            >
+              🧬 Forensics
+            </Link>
             <span className="text-xs font-bold uppercase tracking-widest text-ink-600 hidden sm:block">{user?.name}</span>
-            <button onClick={() => { clearAuth(); router.push("/auth/login"); }} className="p-2 text-ink-400 hover:text-brand-revoked transition-colors">
-              <LogOut className="w-5 h-5" />
-            </button>
+            <UserButton />
           </div>
         </div>
       </header>
@@ -270,9 +280,18 @@ export default function UniversityDashboard() {
                       </div>
                     )}
                     
-                    <div className="pt-6">
+                    <div className="pt-6 space-y-3">
+                      {/* Forensics reminder */}
+                      <div className="flex items-center gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs font-medium text-amber-800">
+                        <span className="text-lg">🧬</span>
+                        <div>
+                          <strong>Run Forensics First</strong> — for file uploads, run{" "}
+                          <Link href="/university/forensics" className="underline font-bold">Document Forensics</Link>{" "}
+                          before issuing to detect font inconsistencies, suspicious metadata, and pixel tampering.
+                        </div>
+                      </div>
                       <button type="submit" disabled={issueLoading} className="btn-primary w-full flex items-center justify-center gap-2">
-                        {issueLoading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><Upload className="w-4 h-4" /> Issue & Anchor on Polygon</>}
+                        {issueLoading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><Upload className="w-4 h-4" /> Issue &amp; Anchor on Polygon</>}
                       </button>
                     </div>
                   </form>
@@ -300,6 +319,7 @@ export default function UniversityDashboard() {
                           <th className="px-8 py-5">Type</th>
                           <th className="px-8 py-5">Date</th>
                           <th className="px-8 py-5">Status</th>
+                          <th className="px-8 py-5">Source</th>
                           <th className="px-8 py-5">Hash</th>
                         </tr>
                       </thead>
@@ -318,6 +338,17 @@ export default function UniversityDashboard() {
                               <span className={cred.status === "VALID" ? "badge-valid" : "badge-revoked"}>
                                 {cred.status === "VALID" ? "✓ Valid" : "✗ Revoked"}
                               </span>
+                            </td>
+                            <td className="px-8 py-5">
+                              {cred.source === "DIGILOCKER_VERIFIED" ? (
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                                  🇮🇳 DigiLocker
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-parchment-100 text-ink-500 border border-parchment-200">
+                                  📄 Manual
+                                </span>
+                              )}
                             </td>
                             <td className="px-8 py-5">
                               <code className="text-xs bg-parchment-100 border border-parchment-200 px-2 py-1 rounded font-mono text-ink-600">

@@ -19,7 +19,8 @@ router.post(
     const { credentialId, targetCountry } = req.body;
 
     if (!credentialId) {
-      return res.status(400).json({ error: "credentialId is required" });
+      res.status(400).json({ error: "credentialId is required" });
+    return;
     }
 
     const credential = await prisma.credential.findUnique({

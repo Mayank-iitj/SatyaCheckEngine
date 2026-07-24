@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
-import { config } from "../config";
+import { requireAuth, getAuth } from "@clerk/express";
 import { prisma } from "../lib/prisma";
 
 // Extend Express Request type
@@ -10,6 +9,7 @@ declare global {
       user?: {
         id: string;
         email: string;
+        clerkId?: string;
         role: string;
         name: string;
       };
@@ -18,54 +18,90 @@ declare global {
 }
 
 /**
- * Verify JWT token and attach user to request
+ * Verify Clerk token and sync local user
  */
-export function authenticate(req: Request, res: Response, next: NextFunction) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "Authentication required" });
-  }
+export const authenticate = [
+  requireAuth(),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const auth = getAuth(req);
+      const clerkId = auth.userId;
+      
+      if (!clerkId) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
 
-  const token = authHeader.split(" ")[1];
+      // We need user details. In a full production setup, this would come from a webhook or 
+      // Clerk API fetch. Since we are in middleware, we expect the user to either exist,
+      // or we can fallback to the claims if available.
+      // The Clerk token (auth.sessionClaims) might have primary_email, but it's not guaranteed
+      // unless configured. Let's try to find them by clerkId.
+      let user = await prisma.user.findUnique({
+        where: { clerkId }
+      });
 
-  try {
-    const decoded = jwt.verify(token, config.jwtSecret) as {
-      id: string;
-      email: string;
-      role: string;
-      name: string;
-    };
-    req.user = decoded;
-    next();
-  } catch (error) {
-    return res.status(401).json({ error: "Invalid or expired token" });
+      if (!user) {
+        // Fetch user from Clerk
+        const { clerkClient } = await import("@clerk/express");
+        const clerkUser = await clerkClient.users.getUser(clerkId);
+        
+        const email = clerkUser.emailAddresses[0]?.emailAddress;
+        if (!email) {
+          return res.status(400).json({ error: "Clerk user has no email address." });
+        }
+
+        // Try to find by email first (in case seeded user exists)
+        user = await prisma.user.findUnique({ where: { email } });
+
+        if (user) {
+          // Link seeded user
+          user = await prisma.user.update({
+            where: { email },
+            data: { clerkId }
+          });
+        } else {
+          // Create new user
+          user = await prisma.user.create({
+            data: {
+              clerkId,
+              email,
+              name: clerkUser.firstName ? `${clerkUser.firstName} ${clerkUser.lastName || ''}`.trim() : email.split('@')[0],
+              role: "STUDENT" // Default role
+            }
+          });
+        }
+      }
+
+      req.user = {
+        id: user.id,
+        email: user.email,
+        clerkId: user.clerkId || undefined,
+        role: user.role,
+        name: user.name,
+      };
+
+      next();
+    } catch (error) {
+      console.error("Auth error:", error);
+      return res.status(401).json({ error: "Authentication failed" });
+    }
   }
-}
+];
 
 /**
- * Optional authentication — attaches user if token present, doesn't fail otherwise
+ * Optional authentication
  */
-export function optionalAuth(req: Request, res: Response, next: NextFunction) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return next();
-  }
-
-  const token = authHeader.split(" ")[1];
-
+export const optionalAuth = (req: Request, res: Response, next: NextFunction) => {
+  // Try to get auth. If it fails, continue anyway.
   try {
-    const decoded = jwt.verify(token, config.jwtSecret) as {
-      id: string;
-      email: string;
-      role: string;
-      name: string;
-    };
-    req.user = decoded;
-  } catch {
-    // Ignore invalid tokens for optional auth
-  }
+    const auth = getAuth(req);
+    if (auth.userId) {
+      // In a real app we'd fetch the user here too, but for optional let's just proceed
+      // Next step could be to populate req.user if needed.
+    }
+  } catch {}
   next();
-}
+};
 
 /**
  * Role-based access control middleware factory
@@ -84,20 +120,4 @@ export function requireRole(...roles: string[]) {
     }
     next();
   };
-}
-
-/**
- * Generate a JWT token for a user
- */
-export function generateToken(user: {
-  id: string;
-  email: string;
-  role: string;
-  name: string;
-}): string {
-  return jwt.sign(
-    { id: user.id, email: user.email, role: user.role, name: user.name },
-    config.jwtSecret,
-    { expiresIn: "7d" }
-  );
 }

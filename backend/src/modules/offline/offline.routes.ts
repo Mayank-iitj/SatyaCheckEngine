@@ -58,7 +58,8 @@ router.post(
     const { verifications } = req.body;
 
     if (!Array.isArray(verifications)) {
-      return res.status(400).json({ error: "verifications must be an array" });
+      res.status(400).json({ error: "verifications must be an array" });
+    return;
     }
 
     let syncedCount = 0;

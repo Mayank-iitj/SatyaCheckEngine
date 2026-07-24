@@ -1,23 +1,29 @@
-import { useState, useEffect, useCallback } from "react";
-import { setToken, clearAuth as clearAuthApi, getStoredUser } from "./api";
+import { useUser, useAuth as useClerkAuth } from "@clerk/nextjs";
 
 export function useAuth() {
-  const [user, setUser] = useState<any>(null);
+  const { user: clerkUser, isLoaded } = useUser();
+  const { signOut } = useClerkAuth();
 
-  useEffect(() => {
-    setUser(getStoredUser());
-  }, []);
+  const email = clerkUser?.primaryEmailAddress?.emailAddress;
+  let role = "STUDENT";
+  if (email === "admin@proofmind.edu") role = "ADMIN";
+  else if (email === "harvard@proofmind.edu") role = "UNIVERSITY";
+  else if (email === "recruiter@google.com") role = "RECRUITER";
 
-  const setAuth = useCallback((userData: any, token: string) => {
-    setUser(userData);
-    setToken(token);
-    localStorage.setItem("proofmind_user", JSON.stringify(userData));
-  }, []);
+  // Map Clerk user to our expected legacy format
+  const user = clerkUser ? {
+    id: clerkUser.id,
+    name: clerkUser.firstName ? `${clerkUser.firstName} ${clerkUser.lastName || ''}`.trim() : email?.split('@')[0],
+    email: email,
+    role: role 
+  } : null;
 
-  const clearAuth = useCallback(() => {
-    setUser(null);
-    clearAuthApi();
-  }, []);
+  const clearAuth = () => {
+    signOut();
+  };
 
-  return { user, setAuth, clearAuth };
+  // setAuth is deprecated with Clerk
+  const setAuth = () => {};
+
+  return { user, setAuth, clearAuth, isLoaded };
 }

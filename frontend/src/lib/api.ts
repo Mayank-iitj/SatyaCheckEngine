@@ -1,37 +1,38 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
-// Get auth token from localStorage
-function getToken(): string | null {
+// Get auth token from Clerk
+async function getToken(): Promise<string | null> {
   if (typeof window === "undefined") return null;
-  return localStorage.getItem("proofmind_token");
+  return await (window as any).Clerk?.session?.getToken() || null;
 }
 
-// Set auth token
-export function setToken(token: string) {
-  localStorage.setItem("proofmind_token", token);
+// Get stored user from Clerk
+export function getStoredUser() {
+  if (typeof window === "undefined") return null;
+  const user = (window as any).Clerk?.user;
+  if (!user) return null;
+  
+  // Map Clerk user to our expected format
+  return {
+    id: user.id,
+    name: user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user.primaryEmailAddress?.emailAddress?.split('@')[0],
+    email: user.primaryEmailAddress?.emailAddress,
+    // We assume role STUDENT for now, in a real app this would come from publicMetadata
+    role: "STUDENT" 
+  };
 }
 
 // Clear auth
 export function clearAuth() {
-  localStorage.removeItem("proofmind_token");
-  localStorage.removeItem("proofmind_user");
+  if (typeof window !== "undefined") {
+    (window as any).Clerk?.signOut();
+  }
 }
 
-// Get stored user
-export function getStoredUser() {
-  if (typeof window === "undefined") return null;
-  const user = localStorage.getItem("proofmind_user");
-  return user ? JSON.parse(user) : null;
-}
-
-// Store user
-export function setStoredUser(user: any) {
-  localStorage.setItem("proofmind_user", JSON.stringify(user));
-}
 
 // Generic fetch wrapper
 async function apiFetch(endpoint: string, options: RequestInit = {}) {
-  const token = getToken();
+  const token = await getToken();
   const headers: Record<string, string> = {
     ...(options.headers as Record<string, string>),
   };
@@ -51,12 +52,12 @@ async function apiFetch(endpoint: string, options: RequestInit = {}) {
   });
 
   if (res.status === 401) {
-    clearAuth();
     if (typeof window !== "undefined") {
-      window.location.href = "/auth/login";
+      window.location.href = "/sign-in";
     }
     throw new Error("Unauthorized");
   }
+
 
   const data = await res.json();
 
@@ -174,6 +175,7 @@ export const plagiarismAPI = {
   check: (data: any) => apiFetch("/plagiarism/check", { method: "POST", body: JSON.stringify(data) }),
   getReport: (credentialHash: string) => apiFetch(`/plagiarism/report/${credentialHash}`),
   verify: (thesisText: string) => apiFetch("/plagiarism/verify", { method: "POST", body: JSON.stringify({ thesisText }) }),
+  getAllReports: () => apiFetch("/plagiarism/reports"),
 };
 
 // ── NEW: Recovery API ──────────────────────────────────────────────────
@@ -227,4 +229,17 @@ export const offlineAPI = {
   sync: (verifications: any[]) =>
     apiFetch("/offline/sync", { method: "POST", body: JSON.stringify({ verifications }) }),
 };
+
+// ── NEW: DigiLocker API ────────────────────────────────────────────────
+export const digilockerAPI = {
+  consent: (data: { docType?: string }) =>
+    apiFetch("/digilocker/consent", { method: "POST", body: JSON.stringify(data) }),
+  approve: (data: { consentToken: string; approved: boolean }) =>
+    apiFetch("/digilocker/consent/approve", { method: "POST", body: JSON.stringify(data) }),
+  fetch: (data: { fetchToken: string }) =>
+    apiFetch("/digilocker/fetch", { method: "POST", body: JSON.stringify(data) }),
+  push: (data: { credentialId: string }) =>
+    apiFetch("/digilocker/push", { method: "POST", body: JSON.stringify(data) }),
+};
+
 

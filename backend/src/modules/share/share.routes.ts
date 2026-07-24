@@ -14,7 +14,8 @@ router.post("/", authenticate, async (req: Request, res: Response) => {
     const { credentialId, expiresInHours, singleUse } = req.body;
 
     if (!credentialId) {
-      return res.status(400).json({ error: "credentialId is required" });
+      res.status(400).json({ error: "credentialId is required" });
+    return;
     }
 
     // Verify ownership
@@ -23,11 +24,13 @@ router.post("/", authenticate, async (req: Request, res: Response) => {
     });
 
     if (!credential) {
-      return res.status(404).json({ error: "Credential not found" });
+      res.status(404).json({ error: "Credential not found" });
+    return;
     }
 
     if (credential.studentId !== req.user!.id && req.user!.role !== "ADMIN") {
-      return res.status(403).json({ error: "Can only share your own credentials" });
+      res.status(403).json({ error: "Can only share your own credentials" });
+    return;
     }
 
     const token = uuidv4();
@@ -52,7 +55,8 @@ router.post("/", authenticate, async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     console.error("Create share link error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Internal server error" });
+    return;
   }
 });
 

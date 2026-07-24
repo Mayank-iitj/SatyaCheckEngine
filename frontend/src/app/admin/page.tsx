@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { adminAPI, leaderboardAPI, plagiarismAPI } from "@/lib/api";
-import { Users, Building2, ShieldAlert, FileCheck, Eye, LogOut, Plus, RefreshCw, Activity, AlertTriangle, Fingerprint } from "lucide-react";
+import { Users, Building2, ShieldAlert, FileCheck, Eye, LogOut, Plus, RefreshCw, Activity, AlertTriangle, Fingerprint, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { UserButton } from "@clerk/nextjs";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { truncateHash } from "@/lib/utils";
 
@@ -23,19 +24,7 @@ export default function AdminDashboard() {
   const [logs, setLogs] = useState<any[]>([]);
   
   // Plagiarism state (Mock for demo, but hitting API)
-  const [plagiarismReports, setPlagiarismReports] = useState<any[]>([
-    {
-      id: "1",
-      studentName: "Eve (Plagiarizer)",
-      institutionName: "Stanford Demo University",
-      thesisTitle: "Distributed Network Optimization Algorithms",
-      simHash: "a3b9f1c72d8e40a6",
-      matchScore: 94,
-      originalHash: "a3b9f1c72d8e40a5",
-      originalAuthor: "Alice Johnson",
-      status: "FLAGGED"
-    }
-  ]);
+  const [plagiarismReports, setPlagiarismReports] = useState<any[]>([]);
   
   const [showAddInst, setShowAddInst] = useState(false);
   const [newInstName, setNewInstName] = useState("");
@@ -45,11 +34,11 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (!user) {
-      router.push("/auth/login");
+      router.push("/sign-in");
       return;
     }
     if (user.role !== "ADMIN") {
-      router.push("/");
+      router.push("/dashboard");
       return;
     }
     fetchData();
@@ -58,14 +47,16 @@ export default function AdminDashboard() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [statsData, instData, logsData] = await Promise.all([
+      const [statsData, instData, logsData, plagData] = await Promise.all([
         leaderboardAPI.stats(),
         adminAPI.getInstitutions(),
-        adminAPI.getAuditLogs()
+        adminAPI.getAuditLogs(),
+        plagiarismAPI.getAllReports().catch(() => ({ reports: [] }))
       ]);
       setStats(statsData);
       setInstitutions(instData.institutions);
       setLogs(logsData.logs);
+      if (plagData && plagData.reports) setPlagiarismReports(plagData.reports);
     } catch (err) {
       console.error("Failed to load admin data", err);
     } finally {
@@ -136,7 +127,7 @@ export default function AdminDashboard() {
         <div className="max-w-[90rem] mx-auto px-6 h-20 flex items-center justify-between relative">
           <div className="flex items-center gap-6">
             <Link href="/" className="flex items-center gap-2 group">
-              <ShieldCheck className="w-6 h-6 text-bronze group-hover:rotate-12 transition-transform duration-500" />
+              <img src="/logo.svg" alt="ProofMind Logo" className="w-6 h-6 group-hover:scale-110 transition-transform duration-500" />
               <span className="font-display font-black text-xl tracking-tight text-ink-900 uppercase hidden sm:block">
                 Proof<span className="text-bronze">Mind</span>
               </span>
@@ -148,10 +139,8 @@ export default function AdminDashboard() {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-xs font-bold uppercase tracking-widest text-ink-600 hidden sm:block">Super Admin</span>
-            <button onClick={() => { clearAuth(); router.push("/auth/login"); }} className="p-2 text-ink-400 hover:text-brand-revoked transition-colors">
-              <LogOut className="w-5 h-5" />
-            </button>
+            <span className="text-xs font-bold uppercase tracking-widest text-ink-600 hidden sm:block">{user?.name}</span>
+            <UserButton />
           </div>
         </div>
       </header>

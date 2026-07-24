@@ -62,7 +62,7 @@ router.get(
     const jobs = await prisma.jobPosting.findMany({
       where: { isActive: true },
       include: {
-        recruiter: { select: { name: true, email: true } },
+        recruiterId: { select: { name: true, email: true } },
         _count: { select: { matches: true } },
       },
       orderBy: { createdAt: "desc" },
@@ -90,7 +90,8 @@ router.get(
     });
 
     if (credentials.length === 0) {
-      return res.json({ matches: [], message: "No verified credentials found to match against" });
+      res.json({ matches: [], message: "No verified credentials found to match against" });
+    return;
     }
 
     // 2. Build student profile summary
@@ -106,11 +107,12 @@ router.get(
     // 3. Get all active jobs
     const jobs = await prisma.jobPosting.findMany({
       where: { isActive: true },
-      include: { recruiter: { select: { name: true, company: true } } },
+      include: { recruiterId: { select: { name: true, company: true } } },
     });
 
     if (jobs.length === 0) {
-      return res.json({ matches: [], message: "No active jobs available" });
+      res.json({ matches: [], message: "No active jobs available" });
+    return;
     }
 
     // 4. Score each job using Gemini AI
@@ -165,7 +167,7 @@ ${jobsPrompt}
         }
       });
       
-      const text = result.text();
+      const text = (result.text ? result.text() : "");
       if (text) {
         aiResults = JSON.parse(text);
       }
@@ -217,7 +219,7 @@ ${jobsPrompt}
           location: job.location,
           description: job.description,
           salaryRange: job.salaryRange,
-          recruiter: job.recruiter,
+          recruiterId: job.recruiter,
         },
         matchScore: aiMatch.matchScore,
         matchReasons: aiMatch.matchReasons,

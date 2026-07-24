@@ -14,6 +14,7 @@
     <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" /></a>
     <a href="https://polygon.technology/"><img src="https://img.shields.io/badge/Polygon-7B3FE4?style=for-the-badge&logo=polygon&logoColor=white" alt="Polygon" /></a>
     <a href="https://deepmind.google/technologies/gemini/"><img src="https://img.shields.io/badge/Gemini_AI-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Gemini AI" /></a>
+    <a href="https://clerk.com/"><img src="https://img.shields.io/badge/Clerk_Auth-6C47FF?style=for-the-badge&logo=clerk&logoColor=white" alt="Clerk Auth" /></a>
   </p>
 </div>
 
@@ -29,10 +30,12 @@ If an institution issues it on ProofMind, it is **mathematically guaranteed to b
 
 - **🔗 Cryptographic Immutability**: Every credential is hashed (SHA-256) and permanently anchored to the Polygon blockchain. It cannot be altered or forged.
 - **⚡ Instant Verification**: Employers and recruiters can scan a QR code or paste a credential hash to receive a tamper-proof verification in under 2 seconds. No login required.
-- **👁️ Anti-Tamper OCR**: Built-in Optical Character Recognition (OCR) scans physical certificates and cross-references the text with the blockchain record to detect visual photoshopping.
+- **👁️ Digital Forensics Engine**: Upload any credential PDF to run a deep forensic analysis using `pdf-lib` and `sharp` to detect tampering, metadata manipulation, or forged digital signatures.
+- **🛡️ Verification-Integrity Module**: A robust microservice that acts as the source of truth, cross-referencing off-chain records against on-chain transaction logs and IPFS CIDs to guarantee data integrity.
+- **🏛️ DigiLocker Integration**: Students can seamlessly sync and fetch government-issued verifiable credentials through a secure, mock Digilocker API layer.
 - **🤖 AI-Powered Job Matching**: Integrated with **Google Gemini AI**, the platform semantically matches a student's verified skills and degrees to active job postings, acting as a hyper-intelligent technical recruiter.
 - **🎓 AI Equivalency Engine**: Cross-border credentials are automatically mapped to local qualification frameworks using an AI evaluation engine (e.g., mapping an Indian B.Tech to a US B.S. in Engineering).
-- **🛡️ Plagiarism Detection**: Built-in SimHash fingerprinting detects structural plagiarism and 1-bit discrepancies in uploaded research theses.
+- **🔒 Enterprise Auth via Clerk**: Bank-grade authentication and user management powered by Clerk, ensuring secure identity verification for Universities and Students.
 
 ---
 
@@ -49,10 +52,10 @@ proofmind/
 ```
 
 **Core Technologies:**
-- **Frontend**: Next.js 14, React, Tailwind CSS, Framer Motion, Tesseract.js (OCR)
-- **Backend**: Node.js, Express, Prisma ORM, PostgreSQL, Google Gemini GenAI SDK
+- **Frontend**: Next.js 14, React, Tailwind CSS, Framer Motion, Clerk UI components
+- **Backend**: Node.js, Express, Prisma ORM, PostgreSQL, `@clerk/express`, Google Gemini GenAI SDK
 - **Web3**: Solidity, Hardhat, Ethers.js, Polygon Network, IPFS (Pinata)
-- **Security**: JWT Auth, bcrypt, Helmet, Rate Limiting
+- **Security**: Clerk Authentication, helmet, Rate Limiting, Digital Forensics (pdf-lib, sharp)
 
 ---
 
@@ -123,14 +126,14 @@ Visit **[http://localhost:3000](http://localhost:3000)** in your browser!
 
 ## 👤 Demo Accounts
 
-The database seed provides several pre-configured accounts to instantly experience all facets of the platform:
+The database seed provides several pre-configured profiles. Simply sign in via Clerk using the matching email address to be automatically mapped to these roles (or sign up as a new user to receive the default Student role):
 
-| Persona | Email | Password | Role Features |
-|---------|-------|----------|---------------|
-| **Admin** | `admin@proofmind.io` | `admin123` | Analytics dashboard, institution verification |
-| **University** | `registrar@mit-demo.edu` | `university123` | Issue credentials, batch mint, revoke |
-| **Student** | `alice@student.demo` | `student123` | Digital wallet, AI job matching |
-| **Recruiter** | `hr@techcorp.demo` | `recruiter123` | Post jobs, source verified candidates |
+| Persona | Email | Role Features |
+|---------|-------|---------------|
+| **Admin** | `admin@proofmind.io` | Analytics dashboard, institution verification |
+| **University** | `registrar@mit-demo.edu` | Issue credentials, digital forensics, revoke |
+| **Student** | `alice@student.demo` | Digital wallet, DigiLocker sync, AI job matching |
+| **Recruiter** | `hr@techcorp.demo` | Post jobs, source verified candidates |
 
 ---
 

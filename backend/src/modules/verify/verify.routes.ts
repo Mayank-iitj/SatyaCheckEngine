@@ -182,7 +182,8 @@ router.post("/", optionalAuth, async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     console.error("Verification error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Internal server error" });
+    return;
   }
 });
 
@@ -194,11 +195,13 @@ router.post("/bulk", optionalAuth, async (req: Request, res: Response) => {
   try {
     const { hashes } = req.body;
     if (!Array.isArray(hashes) || hashes.length === 0) {
-      return res.status(400).json({ error: "Provide an array of hashes" });
+      res.status(400).json({ error: "Provide an array of hashes" });
+    return;
     }
 
     if (hashes.length > 100) {
-      return res.status(400).json({ error: "Maximum 100 hashes per bulk request" });
+      res.status(400).json({ error: "Maximum 100 hashes per bulk request" });
+    return;
     }
 
     const results = await Promise.all(
@@ -238,7 +241,8 @@ router.post("/bulk", optionalAuth, async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     console.error("Bulk verification error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Internal server error" });
+    return;
   }
 });
 
@@ -261,17 +265,20 @@ router.get("/share/:token", async (req: Request, res: Response) => {
     });
 
     if (!shareLink) {
-      return res.status(404).json({ error: "Share link not found" });
+      res.status(404).json({ error: "Share link not found" });
+    return;
     }
 
     // Check expiry
     if (new Date() > shareLink.expiresAt) {
-      return res.status(410).json({ error: "Share link has expired" });
+      res.status(410).json({ error: "Share link has expired" });
+    return;
     }
 
     // Check single-use
     if (shareLink.singleUse && shareLink.usedAt) {
-      return res.status(410).json({ error: "Share link has already been used" });
+      res.status(410).json({ error: "Share link has already been used" });
+    return;
     }
 
     // Mark as used if single-use
@@ -295,7 +302,8 @@ router.get("/share/:token", async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     console.error("Share link resolve error:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Internal server error" });
+    return;
   }
 });
 
