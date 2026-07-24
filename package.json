@@ -6,6 +6,7 @@
   "scripts": {
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:contracts": "cd contracts && npx hardhat node",
     "deploy:contracts": "cd contracts && npx hardhat run scripts/deploy.js --network localhost",
     "seed:backend": "cd backend && npx prisma db seed",
@@ -16,6 +17,15 @@
     "rebuild:chain:dry": "cd backend && npx tsx scripts/rebuildFromChain.ts --dry-run",
     "install:all": "cd contracts && npm install && cd ../backend && npm install && cd ../frontend && npm install"
   },
-  "keywords": ["blockchain", "credentials", "verification", "education", "polygon"],
-  "license": "MIT"
+  "keywords": [
+    "blockchain",
+    "credentials",
+    "verification",
+    "education",
+    "polygon"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^10.0.3"
+  }
 }
