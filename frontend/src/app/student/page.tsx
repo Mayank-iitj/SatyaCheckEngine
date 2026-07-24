@@ -17,7 +17,7 @@ import { UserButton } from "@clerk/nextjs";
 
 export default function StudentDashboard() {
   const router = useRouter();
-  const { user, clearAuth } = useAuth();
+  const { user, clearAuth, isLoaded } = useAuth();
   
   const [activeTab, setActiveTab] = useState<"credentials" | "skills" | "jobs" | "recovery">("credentials");
 
@@ -43,6 +43,7 @@ export default function StudentDashboard() {
   const [recoveryForm, setRecoveryForm] = useState({ institutionId: "", originalTitle: "", evidenceNotes: "" });
 
   useEffect(() => {
+    if (!isLoaded) return;
     if (!user) {
       router.push("/sign-in");
       return;
@@ -57,7 +58,7 @@ export default function StudentDashboard() {
     if (activeTab === "skills") loadSkills();
     if (activeTab === "jobs") loadJobs();
     if (activeTab === "recovery") loadRecovery();
-  }, [user, router, activeTab]);
+  }, [user, isLoaded, router, activeTab]);
 
   const loadCredentials = async () => {
     try {

@@ -13,7 +13,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { truncateHash } from "@/lib/utils";
 
 export default function AdminDashboard() {
-  const { user, clearAuth } = useAuth();
+  const { user, clearAuth, isLoaded } = useAuth();
   const router = useRouter();
   
   const [activeTab, setActiveTab] = useState<"overview" | "institutions" | "plagiarism" | "logs">("overview");
@@ -33,6 +33,7 @@ export default function AdminDashboard() {
   const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
+    if (!isLoaded) return;
     if (!user) {
       router.push("/sign-in");
       return;
@@ -42,7 +43,7 @@ export default function AdminDashboard() {
       return;
     }
     fetchData();
-  }, [user]);
+  }, [user, isLoaded, router]);
 
   const fetchData = async () => {
     setLoading(true);
