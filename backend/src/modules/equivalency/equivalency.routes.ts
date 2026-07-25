@@ -4,7 +4,6 @@ import { prisma } from "../../lib/prisma";
 import { authenticate } from "../../middleware/auth";
 import { NotFoundError } from "../../lib/errors";
 import { ai } from "../../lib/ai";
-import { Type, Schema } from "@google/genai";
 
 const router = Router();
 
@@ -49,17 +48,12 @@ Target Country: ${target}
 Determine the closest equivalent qualification framework in the target country (e.g., "Bachelor of Science (BS)", "Master's Degree (MS)", "Associate Degree", etc.).
 Provide a confidence score from 0 to 100 for this equivalency mapping.
 Provide detailed reasoning based on international education standards and agreements (e.g., Bologna Process, Washington Accord, etc.).
-`;
 
-    const responseSchema: Schema = {
-      type: Type.OBJECT,
-      properties: {
-        targetFramework: { type: Type.STRING },
-        confidenceScore: { type: Type.INTEGER },
-        details: { type: Type.STRING }
-      },
-      required: ["targetFramework", "confidenceScore", "details"]
-    };
+You MUST return the output in strict JSON format. Return a JSON object with exactly these three keys:
+- "targetFramework" (string)
+- "confidenceScore" (integer)
+- "details" (string)
+`;
 
     let aiResult = {
       targetFramework: "Requires manual evaluation",
@@ -68,16 +62,13 @@ Provide detailed reasoning based on international education standards and agreem
     };
 
     try {
-      const result = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: prompt,
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: responseSchema,
-        }
+      const response = await ai.chat.completions.create({
+        model: "llama-3.1-8b-instant",
+        messages: [{ role: "user", content: prompt }],
+        response_format: { type: "json_object" },
       });
       
-      const text = result.text();
+      const text = response.choices[0]?.message?.content || "";
       if (text) {
         aiResult = JSON.parse(text);
       }
@@ -133,7 +124,7 @@ router.get(
   authenticate,
   asyncHandler(async (req: Request, res: Response) => {
     const mappings = await prisma.equivalencyMapping.findMany({
-      where: { credentialId: req.params.credentialId },
+      where: { credentialId: req.params.credentialId as string },
       orderBy: { confidenceScore: "desc" },
     });
 

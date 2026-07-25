@@ -71,10 +71,10 @@ router.post(
     if (credentialId) {
       credential = await prisma.credential.findFirst({
         where: {
-          OR: [{ credentialId }, { id: credentialId }],
+          OR: [{ credentialId: credentialId as string }, { id: credentialId as string }],
         },
         include: {
-          institutionId: { select: { id: true, name: true } },
+          institution: { select: { id: true, name: true } },
         },
       });
       if (!credential) {
@@ -82,9 +82,9 @@ router.post(
       }
     } else if (providedHash) {
       credential = await prisma.credential.findUnique({
-        where: { credentialHash: providedHash },
+        where: { credentialHash: providedHash as string },
         include: {
-          institutionId: { select: { id: true, name: true } },
+          institution: { select: { id: true, name: true } },
         },
       });
     }
@@ -211,10 +211,10 @@ router.get(
 
     const credential = await prisma.credential.findFirst({
       where: {
-        OR: [{ credentialId }, { id: credentialId }],
+        OR: [{ credentialId: credentialId as string }, { id: credentialId as string }],
       },
       include: {
-        institutionId: { select: { id: true, name: true, logoUrl: true } },
+        institution: { select: { id: true, name: true, logoUrl: true } },
         student: { select: { name: true } },
       },
     });
@@ -244,12 +244,12 @@ router.get(
       onChainStatus = credential.status === "REVOKED" ? "REVOKED" : "VALID";
     }
 
-    return res.json({
+    res.json({
       credentialId: credential.credentialId || credential.id,
       credentialHash: credential.credentialHash,
       onChainStatus,
       dbStatus: credential.status,
-      institutionId: credential.institution,
+      institutionId: (credential as any).institution?.id,
       recipientName: credential.recipientName,
       issueDate: credential.issueDate,
       credentialType: credential.credentialType,

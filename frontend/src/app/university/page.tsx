@@ -14,6 +14,19 @@ import { formatDate, getCredentialTypeLabel, truncateHash } from "@/lib/utils";
 import { toast } from "sonner";
 import { UserButton } from "@clerk/nextjs";
 
+const DEMO_CREDENTIALS = [
+  { studentEmail: "jane.smith@example.com", recipientName: "Jane Smith", credentialType: "DEGREE", title: "B.S. in Computer Science" },
+  { studentEmail: "michael.chang@example.com", recipientName: "Michael Chang", credentialType: "DEGREE", title: "M.S. in Data Science" },
+  { studentEmail: "sarah.jones@example.com", recipientName: "Sarah Jones", credentialType: "CERTIFICATE", title: "Advanced Machine Learning" },
+  { studentEmail: "david.kim@example.com", recipientName: "David Kim", credentialType: "MICRO_CREDENTIAL", title: "Cloud Architecture" },
+  { studentEmail: "emily.chen@example.com", recipientName: "Emily Chen", credentialType: "DEGREE", title: "B.A. in Digital Arts" },
+  { studentEmail: "alex.kumar@example.com", recipientName: "Alex Kumar", credentialType: "CERTIFICATE", title: "Cybersecurity Fundamentals" },
+  { studentEmail: "olivia.williams@example.com", recipientName: "Olivia Williams", credentialType: "DEGREE", title: "Ph.D. in Neuroscience" },
+  { studentEmail: "james.brown@example.com", recipientName: "James Brown", credentialType: "MICRO_CREDENTIAL", title: "Agile Project Management" },
+  { studentEmail: "sophia.lee@example.com", recipientName: "Sophia Lee", credentialType: "CERTIFICATE", title: "Full Stack Web Development" },
+  { studentEmail: "william.davis@example.com", recipientName: "William Davis", credentialType: "DEGREE", title: "B.S. in Mechanical Engineering" },
+];
+
 export default function UniversityDashboard() {
   const router = useRouter();
   const { user, isLoaded } = useAuth();
@@ -28,8 +41,10 @@ export default function UniversityDashboard() {
   const [showIssueForm, setShowIssueForm] = useState(false);
   const [issueLoading, setIssueLoading] = useState(false);
   const [issueMode, setIssueMode] = useState<"single" | "batch">("single");
-  const [batchJson, setBatchJson] = useState("");
+  const [batchJson, setBatchJson] = useState(JSON.stringify(DEMO_CREDENTIALS, null, 2));
   const [issueResult, setIssueResult] = useState<any>(null);
+
+  const [demoIndex, setDemoIndex] = useState(0);
 
   const [studentEmail, setStudentEmail] = useState("");
   const [recipientName, setRecipientName] = useState("");
@@ -226,9 +241,25 @@ export default function UniversityDashboard() {
                 <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="beanro-card mb-12">
                   <div className="flex justify-between items-center mb-8 border-b border-parchment-200 pb-4">
                     <h2 className="font-display font-bold text-2xl uppercase text-ink-900">Issue Credentials</h2>
-                    <div className="flex gap-2 bg-parchment-100 p-1 rounded-lg">
-                      <button onClick={() => setIssueMode("single")} className={`px-4 py-2 rounded-md text-xs font-bold uppercase tracking-widest transition-colors ${issueMode === "single" ? "bg-white shadow-sm text-ink-900" : "text-ink-500"}`}>Single</button>
-                      <button onClick={() => setIssueMode("batch")} className={`px-4 py-2 rounded-md text-xs font-bold uppercase tracking-widest transition-colors ${issueMode === "batch" ? "bg-white shadow-sm text-ink-900" : "text-ink-500"}`}>Batch (Merkle)</button>
+                    <div className="flex gap-2 items-center">
+                      <button 
+                        type="button"
+                        onClick={() => {
+                          const demo = DEMO_CREDENTIALS[demoIndex];
+                          setStudentEmail(demo.studentEmail);
+                          setRecipientName(demo.recipientName);
+                          setCredentialType(demo.credentialType);
+                          setTitle(demo.title);
+                          setDemoIndex((prev) => (prev + 1) % DEMO_CREDENTIALS.length);
+                        }} 
+                        className="px-3 py-1 bg-bronze/20 text-bronze rounded hover:bg-bronze hover:text-white text-xs font-bold transition-colors mr-4"
+                      >
+                        ✨ Magic Demo
+                      </button>
+                      <div className="flex gap-2 bg-parchment-100 p-1 rounded-lg">
+                        <button onClick={() => setIssueMode("single")} className={`px-4 py-2 rounded-md text-xs font-bold uppercase tracking-widest transition-colors ${issueMode === "single" ? "bg-white shadow-sm text-ink-900" : "text-ink-500"}`}>Single</button>
+                        <button onClick={() => setIssueMode("batch")} className={`px-4 py-2 rounded-md text-xs font-bold uppercase tracking-widest transition-colors ${issueMode === "batch" ? "bg-white shadow-sm text-ink-900" : "text-ink-500"}`}>Batch (Merkle)</button>
+                      </div>
                     </div>
                   </div>
 

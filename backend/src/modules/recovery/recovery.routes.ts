@@ -104,7 +104,7 @@ router.get(
     const requests = await prisma.recoveryRequest.findMany({
       where,
       include: {
-        studentId: { select: { name: true, email: true } },
+        student: { select: { name: true, email: true } },
         institution: { select: { name: true } },
       },
       orderBy: { createdAt: "desc" },
@@ -124,11 +124,11 @@ router.post(
   requireRole("UNIVERSITY"),
   asyncHandler(async (req: Request, res: Response) => {
     const { approved, reviewNotes } = req.body;
-    const id = req.params.id;
+    const id = req.params.id as string;
 
     const request = await prisma.recoveryRequest.findUnique({
       where: { id },
-      include: { institution: true, studentId: true },
+      include: { institution: true, student: true },
     });
 
     if (!request) throw new NotFoundError("Recovery request not found");

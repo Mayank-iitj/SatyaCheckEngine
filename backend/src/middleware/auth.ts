@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { requireAuth, getAuth } from "@clerk/express";
 import { prisma } from "../lib/prisma";
+import jwt from "jsonwebtoken";
 
 // Extend Express Request type
 declare global {
@@ -18,16 +19,39 @@ declare global {
 }
 
 /**
- * Verify Clerk token and sync local user
+ * Verify Clerk token or Custom JWT and sync local user
  */
 export const authenticate = [
-  requireAuth(),
   async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const auth = getAuth(req);
-      const clerkId = auth.userId;
-      
-      if (!clerkId) {
+    // 1. Check Custom Admin JWT
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      const token = authHeader.substring(7);
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || "proofmind-dev-jwt-secret-2024") as any;
+        if (decoded && decoded.role === "ADMIN") {
+          req.user = {
+            id: decoded.id,
+            email: decoded.email,
+            role: "ADMIN",
+            name: decoded.name || "System Admin",
+          };
+          return next(); // Skip Clerk entirely
+        }
+      } catch (e) {
+        // Ignore custom JWT errors and fallback to Clerk
+      }
+    }
+
+    // 2. Fallback to Clerk
+    requireAuth()(req, res, async (err) => {
+      if (err) return next(err);
+
+      try {
+        const auth = getAuth(req);
+        const clerkId = auth.userId;
+        
+        if (!clerkId) {
         return res.status(401).json({ error: "Authentication required" });
       }
 
@@ -53,21 +77,35 @@ export const authenticate = [
         // Try to find by email first (in case seeded user exists)
         user = await prisma.user.findUnique({ where: { email } });
 
+        const requestedRole = (req.headers["x-requested-role"] as string) || "STUDENT";
+
         if (user) {
-          // Link seeded user
+          // Link seeded user and update role if requested
           user = await prisma.user.update({
             where: { email },
-            data: { clerkId }
+            data: { 
+              clerkId,
+              role: user.role === "ADMIN" ? "ADMIN" : requestedRole
+            }
           });
         } else {
-          // Create new user
+          // Create new user with requested role
           user = await prisma.user.create({
             data: {
               clerkId,
               email,
               name: clerkUser.firstName ? `${clerkUser.firstName} ${clerkUser.lastName || ''}`.trim() : email.split('@')[0],
-              role: "STUDENT" // Default role
+              role: requestedRole
             }
+          });
+        }
+      } else {
+        // Sync role if they switch portals
+        const requestedRole = req.headers["x-requested-role"] as string;
+        if (requestedRole && user.role !== requestedRole && user.role !== "ADMIN") {
+          user = await prisma.user.update({
+            where: { id: user.id },
+            data: { role: requestedRole }
           });
         }
       }
@@ -85,6 +123,7 @@ export const authenticate = [
       console.error("Auth error:", error);
       return res.status(401).json({ error: "Authentication failed" });
     }
+  });
   }
 ];
 

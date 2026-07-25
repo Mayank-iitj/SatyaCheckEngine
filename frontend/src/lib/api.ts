@@ -1,8 +1,10 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
 
-// Get auth token from Clerk
+// Get auth token from Clerk or Admin local storage
 async function getToken(): Promise<string | null> {
   if (typeof window === "undefined") return null;
+  const adminToken = localStorage.getItem("admin_token");
+  if (adminToken) return adminToken;
   return await (window as any).Clerk?.session?.getToken() || null;
 }
 
@@ -36,6 +38,13 @@ async function apiFetch(endpoint: string, options: RequestInit = {}) {
   const headers: Record<string, string> = {
     ...(options.headers as Record<string, string>),
   };
+
+  if (typeof window !== "undefined") {
+    const path = window.location.pathname;
+    if (path.startsWith("/university")) headers["x-requested-role"] = "UNIVERSITY";
+    else if (path.startsWith("/recruiter")) headers["x-requested-role"] = "RECRUITER";
+    else headers["x-requested-role"] = "STUDENT";
+  }
 
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
@@ -75,6 +84,9 @@ export const authAPI = {
 
   login: (data: { email: string; password: string }) =>
     apiFetch("/auth/login", { method: "POST", body: JSON.stringify(data) }),
+    
+  adminLogin: (data: { email: string; password: string }) =>
+    apiFetch("/auth/admin/login", { method: "POST", body: JSON.stringify(data) }),
 
   me: () => apiFetch("/auth/me"),
 };
@@ -155,6 +167,17 @@ export const jobsAPI = {
   list: () => apiFetch("/jobs"),
   matches: () => apiFetch("/jobs/matches"),
   create: (data: any) => apiFetch("/jobs", { method: "POST", body: JSON.stringify(data) }),
+};
+
+export const chatAPI = {
+  ask: (message: string) => apiFetch("/chat", { method: "POST", body: JSON.stringify({ message }) }),
+};
+
+// ── NEW: Demo API ──────────────────────────────────────────────────────
+export const demoAPI = {
+  seedStudent: () => apiFetch("/demo/student", { method: "POST" }),
+  seedRecruiter: () => apiFetch("/demo/recruiter", { method: "POST" }),
+  seedAdmin: () => apiFetch("/demo/admin", { method: "POST" }),
 };
 
 // ── NEW: Expiry API ────────────────────────────────────────────────────
@@ -240,6 +263,14 @@ export const digilockerAPI = {
     apiFetch("/digilocker/fetch", { method: "POST", body: JSON.stringify(data) }),
   push: (data: { credentialId: string }) =>
     apiFetch("/digilocker/push", { method: "POST", body: JSON.stringify(data) }),
+};
+
+// ── NEW: Forensics API ─────────────────────────────────────────────────
+export const forensicsAPI = {
+  analyze: (formData: FormData) =>
+    apiFetch("/forensics/analyze", { method: "POST", body: formData }),
+  getReport: (credentialId: string) =>
+    apiFetch(`/forensics/report/${credentialId}`),
 };
 
 

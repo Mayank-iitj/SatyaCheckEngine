@@ -318,7 +318,7 @@ router.post(
 router.post(
   "/push",
   authenticate,
-  requireRole(["UNIVERSITY", "ADMIN"]),
+  requireRole("UNIVERSITY", "ADMIN"),
   asyncHandler(async (req: Request, res: Response) => {
     const { credentialId, studentDigilockerId, universityId } = req.body;
 

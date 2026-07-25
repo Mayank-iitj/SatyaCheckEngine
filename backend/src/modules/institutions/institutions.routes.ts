@@ -220,7 +220,7 @@ router.post(
     const { reason, slashAmount } = req.body;
     
     const institution = await prisma.institution.findUnique({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
     });
 
     if (!institution) throw new NotFoundError("Institution not found");

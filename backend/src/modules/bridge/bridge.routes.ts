@@ -108,7 +108,7 @@ router.get(
   authenticate,
   asyncHandler(async (req: Request, res: Response) => {
     const bridge = await prisma.bridgeRequest.findUnique({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
       include: {
         credential: {
           select: { title: true, credentialHash: true },
@@ -131,7 +131,7 @@ router.get(
   authenticate,
   asyncHandler(async (req: Request, res: Response) => {
     const bridges = await prisma.bridgeRequest.findMany({
-      where: { credentialId: req.params.credentialId },
+      where: { credentialId: req.params.credentialId as string },
       orderBy: { createdAt: "desc" },
     });
 

@@ -1,14 +1,18 @@
 import { useUser, useAuth as useClerkAuth } from "@clerk/nextjs";
+import { usePathname } from "next/navigation";
 
 export function useAuth() {
   const { user: clerkUser, isLoaded } = useUser();
   const { signOut } = useClerkAuth();
+  const pathname = usePathname();
 
   const email = clerkUser?.primaryEmailAddress?.emailAddress;
+  
+  // Dynamically assign role based on the portal they are accessing
   let role = "STUDENT";
-  if (email === "admin@proofmind.edu") role = "ADMIN";
-  else if (email === "harvard@proofmind.edu") role = "UNIVERSITY";
-  else if (email === "recruiter@google.com") role = "RECRUITER";
+  if (pathname?.startsWith("/admin")) role = "ADMIN";
+  else if (pathname?.startsWith("/university")) role = "UNIVERSITY";
+  else if (pathname?.startsWith("/recruiter")) role = "RECRUITER";
 
   // Map Clerk user to our expected legacy format
   const user = clerkUser ? {

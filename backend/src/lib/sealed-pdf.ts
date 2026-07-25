@@ -170,7 +170,7 @@ async function buildSealedPDF(sourceBuffer: Buffer, overlay: SealOverlayData): P
   basePdf.setKeywords([verificationUrl, overlay.credentialId]);
 
   const pdfBytes = await basePdf.save();
-  let sealedBuffer = Buffer.from(pdfBytes);
+  let sealedBuffer = Buffer.from(pdfBytes) as any;
 
   // Attempt to apply digital signature
   try {

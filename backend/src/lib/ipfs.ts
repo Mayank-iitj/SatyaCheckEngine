@@ -46,7 +46,7 @@ async function uploadToPinata(
     return res;
   }, { retries: 3, initialDelay: 1000 });
 
-  const data = await response.json();
+  const data: any = await response.json();
   const cid = data.data?.cid || data.IpfsHash;
   const gateway = config.pinataGateway || "gateway.pinata.cloud";
 

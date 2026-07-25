@@ -143,7 +143,7 @@ router.get(
   "/profile/:userId",
   asyncHandler(async (req: Request, res: Response) => {
     const profile = await prisma.skillProfile.findUnique({
-      where: { userId: req.params.userId },
+      where: { userId: req.params.userId as string },
       include: {
         user: { select: { name: true, email: true } },
         entries: {
@@ -168,11 +168,13 @@ router.get(
     });
 
     if (!profile) {
-      return res.status(404).json({ error: "Skill profile not found" });
+      res.status(404).json({ error: "Skill profile not found" });
+      return;
     }
 
     if (!profile.isPublic) {
-      return res.status(403).json({ error: "This skill profile is private" });
+      res.status(403).json({ error: "This skill profile is private" });
+      return;
     }
 
     // Group by skill tag for visualization

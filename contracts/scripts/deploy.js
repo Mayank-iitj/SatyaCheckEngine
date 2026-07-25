@@ -12,6 +12,15 @@ async function main() {
   const contractAddress = await registry.getAddress();
   console.log(`✅ ProofMindRegistry deployed to: ${contractAddress}`);
 
+  const signers = await hre.ethers.getSigners();
+  const deployer = signers[0].address;
+
+  // Automatically register the backend wallet (deployer) as an institution so it can issue credentials
+  console.log(`\n⏳ Registering deployer (${deployer}) as an institution...`);
+  const tx = await registry.registerInstitution(deployer, "System Admin");
+  await tx.wait();
+  console.log(`✅ Deployer registered as an institution!`);
+
   // Save deployment info for the backend to consume
   const deploymentInfo = {
     address: contractAddress,

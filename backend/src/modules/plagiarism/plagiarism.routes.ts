@@ -113,14 +113,15 @@ router.get(
     const { credentialHash } = req.params;
 
     const fingerprint = await prisma.thesisFingerprint.findFirst({
-      where: { credentialHash },
+      where: { credentialHash: credentialHash as string },
     });
 
     if (!fingerprint) {
-      return res.json({
+      res.json({
         status: "NO_THESIS",
         message: "No thesis fingerprint found for this credential. Submit thesis text for analysis.",
       });
+      return;
     }
 
     // Compare against all others

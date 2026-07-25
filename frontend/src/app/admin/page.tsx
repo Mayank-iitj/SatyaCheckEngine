@@ -2,18 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/auth";
 import { adminAPI, leaderboardAPI, plagiarismAPI } from "@/lib/api";
-import { Users, Building2, ShieldAlert, FileCheck, Eye, LogOut, Plus, RefreshCw, Activity, AlertTriangle, Fingerprint, ShieldCheck } from "lucide-react";
+import { Users, Building2, ShieldAlert, FileCheck, Eye, LogOut, Plus, RefreshCw, Activity, AlertTriangle, Fingerprint, ShieldCheck, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
-import { UserButton } from "@clerk/nextjs";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { truncateHash } from "@/lib/utils";
 
 export default function AdminDashboard() {
-  const { user, clearAuth, isLoaded } = useAuth();
   const router = useRouter();
   
   const [activeTab, setActiveTab] = useState<"overview" | "institutions" | "plagiarism" | "logs">("overview");
@@ -33,17 +30,13 @@ export default function AdminDashboard() {
   const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
-    if (!isLoaded) return;
-    if (!user) {
-      router.push("/sign-in");
-      return;
-    }
-    if (user.role !== "ADMIN") {
-      router.push("/dashboard");
+    const adminToken = localStorage.getItem("admin_token");
+    if (!adminToken) {
+      router.push("/admin/login");
       return;
     }
     fetchData();
-  }, [user, isLoaded, router]);
+  }, [router]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -112,6 +105,20 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleSeedDemo = async () => {
+    setActionLoading(true);
+    try {
+      const { demoAPI } = await import("@/lib/api");
+      await demoAPI.seedAdmin();
+      toast.success("✨ Magic Demo Institutions Loaded!");
+      fetchData();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to load demo data");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const tabs = [
     { id: "overview", label: "Global Stats", icon: Activity },
     { id: "institutions", label: "Institutions & Slashing", icon: Building2 },
@@ -140,8 +147,17 @@ export default function AdminDashboard() {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-xs font-bold uppercase tracking-widest text-ink-600 hidden sm:block">{user?.name}</span>
-            <UserButton />
+            <span className="text-xs font-bold uppercase tracking-widest text-ink-600 hidden sm:block">System Admin</span>
+            <button 
+              onClick={() => {
+                localStorage.removeItem("admin_token");
+                localStorage.removeItem("admin_user");
+                router.push("/admin/login");
+              }}
+              className="text-xs font-bold text-brand-revoked uppercase tracking-widest hover:text-red-900 transition-colors"
+            >
+              Sign Out
+            </button>
           </div>
         </div>
       </header>
@@ -249,9 +265,16 @@ export default function AdminDashboard() {
                 {/* Action Toggle */}
                 <div className="mb-10 flex justify-between items-end">
                   <h1 className="font-display font-black text-4xl uppercase text-ink-900">Institution Management</h1>
-                  <button onClick={() => setShowAddInst(!showAddInst)} className="btn-primary flex items-center gap-2">
-                    <Plus className="w-4 h-4" /> Add Institution
-                  </button>
+                  <div className="flex gap-4">
+                    {institutions.length === 0 && (
+                      <button onClick={handleSeedDemo} disabled={actionLoading} className="btn-secondary bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100 flex items-center gap-2">
+                        {actionLoading ? <div className="w-4 h-4 border-2 border-indigo-600/30 border-t-indigo-600 rounded-full animate-spin" /> : <Sparkles className="w-4 h-4" />} Seed Demo Data
+                      </button>
+                    )}
+                    <button onClick={() => setShowAddInst(!showAddInst)} className="btn-primary flex items-center gap-2">
+                      <Plus className="w-4 h-4" /> Add Institution
+                    </button>
+                  </div>
                 </div>
 
                 {/* Add Institution Form */}

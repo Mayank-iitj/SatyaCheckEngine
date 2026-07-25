@@ -4,7 +4,6 @@ import { prisma } from "../../lib/prisma";
 import { authenticate, requireRole } from "../../middleware/auth";
 import { BadRequestError } from "../../lib/errors";
 import { ai } from "../../lib/ai";
-import { Type, Schema } from "@google/genai";
 
 const router = Router();
 
@@ -62,7 +61,7 @@ router.get(
     const jobs = await prisma.jobPosting.findMany({
       where: { isActive: true },
       include: {
-        recruiterId: { select: { name: true, email: true } },
+        recruiter: { select: { name: true, email: true } },
         _count: { select: { matches: true } },
       },
       orderBy: { createdAt: "desc" },
@@ -107,7 +106,7 @@ router.get(
     // 3. Get all active jobs
     const jobs = await prisma.jobPosting.findMany({
       where: { isActive: true },
-      include: { recruiterId: { select: { name: true, company: true } } },
+      include: { recruiter: { select: { name: true } } }, // NOTE: user doesn't have 'company' on User model. We'll omit company or fetch it if needed. Wait, job itself has company!
     });
 
     if (jobs.length === 0) {
@@ -136,40 +135,26 @@ Average Institution Reputation: ${avgReputation.toFixed(1)}
 
 Job Postings:
 ${jobsPrompt}
-`;
 
-    const responseSchema: Schema = {
-      type: Type.ARRAY,
-      items: {
-        type: Type.OBJECT,
-        properties: {
-          jobId: { type: Type.STRING },
-          matchScore: { type: Type.INTEGER },
-          matchReasons: { 
-            type: Type.ARRAY, 
-            items: { type: Type.STRING },
-            description: "2-3 short, specific reasons why this candidate matches or falls short for this role based on their credentials."
-          }
-        },
-        required: ["jobId", "matchScore", "matchReasons"]
-      }
-    };
+You MUST return the output in strict JSON format. Return a JSON object with a single key "matches". The value should be an array of objects, where each object has:
+- "jobId" (string)
+- "matchScore" (integer)
+- "matchReasons" (array of 2-3 specific string reasons)
+`;
 
     let aiResults: { jobId: string; matchScore: number; matchReasons: string[] }[] = [];
 
     try {
-      const result = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: prompt,
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: responseSchema,
-        }
+      const response = await ai.chat.completions.create({
+        model: "llama-3.1-8b-instant",
+        messages: [{ role: "user", content: prompt }],
+        response_format: { type: "json_object" },
       });
       
-      const text = (result.text ? result.text() : "");
+      const text = response.choices[0]?.message?.content || "";
       if (text) {
-        aiResults = JSON.parse(text);
+        const parsed = JSON.parse(text);
+        aiResults = parsed.matches || [];
       }
     } catch (error) {
       console.error("Gemini AI matching failed (falling back to local engine):", (error as any).message);
@@ -219,7 +204,7 @@ ${jobsPrompt}
           location: job.location,
           description: job.description,
           salaryRange: job.salaryRange,
-          recruiterId: job.recruiter,
+          recruiter: (job as any).recruiter,
         },
         matchScore: aiMatch.matchScore,
         matchReasons: aiMatch.matchReasons,

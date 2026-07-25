@@ -375,6 +375,30 @@ router.get("/issued", authenticate, requireRole("UNIVERSITY"), asyncHandler(asyn
 }));
 
 /**
+ * GET /api/credentials/admin/all
+ * Admin views all credentials (paginated)
+ */
+router.get("/admin/all", authenticate, requireRole("ADMIN"), asyncHandler(async (req: Request, res: Response) => {
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 20;
+
+  const [credentials, total] = await Promise.all([
+    prisma.credential.findMany({
+      include: {
+        student: { select: { name: true, email: true } },
+        institution: { select: { name: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    prisma.credential.count(),
+  ]);
+
+  res.json({ credentials, total, page, limit });
+}));
+
+/**
  * GET /api/credentials/:id
  * Get a single credential with full details
  */
@@ -399,10 +423,9 @@ router.get("/:id", authenticate, asyncHandler(async (req: Request, res: Response
   // Security check: only issuer, recipient, or admin can view
   if (
     credential.studentId !== req.user!.id &&
-    credential.institutionId !== req.user!.id && // Assuming institution.userId = req.user.id for university check would be more precise
+    credential.institutionId !== req.user!.id &&
     req.user!.role !== "ADMIN"
   ) {
-    // We should strictly verify if the user is the university that issued it
     const institution = await prisma.institution.findUnique({ where: { userId: req.user!.id } });
     if (!institution || institution.id !== credential.institutionId) {
       throw new ForbiddenError("Not authorized to view this credential");
@@ -608,29 +631,5 @@ router.post(
     });
   })
 );
-
-/**
- * GET /api/credentials/admin/all
- * Admin views all credentials (paginated)
- */
-router.get("/admin/all", authenticate, requireRole("ADMIN"), asyncHandler(async (req: Request, res: Response) => {
-  const page = parseInt(req.query.page as string) || 1;
-  const limit = parseInt(req.query.limit as string) || 20;
-
-  const [credentials, total] = await Promise.all([
-    prisma.credential.findMany({
-      include: {
-        student: { select: { name: true, email: true } },
-        institution: { select: { name: true } },
-      },
-      orderBy: { createdAt: "desc" },
-      skip: (page - 1) * limit,
-      take: limit,
-    }),
-    prisma.credential.count(),
-  ]);
-
-  res.json({ credentials, total, page, limit });
-}));
 
 export default router;

@@ -10,6 +10,7 @@ import credentialRoutes from "./modules/credentials/credentials.routes";
 import verifyRoutes from "./modules/verify/verify.routes";
 import analyticsRoutes from "./modules/analytics/analytics.routes";
 import shareRoutes from "./modules/share/share.routes";
+import authRoutes from "./modules/auth/auth.routes";
 
 // New Innovation Routes
 import jobsRoutes from "./modules/jobs/jobs.routes";
@@ -23,6 +24,8 @@ import notificationsRoutes from "./modules/notifications/notifications.routes";
 import bridgeRoutes from "./modules/bridge/bridge.routes";
 import leaderboardRoutes from "./modules/leaderboard/leaderboard.routes";
 import offlineRoutes from "./modules/offline/offline.routes";
+import chatRoutes from "./modules/chat/chat.routes";
+import demoRoutes from "./modules/demo/demo.routes";
 
 // Verification-Integrity Module
 import integrityRoutes from "./modules/integrity/integrity.routes";
@@ -50,7 +53,7 @@ app.use(requestLogger);
 // ── Rate Limiting ───────────────────────────────────────────────────────
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,
+  max: 5000, // Increased heavily for rapid local demo simulation
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: "Too many requests, please try again later" },
@@ -58,7 +61,7 @@ const apiLimiter = rateLimit({
 
 const verifyLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 30,
+  max: 1000, // Increased heavily for rapid local demo simulation
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: "Too many verification requests, please slow down" },
@@ -87,6 +90,7 @@ app.use("/api/credentials", apiLimiter, credentialRoutes);
 app.use("/api/verify", verifyLimiter, verifyRoutes);
 app.use("/api/analytics", apiLimiter, analyticsRoutes);
 app.use("/api/share-links", apiLimiter, shareRoutes);
+app.use("/api/auth", apiLimiter, authRoutes);
 
 // ── New Innovation Routes ───────────────────────────────────────────────
 app.use("/api/jobs", apiLimiter, jobsRoutes);
@@ -100,6 +104,8 @@ app.use("/api/notifications", apiLimiter, notificationsRoutes);
 app.use("/api/bridge", apiLimiter, bridgeRoutes);
 app.use("/api/leaderboard", leaderboardRoutes); // public, no strict limit
 app.use("/api/offline", apiLimiter, offlineRoutes);
+app.use("/api/chat", apiLimiter, chatRoutes);
+app.use("/api/demo", demoRoutes); // Internal demo routes
 
 // ── Verification-Integrity Module Routes ────────────────────────────────
 app.use("/api/integrity", apiLimiter, integrityRoutes);

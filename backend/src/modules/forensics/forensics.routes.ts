@@ -95,7 +95,7 @@ router.get(
 
     const credential = await prisma.credential.findFirst({
       where: {
-        OR: [{ credentialId }, { id: credentialId }],
+        OR: [{ credentialId: credentialId as string }, { id: credentialId as string }],
       },
       select: {
         id: true,
@@ -129,7 +129,7 @@ router.get(
     return;
     }
 
-    return res.json({
+    res.json({
       credentialId: credential.credentialId || credential.id,
       title: credential.title,
       source: credential.source,

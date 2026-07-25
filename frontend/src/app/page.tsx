@@ -5,7 +5,7 @@ import { useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { ShieldCheck, Plus, Minus, ArrowRight, Scan, Shield, ChevronDown, CheckCircle2, Building2, Wallet, Briefcase, GraduationCap, Home } from "lucide-react";
+import { ShieldCheck, Plus, Minus, ArrowRight, Scan, Shield, ChevronDown, CheckCircle2, Building2, Wallet, Briefcase, GraduationCap, Home, Activity } from "lucide-react";
 import { InteractiveDoc } from "../components/InteractiveDoc";
 import LogoLoop from "../components/LogoLoop";
 import StaggeredMenu from "../components/StaggeredMenu";
@@ -16,6 +16,8 @@ import Dock from "../components/Dock";
 import ScrollVelocity from "../components/ScrollVelocity";
 import FlowingMenu from "../components/FlowingMenu";
 import ShapeBlur from "../components/ShapeBlur";
+import CognitaAI from "../components/CognitaAI";
+import DigilockerDemo from "../components/DigilockerDemo";
 
 export default function LandingPage() {
   const { scrollYProgress } = useScroll();
@@ -27,7 +29,8 @@ export default function LandingPage() {
     { label: 'Student', ariaLabel: 'Go to student portal', link: '/student' },
     { label: 'University', ariaLabel: 'Go to university portal', link: '/university' },
     { label: 'Recruiter', ariaLabel: 'Go to recruiter portal', link: '/recruiter' },
-    { label: 'Admin', ariaLabel: 'Go to admin portal', link: '/admin' }
+    { label: 'Admin', ariaLabel: 'Go to admin portal', link: '/admin' },
+    { label: 'Cognita AI', ariaLabel: 'Go to Cognita AI', link: '/cognita' }
   ];
 
   const staggerSocialItems = [
@@ -241,6 +244,57 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── Blockchain Implementation Brief ────────────────────────────── */}
+      <section className="py-12 px-6 relative z-10">
+        <div className="max-w-4xl mx-auto">
+          <motion.div 
+            initial={{ opacity: 0, y: 15 }} 
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }} 
+            transition={{ delay: 0.2 }}
+            className="relative overflow-hidden rounded-3xl border border-indigo-500/20 bg-ink-900 shadow-2xl p-8 md:p-12"
+          >
+            {/* Glowing Orbs */}
+            <div className="absolute -top-24 -left-24 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl" />
+            <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl" />
+            
+            <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-10">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400">
+                    <Activity className="h-5 w-5 animate-pulse" />
+                  </div>
+                  <h3 className="font-display font-bold text-2xl uppercase tracking-wider text-parchment-100">
+                    Blockchain Infrastructure Live
+                  </h3>
+                </div>
+                <p className="text-parchment-400 text-sm md:text-base leading-relaxed">
+                  All credentials issued across the ProofMind platform are currently being anchored to the <span className="text-bronze font-bold">ProofMindRegistry</span> smart contract running on our live network. This guarantees cryptographic immutability, instant global verification, and zero reliance on centralized databases.
+                </p>
+              </div>
+              
+              <div className="flex flex-col gap-3 bg-ink-950/80 backdrop-blur-md p-6 rounded-2xl border border-ink-800 shrink-0 w-full md:w-80">
+                <div className="flex justify-between items-center gap-8 text-sm">
+                  <span className="text-parchment-500 uppercase tracking-widest font-bold text-[10px]">Network</span>
+                  <span className="text-emerald-400 font-mono">Localhost (31337)</span>
+                </div>
+                <div className="flex justify-between items-center gap-8 text-sm">
+                  <span className="text-parchment-500 uppercase tracking-widest font-bold text-[10px]">Registry ABI</span>
+                  <span className="text-parchment-100 font-mono">0x5FbDB...80aa3</span>
+                </div>
+                <div className="flex justify-between items-center gap-8 text-sm">
+                  <span className="text-parchment-500 uppercase tracking-widest font-bold text-[10px]">Gas Fees</span>
+                  <span className="text-emerald-400 font-mono">Subsidized (0 Gwei)</span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── DigiLocker Gateway Demonstration ───────────────────────────── */}
+      <DigilockerDemo />
+
       {/* ── Features / Portals (Signature Brews Style) ─────────────────── */}
       <section id="portals" className="py-24 px-6 relative z-10 bg-parchment-50 border-y border-parchment-200">
         <div className="max-w-[90rem] mx-auto">
@@ -360,6 +414,9 @@ export default function LandingPage() {
           ))}
         </div>
       </section>
+
+      {/* ── Cognita AI Section ─────────────────────────────────────────── */}
+      <CognitaAI />
 
       {/* ── FAQ Section ────────────────────────────────────────────────── */}
       <section id="faq" className="py-24 px-6 relative z-10 bg-ink-900 text-parchment-100">

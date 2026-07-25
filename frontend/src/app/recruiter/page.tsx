@@ -108,6 +108,19 @@ export default function RecruiterDashboard() {
     }
   };
 
+  const handleSeedDemo = async () => {
+    setLoading(true);
+    try {
+      const { demoAPI } = await import("@/lib/api");
+      await demoAPI.seedRecruiter();
+      toast.success("✨ Magic Demo Jobs Loaded!");
+      await loadJobs();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to load demo data");
+      setLoading(false);
+    }
+  };
+
   const tabs = [
     { id: "jobs", label: "My Job Postings", icon: Briefcase },
     { id: "post", label: "Post New Role", icon: Plus },
@@ -184,7 +197,12 @@ export default function RecruiterDashboard() {
                   <Briefcase className="w-12 h-12 text-ink-300 mx-auto mb-4" />
                   <h3 className="font-display font-bold text-2xl uppercase mb-2">No Jobs Posted</h3>
                   <p className="text-ink-600 mb-6">Create a job posting to start matching with verified candidates.</p>
-                  <button onClick={() => setActiveTab("post")} className="btn-primary">Post a Role</button>
+                  <div className="flex justify-center gap-4">
+                    <button onClick={() => setActiveTab("post")} className="btn-primary">Post a Role</button>
+                    <button onClick={handleSeedDemo} className="btn-secondary bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100 flex items-center gap-2">
+                      <Sparkles className="w-4 h-4" /> Load Magic Demo Jobs
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <div className="grid lg:grid-cols-2 gap-8">

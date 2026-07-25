@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
+import { forensicsAPI } from "@/lib/api";
 
 type CheckStatus = "pass" | "warning" | "fail" | "skipped" | null;
 
@@ -103,20 +104,8 @@ export default function ForensicsPage() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const token = localStorage.getItem("proofmind_token");
-      const res = await fetch("/api/forensics/analyze", {
-        method: "POST",
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-        body: formData,
-      });
+      const data = await forensicsAPI.analyze(formData);
 
-      if (!res.ok) {
-        if (res.status === 401) throw new Error("Authentication required. Please log in as a University.");
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.error || `Server error (${res.status})`);
-      }
-
-      const data: ForensicsReport = await res.json();
       setTimeout(() => {
         setReport(data);
         setAnimating(false);

@@ -214,10 +214,10 @@ router.get(
 
     if (!hash) {
       res.status(400).json({ error: "Credential hash required" });
-    return;
+      return;
     }
 
-    const fraudScore = await computeFraudScore(hash);
+    const fraudScore = await computeFraudScore(hash as string);
 
     res.json({
       ...fraudScore,
