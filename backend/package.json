@@ -4,13 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc || exit 0",
+    "build": "tsc",
     "start": "node dist/server.js",
     "test": "jest",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "prisma studio"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
