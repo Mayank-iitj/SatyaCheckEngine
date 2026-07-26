@@ -26,7 +26,7 @@ async function fetchNSEData(company: string): Promise<any> {
       signal: AbortSignal.timeout(5000),
     });
     if (response.ok) {
-      const data = await response.json();
+      const data: any = await response.json();
       return { source: "NSE", data: data?.symbols?.slice(0, 3) || [] };
     }
   } catch {

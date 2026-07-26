@@ -106,7 +106,8 @@ void main() {
 
     float sdf;
     if (VAR == 0) {
-        sdf = sdRoundRect(st, vec2(size * 2.0, size * 0.4), roundness);
+        // Decreased breadth from size * 2.0 to size * 1.2, increased height from size * 0.4 to size * 0.8
+        sdf = sdRoundRect(st, vec2(size * 1.2, size * 0.8), roundness);
         sdf = strokeAA(sdf, 0.0, borderSize, sdfCircle) * 4.0;
     } else if (VAR == 1) {
         sdf = sdCircle(st, vec2(0.5));

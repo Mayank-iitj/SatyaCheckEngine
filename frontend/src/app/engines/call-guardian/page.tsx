@@ -10,18 +10,33 @@ const EXAMPLE_TRANSCRIPTS = [
   {
     label: "SEBI Freeze Scam",
     callerClaim: "SEBI Compliance Officer",
-    transcript: "Hello sir, I am calling from SEBI headquarters Mumbai. Your trading account has been flagged for suspicious activity worth ₹15 lakhs. We have filed a case against your PAN number. To avoid immediate arrest, you must transfer ₹2 lakhs to our secure RBI escrow account within 30 minutes. This is your final notice."
+    transcript: "Hello sir, I am calling from S E B I headquarters. Your trading account has been flagged for suspicious activity.",
+    audioUrl: "/audio/scam1.mp3"
   },
   {
     label: "Algo Trading Fraud",
     callerClaim: "Stock Market Expert",
-    transcript: "Good morning sir! I am Amit Sharma, SEBI registered advisor with registration number INH000001. My algo trading system has given 45% monthly returns consistently for 3 years. I am offering you a limited slot in our premium group for just ₹25,000. Today only. Returns are guaranteed."
+    transcript: "Good morning sir. My algo trading system has given forty five percent monthly returns. I am offering you a limited slot.",
+    audioUrl: "/audio/scam2.mp3"
   },
   {
     label: "Fake IPO Call",
     callerClaim: "IPO Allotment Authority",
-    transcript: "Sir your name has been selected in our special IPO lottery scheme. You will receive 500 shares worth ₹2 lakh but you need to pay ₹5000 processing fee on this UPI number before 5 PM today. This offer will expire. Please do not tell anyone as this is confidential allocation."
+    transcript: "Sir your name has been selected in our special I P O lottery scheme. You will receive five hundred shares.",
+    audioUrl: "/audio/scam3.mp3"
   },
+  {
+    label: "Cyber Police Scam",
+    callerClaim: "Mumbai Cyber Police",
+    transcript: "Hello, this is Mumbai Cyber Police. Your Aadhaar card has been linked to money laundering. Press 1 to speak to an officer.",
+    audioUrl: "/audio/scam4.mp3"
+  },
+  {
+    label: "Lottery Scam",
+    callerClaim: "Lottery Department",
+    transcript: "Congratulations! You have won the lottery of twenty five lakh rupees. Please pay the processing fee to claim.",
+    audioUrl: "/audio/scam5.mp3"
+  }
 ];
 
 function ScoreRing({ score }: { score: number }) {
@@ -47,6 +62,7 @@ export default function CallGuardianPage() {
   const [transcript, setTranscript] = useState("");
   const [callerClaim, setCallerClaim] = useState("");
   const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [selectedAudioUrl, setSelectedAudioUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
@@ -55,7 +71,14 @@ export default function CallGuardianPage() {
   const fillExample = (ex: typeof EXAMPLE_TRANSCRIPTS[0]) => {
     setTranscript(ex.transcript);
     setCallerClaim(ex.callerClaim);
-    setMode("transcript");
+    if (ex.audioUrl) {
+      setSelectedAudioUrl(ex.audioUrl);
+      setMode("audio");
+    } else {
+      setSelectedAudioUrl(null);
+      setMode("transcript");
+    }
+    setAudioFile(null);
     setResult(null); setError(null);
   };
 
@@ -122,15 +145,6 @@ export default function CallGuardianPage() {
               <textarea value={transcript} onChange={e => setTranscript(e.target.value)}
                 className="w-full bg-ink-800 border border-ink-700 rounded-xl p-4 text-parchment-100 text-sm font-mono leading-relaxed resize-none focus:outline-none focus:border-red-500 transition-colors placeholder:text-ink-500 min-h-[160px]"
                 placeholder="Type or paste the call transcript here (as accurately as possible)..." />
-              <div className="flex flex-wrap gap-2 mt-2 items-center">
-                <span className="text-xs text-ink-500 font-bold uppercase tracking-wider">Load example:</span>
-                {EXAMPLE_TRANSCRIPTS.map((ex, i) => (
-                  <button key={i} onClick={() => fillExample(ex)}
-                    className="text-xs px-3 py-1.5 bg-ink-800 border border-ink-700 rounded-full text-ink-300 hover:border-red-500 hover:text-red-400 transition-colors">
-                    {ex.label}
-                  </button>
-                ))}
-              </div>
             </div>
           ) : (
             <div>
@@ -138,10 +152,16 @@ export default function CallGuardianPage() {
               <div onClick={() => fileRef.current?.click()}
                 className="border-2 border-dashed border-ink-700 hover:border-red-500 rounded-2xl p-10 text-center cursor-pointer transition-colors group">
                 <input ref={fileRef} type="file" className="hidden" accept="audio/*"
-                  onChange={e => { const f = e.target.files?.[0]; if (f) { setAudioFile(f); setResult(null); } }} />
+                  onChange={e => { const f = e.target.files?.[0]; if (f) { setAudioFile(f); setSelectedAudioUrl(null); setResult(null); } }} />
                 <Mic className="w-10 h-10 text-ink-600 group-hover:text-red-400 mx-auto mb-3 transition-colors" />
                 {audioFile ? (
                   <p className="text-sm text-red-400 font-medium">✓ {audioFile.name} ({(audioFile.size / 1024).toFixed(1)} KB)</p>
+                ) : selectedAudioUrl ? (
+                  <div className="flex flex-col items-center gap-3 w-full max-w-sm mx-auto" onClick={(e) => e.stopPropagation()}>
+                    <p className="text-sm text-red-400 font-medium">Sample loaded</p>
+                    <audio controls src={selectedAudioUrl} className="w-full" />
+                    <p className="text-xs text-ink-400 mt-2">Click outside to upload a different file</p>
+                  </div>
                 ) : (
                   <>
                     <p className="text-ink-300 font-medium">Click or drop audio file</p>
@@ -149,11 +169,21 @@ export default function CallGuardianPage() {
                   </>
                 )}
               </div>
-              {audioFile && !transcript && (
+              {(audioFile || selectedAudioUrl) && !transcript && (
                 <p className="text-xs text-ink-400 mt-2">💡 Add the call transcript below for more accurate analysis</p>
               )}
             </div>
           )}
+
+          <div className="flex flex-wrap gap-2 mt-2 items-center">
+            <span className="text-xs text-ink-500 font-bold uppercase tracking-wider">Load sample:</span>
+            {EXAMPLE_TRANSCRIPTS.map((ex, i) => (
+              <button key={i} onClick={() => fillExample(ex)}
+                className="text-xs px-3 py-1.5 bg-ink-800 border border-ink-700 rounded-full text-ink-300 hover:border-red-500 hover:text-red-400 transition-colors">
+                {ex.label}
+              </button>
+            ))}
+          </div>
 
           <button onClick={analyze} disabled={loading || !canSubmit}
             className="w-full py-4 bg-red-800 text-white font-bold uppercase tracking-widest rounded-xl hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm flex items-center justify-center gap-2">

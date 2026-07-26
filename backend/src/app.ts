@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
+import hpp from "hpp";
 import path from "path";
 import { config } from "./config";
 
@@ -38,6 +39,11 @@ import mediaVerifyRoutes from "./modules/satyacheck/media-verify.routes";
 import claimVerifyRoutes from "./modules/satyacheck/claim-verify.routes";
 import callGuardianRoutes from "./modules/satyacheck/call-guardian.routes";
 
+// ── Delivery & Scanner Routes ───────────────────────────────────────────
+import whatsappRoutes from "./modules/delivery/whatsapp.routes";
+import extensionRoutes from "./modules/delivery/extension.routes";
+import scannerRoutes from "./modules/delivery/scanner.routes";
+
 import { requestLogger } from "./middleware/logger";
 import { errorHandler, notFoundHandler } from "./middleware/error";
 
@@ -45,12 +51,23 @@ const app = express();
 
 // ── Security Middleware ─────────────────────────────────────────────────
 app.use(helmet({
+  contentSecurityPolicy: process.env.NODE_ENV === "production" ? undefined : false,
+  crossOriginEmbedderPolicy: false,
   crossOriginResourcePolicy: { policy: "cross-origin" },
+  dnsPrefetchControl: { allow: false },
+  frameguard: { action: "deny" },
+  hidePoweredBy: true,
+  hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
+  ieNoOpen: true,
+  noSniff: true,
+  referrerPolicy: { policy: "no-referrer" },
+  xssFilter: true,
 }));
 
 app.use(cors({
   origin: config.corsOrigin,
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 }));
 
 // ── Logging Middleware ──────────────────────────────────────────────────
@@ -59,23 +76,34 @@ app.use(requestLogger);
 // ── Rate Limiting ───────────────────────────────────────────────────────
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5000, // Increased heavily for rapid local demo simulation
+  max: 100, // Strict API limit for general routes
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: "Too many requests, please try again later" },
 });
 
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // Very strict limit for authentication to prevent brute force
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many authentication attempts, please try again later" },
+});
+
 const verifyLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 1000, // Increased heavily for rapid local demo simulation
+  max: 30, // Strict verification limit
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: "Too many verification requests, please slow down" },
 });
 
 // ── Body Parsing ────────────────────────────────────────────────────────
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "100kb" })); // Prevents payload-based DoS
+app.use(express.urlencoded({ extended: true, limit: "100kb" }));
+
+// ── Prevent HTTP Parameter Pollution ────────────────────────────────────
+app.use(hpp());
 
 // ── Static Files (local IPFS fallback) ──────────────────────────────────
 app.use("/api/files", express.static(path.join(__dirname, "..", "uploads")));
@@ -96,7 +124,7 @@ app.use("/api/credentials", apiLimiter, credentialRoutes);
 app.use("/api/verify", verifyLimiter, verifyRoutes);
 app.use("/api/analytics", apiLimiter, analyticsRoutes);
 app.use("/api/share-links", apiLimiter, shareRoutes);
-app.use("/api/auth", apiLimiter, authRoutes);
+app.use("/api/auth", authLimiter, authRoutes);
 
 // ── New Innovation Routes ───────────────────────────────────────────────
 app.use("/api/jobs", apiLimiter, jobsRoutes);
@@ -123,6 +151,11 @@ app.use("/api/satyacheck", apiLimiter, textVerifyRoutes);
 app.use("/api/satyacheck", apiLimiter, mediaVerifyRoutes);
 app.use("/api/satyacheck", apiLimiter, claimVerifyRoutes);
 app.use("/api/satyacheck", apiLimiter, callGuardianRoutes);
+
+// ── Delivery & Scanner Routes ───────────────────────────────────────────
+app.use("/api/delivery/whatsapp", apiLimiter, whatsappRoutes);
+app.use("/api/delivery/extension", apiLimiter, extensionRoutes);
+app.use("/api/scanner", apiLimiter, scannerRoutes);
 
 // ── 404 Handler ─────────────────────────────────────────────────────────
 app.use(notFoundHandler);

@@ -49,3 +49,12 @@ export function getStatusColor(status: string): string {
       return "text-amber-500";
   }
 }
+
+export function getCredentialTypeLabel(type: string): string {
+  const labels: Record<string, string> = {
+    DEGREE: "Academic Degree",
+    CERTIFICATE: "Professional Certificate",
+    DIPLOMA: "Diploma",
+  };
+  return labels[type] || type;
+}

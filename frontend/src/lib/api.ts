@@ -271,4 +271,9 @@ export const forensicsAPI = {
     apiFetch(`/forensics/report/${credentialId}`),
 };
 
+// ── NEW: Scanner API ───────────────────────────────────────────────────
+export const scannerAPI = {
+  status: () => apiFetch("/scanner/status"),
+  run: () => apiFetch("/scanner/run", { method: "POST" }),
+};
 

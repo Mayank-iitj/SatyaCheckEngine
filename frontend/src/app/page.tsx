@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { ShieldCheck, Plus, Minus, ArrowRight, Scan, Shield, ChevronDown, CheckCircle2, Building2, Briefcase, Home, Activity } from "lucide-react";
 import LogoLoop from "../components/LogoLoop";
+import CircularGallery from "../components/CircularGallery";
 import StaggeredMenu from "../components/StaggeredMenu";
 import RotatingText from "../components/RotatingText";
 import ScrollFloat from "../components/ScrollFloat";
@@ -17,6 +18,28 @@ import FlowingMenu from "../components/FlowingMenu";
 import ShapeBlur from "../components/ShapeBlur";
 import CognitaAI from "../components/CognitaAI";
 import Plasma from "../components/Plasma";
+import { useEffect } from "react";
+
+function CanvasCircularGallery() {
+  const galleryItems = [
+    { image: '/gallery/1.png', text: 'Cryptographic Security' },
+    { image: '/gallery/2.png', text: 'Academic Verification' },
+    { image: '/gallery/3.png', text: 'Global Equivalency' },
+    { image: '/gallery/4.png', text: 'AI Forensics' },
+  ];
+
+  return (
+    <CircularGallery
+      bend={3}
+      textColor="#1C1613"
+      borderRadius={0.05}
+      scrollEase={0.02}
+      fontUrl="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700&display=swap"
+      font="bold 30px 'Plus Jakarta Sans', sans-serif"
+      items={galleryItems}
+    />
+  );
+}
 
 export default function LandingPage() {
   const { scrollYProgress } = useScroll();
@@ -307,17 +330,6 @@ export default function LandingPage() {
 
       {/* ── Brand Philosophy ───────────────────────────────────────────── */}
       <section id="problem" className="py-24 lg:py-40 px-6 relative z-10 overflow-hidden">
-        <div className="absolute inset-0 z-0 opacity-80">
-          <ShapeBlur
-            variation={0}
-            pixelRatioProp={typeof window !== 'undefined' ? window.devicePixelRatio : 2}
-            shapeSize={1.2}
-            roundness={0.4}
-            borderSize={0.05}
-            circleSize={0.3}
-            circleEdge={0.5}
-          />
-        </div>
         <div className="max-w-5xl mx-auto text-center relative z-10 pointer-events-none">
           <motion.p 
             initial={{ opacity: 0 }}
@@ -336,10 +348,15 @@ export default function LandingPage() {
             className="font-display font-black text-4xl md:text-5xl lg:text-7xl leading-[1.1] text-ink-900 uppercase"
           >
             THE DUAL-LAYER TRUST PROTOCOL
-            <span className="block text-ink-500 text-2xl md:text-3xl lg:text-4xl mt-6">
+            <span className="block text-ink-500 text-2xl md:text-3xl lg:text-4xl mt-6 mb-12">
               SatyaCheck leads with authentication as the primary trust layer and deploys AI detection only as a safety net for unsigned content.
             </span>
           </motion.h2>
+        </div>
+
+        {/* Circular Gallery replacing ShapeBlur */}
+        <div style={{ height: '600px', position: 'relative', marginTop: '4rem', zIndex: 20 }}>
+          <CanvasCircularGallery />
         </div>
       </section>
 

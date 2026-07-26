@@ -3,6 +3,7 @@ import { config } from "./config";
 import { initBlockchain } from "./lib/blockchain";
 import { prisma } from "./lib/prisma";
 import { logger } from "./lib/logger";
+import { runSocialScanner } from "./jobs/social-scanner";
 
 async function main() {
   logger.info("🧠 SatyaCheck API Server Starting...");
@@ -20,11 +21,17 @@ async function main() {
     logger.info(`📦 IPFS Provider: ${config.ipfsProvider}\n`);
   });
 
+  // Start Background Jobs
+  logger.info("🕒 Initializing Social Scanner Job...");
+  runSocialScanner(); // Run immediately
+  const scannerInterval = setInterval(runSocialScanner, 5 * 60 * 1000); // 5 minutes
+
   // Graceful shutdown
   const shutdown = async (signal: string) => {
     logger.info(`\n${signal} received. Shutting down gracefully...`);
     server.close(async () => {
       logger.info("HTTP server closed.");
+      clearInterval(scannerInterval);
       try {
         await prisma.$disconnect();
         logger.info("Prisma disconnected.");
