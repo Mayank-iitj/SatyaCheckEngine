@@ -118,6 +118,10 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+// ── Root and Favicon (Prevent 404 logs) ─────────────────────────────────
+app.get("/", (req, res) => res.send("SatyaCheck API is running."));
+app.get("/favicon.ico", (req, res) => res.status(204).end());
+
 // ── API Routes ──────────────────────────────────────────────────────────
 app.use("/api/institutions", apiLimiter, institutionRoutes);
 app.use("/api/credentials", apiLimiter, credentialRoutes);
