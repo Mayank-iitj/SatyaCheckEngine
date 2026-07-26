@@ -15,7 +15,7 @@ export default function CognitaPage() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "ai",
-      content: "Hello! I am Cognita AI, the intelligent verification assistant for ProofMind. How can I help you today?"
+      content: "Hello! I am Cognita AI, the intelligent verification assistant for SatyaCheck. How can I help you today?"
     }
   ]);
   const [input, setInput] = useState("");
@@ -60,7 +60,7 @@ export default function CognitaPage() {
       <header className="px-6 h-20 flex items-center justify-between border-b border-white/5 relative z-10 bg-ink-950/50 backdrop-blur-md">
         <Link href="/" className="flex items-center gap-2 text-parchment-400 hover:text-bronze transition-colors">
           <ChevronLeft className="w-5 h-5" />
-          <span className="text-xs font-bold uppercase tracking-widest">Back to ProofMind</span>
+          <span className="text-xs font-bold uppercase tracking-widest">Back to SatyaCheck</span>
         </Link>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-bronze/20 text-bronze flex items-center justify-center border border-bronze/30">
@@ -125,25 +125,22 @@ export default function CognitaPage() {
 
       {/* Input Area */}
       <footer className="p-6 bg-ink-950/80 backdrop-blur-xl border-t border-white/5 relative z-10">
-        <form onSubmit={handleSend} className="max-w-4xl mx-auto relative">
+        <form onSubmit={handleSend} className="max-w-3xl mx-auto relative">
           <input
             type="text"
             value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask Cognita about ProofMind's blockchain credentials..."
-            className="w-full bg-white/5 border border-white/10 rounded-full py-4 pl-6 pr-16 text-parchment-100 placeholder:text-parchment-500 focus:outline-none focus:ring-2 focus:ring-bronze/50 transition-all"
+            onChange={e => setInput(e.target.value)}
+            placeholder="Ask about a suspicious call, message, or market claim..."
+            className="w-full bg-white/5 border border-white/10 rounded-full py-4 pl-6 pr-16 text-parchment-100 placeholder:text-parchment-500 focus:outline-none focus:ring-2 focus:ring-bronze/50 transition-all text-sm"
             disabled={loading}
           />
-          <button
-            type="submit"
-            disabled={!input.trim() || loading}
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-bronze text-white rounded-full flex items-center justify-center hover:bg-bronze/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <Send className="w-5 h-5 ml-1" />
+          <button type="submit" disabled={!input.trim() || loading}
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-bronze text-white rounded-full flex items-center justify-center hover:bg-bronze/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+            <Send className="w-4 h-4 ml-0.5" />
           </button>
         </form>
-        <p className="text-center text-[10px] uppercase tracking-widest text-parchment-500 mt-4">
-          Cognita AI can make mistakes. Verify critical information.
+        <p className="text-center text-[10px] uppercase tracking-widest text-parchment-500 mt-3">
+          Powered by Groq Llama-3 · Always verify with SEBI SCORES for critical decisions
         </p>
       </footer>
     </div>

@@ -1,6 +1,6 @@
 <div align="center">
-  <img src="./frontend/public/logo.svg" alt="ProofMind Logo" width="120" />
-  <h1 align="center">ProofMind</h1>
+  <img src="./frontend/public/logo.svg" alt="SatyaCheck Logo" width="120" />
+  <h1 align="center">SatyaCheck</h1>
   <p align="center">
     <strong>Trust Every Degree. Verify Every Achievement.</strong>
   </p>
@@ -9,7 +9,7 @@
   </p>
   
   <p align="center">
-    <a href="https://github.com/yourusername/proofmind"><img src="https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge" alt="License" /></a>
+    <a href="https://github.com/yourusername/satyacheck"><img src="https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge" alt="License" /></a>
     <a href="https://nextjs.org/"><img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js" /></a>
     <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" /></a>
     <a href="https://polygon.technology/"><img src="https://img.shields.io/badge/Polygon-7B3FE4?style=for-the-badge&logo=polygon&logoColor=white" alt="Polygon" /></a>
@@ -22,9 +22,9 @@
 
 ## 🌟 Vision
 
-In a world where degree mills and fabricated resumes run rampant, verifying academic credentials has become a slow, expensive, and manual process. **ProofMind** revolutionizes the academic ecosystem by replacing phone calls and emails to university registrars with instantaneous, cryptographic verification on the **Polygon blockchain**.
+In a world where degree mills and fabricated resumes run rampant, verifying academic credentials has become a slow, expensive, and manual process. **SatyaCheck** revolutionizes the academic ecosystem by replacing phone calls and emails to university registrars with instantaneous, cryptographic verification on the **Polygon blockchain**.
 
-If an institution issues it on ProofMind, it is **mathematically guaranteed to be authentic**.
+If an institution issues it on SatyaCheck, it is **mathematically guaranteed to be authentic**.
 
 ## ✨ Key Features
 
@@ -41,10 +41,10 @@ If an institution issues it on ProofMind, it is **mathematically guaranteed to b
 
 ## 🏗️ Architecture
 
-ProofMind is built on a modern, robust, and scalable tech stack:
+SatyaCheck is built on a modern, robust, and scalable tech stack:
 
 ```text
-proofmind/
+satyacheck/
 ├── contracts/          # Solidity smart contracts (Hardhat, Ethers.js)
 ├── backend/            # Node.js + Express API (Prisma, PostgreSQL, Gemini SDK)
 ├── frontend/           # Next.js 14, Tailwind CSS, Framer Motion, Three.js
@@ -68,8 +68,8 @@ proofmind/
 
 ### 1. Clone & Install
 ```bash
-git clone https://github.com/yourusername/proofmind.git
-cd proofmind
+git clone https://github.com/yourusername/satyacheck.git
+cd satyacheck
 
 # Install dependencies for all workspaces
 npm run install:all
@@ -104,7 +104,7 @@ cd ..
 cd contracts
 npx hardhat node
 
-# Terminal 2: Deploy the ProofMindRegistry contract
+# Terminal 2: Deploy the SatyaCheckRegistry contract
 cd contracts
 npx hardhat run scripts/deploy.js --network localhost
 ```
@@ -130,7 +130,7 @@ The database seed provides several pre-configured profiles. Simply sign in via C
 
 | Persona | Email | Role Features |
 |---------|-------|---------------|
-| **Admin** | `admin@proofmind.io` | Analytics dashboard, institution verification |
+| **Admin** | `admin@satyacheck.io` | Analytics dashboard, institution verification |
 | **University** | `registrar@mit-demo.edu` | Issue credentials, digital forensics, revoke |
 | **Student** | `alice@student.demo` | Digital wallet, DigiLocker sync, AI job matching |
 | **Recruiter** | `hr@techcorp.demo` | Post jobs, source verified candidates |
@@ -139,7 +139,7 @@ The database seed provides several pre-configured profiles. Simply sign in via C
 
 ## 🔒 Security Posture
 
-ProofMind takes trust and security seriously:
+SatyaCheck takes trust and security seriously:
 - **Zero PII on Chain**: We never store Personally Identifiable Information on the blockchain. We only store a cryptographic SHA-256 hash of the credential data, ensuring 100% GDPR compliance.
 - **ECDSA Signatures**: Ensures that only verified institutional wallets can interact with the registry contract.
 - **Decentralized Storage**: Certificate PDFs and metadata are pinned securely to IPFS, eliminating single points of failure.
@@ -155,4 +155,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
   <br/>
   <p>Built with ❤️ to secure the future of academic achievements.</p>
 </div>
-# proofmind
+# satyacheck

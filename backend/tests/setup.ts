@@ -10,7 +10,7 @@ jest.mock("../src/lib/blockchain", () => ({
     revoked: false,
     issuer: "0xMockIssuer",
     timestamp: Date.now(),
-    metadataURI: "proofmind://mock",
+    metadataURI: "satyacheck://mock",
   }),
 }));
 

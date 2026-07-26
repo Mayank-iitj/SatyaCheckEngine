@@ -38,7 +38,7 @@ async function computeFraudScore(credentialHash: string) {
       check: "Hash Match",
       status: "PASS",
       score: 25,
-      detail: "Credential hash found in the ProofMind database",
+      detail: "Credential hash found in the SatyaCheck database",
     });
     totalScore += 25;
   } else {

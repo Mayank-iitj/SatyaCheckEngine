@@ -4,12 +4,12 @@ pragma solidity ^0.8.24;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
- * @title ProofMindRegistry
+ * @title SatyaCheckRegistry
  * @notice On-chain registry for academic credential hashes.
  *         Universities register as issuers, issue credential hashes,
  *         and can revoke them. Anyone can verify a credential hash.
  */
-contract ProofMindRegistry is Ownable {
+contract SatyaCheckRegistry is Ownable {
     struct Credential {
         address issuer;
         bytes32 credentialHash;
@@ -64,7 +64,7 @@ contract ProofMindRegistry is Ownable {
     modifier onlyInstitution() {
         require(
             registeredInstitutions[msg.sender],
-            "ProofMind: caller is not a registered institution"
+            "SatyaCheck: caller is not a registered institution"
         );
         _;
     }
@@ -85,9 +85,9 @@ contract ProofMindRegistry is Ownable {
     ) external onlyOwner {
         require(
             !registeredInstitutions[institution],
-            "ProofMind: institution already registered"
+            "SatyaCheck: institution already registered"
         );
-        require(institution != address(0), "ProofMind: zero address");
+        require(institution != address(0), "SatyaCheck: zero address");
 
         registeredInstitutions[institution] = true;
         institutionNames[institution] = name;
@@ -103,7 +103,7 @@ contract ProofMindRegistry is Ownable {
     function removeInstitution(address institution) external onlyOwner {
         require(
             registeredInstitutions[institution],
-            "ProofMind: institution not registered"
+            "SatyaCheck: institution not registered"
         );
 
         registeredInstitutions[institution] = false;
@@ -125,9 +125,9 @@ contract ProofMindRegistry is Ownable {
     ) external onlyInstitution {
         require(
             credentials[hash].timestamp == 0,
-            "ProofMind: credential already exists"
+            "SatyaCheck: credential already exists"
         );
-        require(hash != bytes32(0), "ProofMind: empty hash");
+        require(hash != bytes32(0), "SatyaCheck: empty hash");
 
         credentials[hash] = Credential({
             issuer: msg.sender,
@@ -154,17 +154,17 @@ contract ProofMindRegistry is Ownable {
     ) external onlyInstitution {
         require(
             hashes.length == metadataURIs.length,
-            "ProofMind: arrays length mismatch"
+            "SatyaCheck: arrays length mismatch"
         );
-        require(hashes.length > 0, "ProofMind: empty arrays");
-        require(hashes.length <= 100, "ProofMind: batch too large");
+        require(hashes.length > 0, "SatyaCheck: empty arrays");
+        require(hashes.length <= 100, "SatyaCheck: batch too large");
 
         for (uint256 i = 0; i < hashes.length; i++) {
             bytes32 hash = hashes[i];
-            require(hash != bytes32(0), "ProofMind: empty hash in batch");
+            require(hash != bytes32(0), "SatyaCheck: empty hash in batch");
             require(
                 credentials[hash].timestamp == 0,
-                "ProofMind: duplicate in batch"
+                "SatyaCheck: duplicate in batch"
             );
 
             credentials[hash] = Credential({
@@ -197,12 +197,12 @@ contract ProofMindRegistry is Ownable {
         string calldata reason
     ) external {
         Credential storage c = credentials[hash];
-        require(c.timestamp != 0, "ProofMind: credential not found");
+        require(c.timestamp != 0, "SatyaCheck: credential not found");
         require(
             c.issuer == msg.sender,
-            "ProofMind: only the issuer can revoke"
+            "SatyaCheck: only the issuer can revoke"
         );
-        require(!c.revoked, "ProofMind: already revoked");
+        require(!c.revoked, "SatyaCheck: already revoked");
 
         c.revoked = true;
         c.revokedReason = reason;

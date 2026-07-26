@@ -149,20 +149,20 @@ async function buildSealedPDF(sourceBuffer: Buffer, overlay: SealOverlayData): P
   // Add metadata to the sealed PDF
   basePdf.setTitle(`Sealed Credential — ${overlay.recipientName}`);
   basePdf.setAuthor(overlay.institutionName);
-  basePdf.setSubject(`ProofMind Sealed Credential | ID: ${overlay.credentialId}`);
-  basePdf.setKeywords(["ProofMind", "credential", "blockchain", "verified", overlay.credentialId]);
-  basePdf.setProducer("ProofMind Integrity Engine v1.0");
-  basePdf.setCreator("ProofMind — proofmind.app");
+  basePdf.setSubject(`SatyaCheck Sealed Credential | ID: ${overlay.credentialId}`);
+  basePdf.setKeywords(["SatyaCheck", "credential", "blockchain", "verified", overlay.credentialId]);
+  basePdf.setProducer("SatyaCheck Integrity Engine v1.0");
+  basePdf.setCreator("SatyaCheck — satyacheck.app");
   basePdf.setCreationDate(new Date());
   basePdf.setModificationDate(new Date());
 
   // Add custom metadata for verification
   const customMetadata = {
-    ProofMindCredentialId: overlay.credentialId,
-    ProofMindCredentialHash: overlay.credentialHash,
-    ProofMindTxHash: overlay.txHash || "pending",
-    ProofMindVerifyUrl: verificationUrl,
-    ProofMindSignedAt: new Date().toISOString(),
+    SatyaCheckCredentialId: overlay.credentialId,
+    SatyaCheckCredentialHash: overlay.credentialHash,
+    SatyaCheckTxHash: overlay.txHash || "pending",
+    SatyaCheckVerifyUrl: verificationUrl,
+    SatyaCheckSignedAt: new Date().toISOString(),
   };
 
   // Embed custom XMP metadata
@@ -218,7 +218,7 @@ async function applySealToPage(
     opacity: 0.95,
   });
 
-  // ProofMind branding
+  // SatyaCheck branding
   page.drawText("🔒 PROOFMIND VERIFIED CREDENTIAL", {
     x: 16,
     y: bannerY + 108,
@@ -351,12 +351,12 @@ function buildXMPMetadata(
 <x:xmpmeta xmlns:x="adobe:ns:meta/">
   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
     <rdf:Description rdf:about=""
-        xmlns:proofmind="https://proofmind.app/ns/">
-      <proofmind:CredentialId>${overlay.credentialId}</proofmind:CredentialId>
-      <proofmind:CredentialHash>${overlay.credentialHash}</proofmind:CredentialHash>
-      <proofmind:VerifyUrl>https://proofmind.app/verify/${overlay.credentialId}</proofmind:VerifyUrl>
-      <proofmind:InstitutionName>${overlay.institutionName}</proofmind:InstitutionName>
-      <proofmind:SealedAt>${new Date().toISOString()}</proofmind:SealedAt>
+        xmlns:satyacheck="https://satyacheck.app/ns/">
+      <satyacheck:CredentialId>${overlay.credentialId}</satyacheck:CredentialId>
+      <satyacheck:CredentialHash>${overlay.credentialHash}</satyacheck:CredentialHash>
+      <satyacheck:VerifyUrl>https://satyacheck.app/verify/${overlay.credentialId}</satyacheck:VerifyUrl>
+      <satyacheck:InstitutionName>${overlay.institutionName}</satyacheck:InstitutionName>
+      <satyacheck:SealedAt>${new Date().toISOString()}</satyacheck:SealedAt>
     </rdf:Description>
   </rdf:RDF>
 </x:xmpmeta>

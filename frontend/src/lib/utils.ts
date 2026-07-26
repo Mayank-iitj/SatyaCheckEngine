@@ -26,13 +26,13 @@ export function truncateHash(hash: string, chars = 8): string {
   return `${hash.slice(0, chars + 2)}...${hash.slice(-chars)}`;
 }
 
-export function getCredentialTypeLabel(type: string): string {
+export function getVerificationTypeLabel(type: string): string {
   const labels: Record<string, string> = {
-    DEGREE: "Degree",
-    DIPLOMA: "Diploma",
-    TRANSCRIPT: "Transcript",
-    MICRO_CREDENTIAL: "Micro-Credential",
-    CERTIFICATE: "Certificate",
+    TEXT: "Text / Phishing",
+    MEDIA: "Media / Deepfake",
+    CLAIM: "Claim vs. Registry",
+    CALL: "Call / Vishing",
+    GENERAL: "General",
   };
   return labels[type] || type;
 }

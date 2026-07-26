@@ -3,14 +3,14 @@ const fs = require("fs");
 const path = require("path");
 
 async function main() {
-  console.log("🚀 Deploying ProofMindRegistry...");
+  console.log("🚀 Deploying SatyaCheckRegistry...");
 
-  const ProofMindRegistry = await hre.ethers.getContractFactory("ProofMindRegistry");
-  const registry = await ProofMindRegistry.deploy();
+  const SatyaCheckRegistry = await hre.ethers.getContractFactory("SatyaCheckRegistry");
+  const registry = await SatyaCheckRegistry.deploy();
   await registry.waitForDeployment();
 
   const contractAddress = await registry.getAddress();
-  console.log(`✅ ProofMindRegistry deployed to: ${contractAddress}`);
+  console.log(`✅ SatyaCheckRegistry deployed to: ${contractAddress}`);
 
   const signers = await hre.ethers.getSigners();
   const deployer = signers[0].address;
@@ -46,8 +46,8 @@ async function main() {
     "..",
     "artifacts",
     "contracts",
-    "ProofMindRegistry.sol",
-    "ProofMindRegistry.json"
+    "SatyaCheckRegistry.sol",
+    "SatyaCheckRegistry.json"
   );
 
   if (fs.existsSync(artifactPath)) {

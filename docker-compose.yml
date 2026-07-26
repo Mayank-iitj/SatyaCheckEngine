@@ -3,14 +3,14 @@ version: "3.8"
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: proofmind-db
+    container_name: satyacheck-db
     restart: unless-stopped
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_USER: proofmind
-      POSTGRES_PASSWORD: proofmind
-      POSTGRES_DB: proofmind
+      POSTGRES_USER: satyacheck
+      POSTGRES_PASSWORD: satyacheck
+      POSTGRES_DB: satyacheck
     volumes:
       - pgdata:/var/lib/postgresql/data
 

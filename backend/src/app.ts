@@ -32,6 +32,12 @@ import integrityRoutes from "./modules/integrity/integrity.routes";
 import forensicsRoutes from "./modules/forensics/forensics.routes";
 import digilockerRoutes from "./modules/digilocker/digilocker.routes";
 
+// ── SatyaCheck Core Engines ─────────────────────────────────────────────
+import textVerifyRoutes from "./modules/satyacheck/text-verify.routes";
+import mediaVerifyRoutes from "./modules/satyacheck/media-verify.routes";
+import claimVerifyRoutes from "./modules/satyacheck/claim-verify.routes";
+import callGuardianRoutes from "./modules/satyacheck/call-guardian.routes";
+
 import { requestLogger } from "./middleware/logger";
 import { errorHandler, notFoundHandler } from "./middleware/error";
 
@@ -80,7 +86,7 @@ app.get("/api/health", (req, res) => {
     status: "ok",
     timestamp: new Date().toISOString(),
     version: "1.0.0",
-    name: "ProofMind API",
+    name: "SatyaCheck API",
   });
 });
 
@@ -111,6 +117,12 @@ app.use("/api/demo", demoRoutes); // Internal demo routes
 app.use("/api/integrity", apiLimiter, integrityRoutes);
 app.use("/api/forensics", apiLimiter, forensicsRoutes);
 app.use("/api/digilocker", apiLimiter, digilockerRoutes);
+
+// ── SatyaCheck Core Engine Routes ───────────────────────────────────────
+app.use("/api/satyacheck", apiLimiter, textVerifyRoutes);
+app.use("/api/satyacheck", apiLimiter, mediaVerifyRoutes);
+app.use("/api/satyacheck", apiLimiter, claimVerifyRoutes);
+app.use("/api/satyacheck", apiLimiter, callGuardianRoutes);
 
 // ── 404 Handler ─────────────────────────────────────────────────────────
 app.use(notFoundHandler);

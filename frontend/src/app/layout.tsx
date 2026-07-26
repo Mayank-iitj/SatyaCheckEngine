@@ -3,18 +3,21 @@ import "./globals.css";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "ProofMind — Trust Every Degree. Verify Every Achievement.",
+  title: "SatyaCheck — Protect. Verify. Trust.",
   description:
-    "Blockchain-backed academic credential verification platform. Universities issue tamper-proof digital credentials, students store them in a digital wallet, and employers verify authenticity in seconds.",
+    "SatyaCheck is India's AI-powered market integrity platform. Detect financial scams, deepfakes, phishing, and vishing targeting retail investors using four specialized verification engines.",
   keywords: [
-    "academic credentials",
-    "blockchain verification",
-    "digital degree",
-    "credential verification",
-    "ProofMind",
-    "education technology",
+    "market integrity",
+    "financial scam detection",
+    "deepfake detector",
+    "SEBI verification",
+    "investor protection India",
+    "SatyaCheck",
+    "phishing detection",
+    "vishing detector",
   ],
 };
+
 
 import { Toaster } from 'sonner';
 

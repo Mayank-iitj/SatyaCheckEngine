@@ -103,7 +103,7 @@ export default function PublicVerifyPage() {
         <div style={styles.headerInner}>
           <a href="/" style={styles.logo}>
             <span style={styles.logoIcon}>🔒</span>
-            <span style={styles.logoText}>ProofMind</span>
+            <span style={styles.logoText}>SatyaCheck</span>
           </a>
           <span style={styles.headerTag}>Credential Verification</span>
         </div>
@@ -220,7 +220,7 @@ export default function PublicVerifyPage() {
                   >
                     {data.source === "DIGILOCKER_VERIFIED"
                       ? "🇮🇳 DigiLocker Verified"
-                      : "ProofMind Issued"}
+                      : "SatyaCheck Issued"}
                   </span>
                 </div>
               </div>
@@ -293,7 +293,7 @@ export default function PublicVerifyPage() {
             </div>
 
             <div style={styles.footer}>
-              <span>Verified by ProofMind • Powered by Polygon Blockchain</span>
+              <span>Verified by SatyaCheck • Powered by Polygon Blockchain</span>
               <span style={{ color: "#444" }}>No login required to verify</span>
             </div>
           </div>

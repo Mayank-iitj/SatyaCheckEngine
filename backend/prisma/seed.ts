@@ -9,7 +9,7 @@ function hashData(data: string): string {
 }
 
 async function main() {
-  console.log("🌱 Seeding ProofMind database (Absolute Win Edition)...\n");
+  console.log("🌱 Seeding SatyaCheck database (Absolute Win Edition)...\n");
 
   // ── 1. Global Platform Stats (Leaderboard Demo) ───────────────────────
   await prisma.platformStats.upsert({
@@ -31,12 +31,12 @@ async function main() {
   // ── 2. Create Admin User ──────────────────────────────────────────────
   const adminPassword = await bcrypt.hash("admin123", 10);
   const admin = await prisma.user.upsert({
-    where: { email: "admin@proofmind.io" },
+    where: { email: "admin@satyacheck.io" },
     update: {},
     create: {
-      email: "admin@proofmind.io",
+      email: "admin@satyacheck.io",
       passwordHash: adminPassword,
-      name: "ProofMind Admin",
+      name: "SatyaCheck Admin",
       role: "ADMIN",
     },
   });

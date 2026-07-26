@@ -134,7 +134,7 @@ router.post(
     try {
       const chainResult = await issueCredentialOnChain(
         credentialHash,
-        metadataURI || `proofmind://${credentialHash}`
+        metadataURI || `satyacheck://${credentialHash}`
       );
       if (chainResult) {
         txHash = chainResult.txHash;
@@ -308,7 +308,7 @@ router.get(
     }).catch(() => {});
 
     // Stream PDF to client
-    const fileName = `ProofMind-Sealed-${(credential as any).credentialId || credential.id}.pdf`;
+    const fileName = `SatyaCheck-Sealed-${(credential as any).credentialId || credential.id}.pdf`;
     res.set({
       "Content-Type": "application/pdf",
       "Content-Disposition": `attachment; filename="${fileName}"`,
@@ -578,7 +578,7 @@ router.post(
     // 3. Issue Merkle root on-chain (1 transaction for all credentials!)
     let txHash: string | null = null;
     try {
-      const chainResult = await issueCredentialOnChain(tree.root, `proofmind://batch/${batchId}`);
+      const chainResult = await issueCredentialOnChain(tree.root, `satyacheck://batch/${batchId}`);
       if (chainResult) txHash = chainResult.txHash;
     } catch (err) {
       console.warn("On-chain batch issuance failed (non-fatal):", err);

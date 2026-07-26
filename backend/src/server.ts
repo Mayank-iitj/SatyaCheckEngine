@@ -5,7 +5,7 @@ import { prisma } from "./lib/prisma";
 import { logger } from "./lib/logger";
 
 async function main() {
-  logger.info("🧠 ProofMind API Server Starting...");
+  logger.info("🧠 SatyaCheck API Server Starting...");
   logger.info(`📌 Environment: ${process.env.NODE_ENV || "development"}`);
 
   // Initialize blockchain connection
@@ -13,7 +13,7 @@ async function main() {
 
   // Start server
   const server = app.listen(config.port, () => {
-    logger.info(`\n🚀 ProofMind API running at http://localhost:${config.port}`);
+    logger.info(`\n🚀 SatyaCheck API running at http://localhost:${config.port}`);
     logger.info(`📋 Health check: http://localhost:${config.port}/api/health`);
     logger.info(`🔗 CORS origin: ${config.corsOrigin}`);
     logger.info(`⛓️  Chain ID: ${config.chainId}`);

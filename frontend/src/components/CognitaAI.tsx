@@ -25,7 +25,7 @@ export default function CognitaAI() {
               const AnyRotatingText = RotatingText as any;
               return (
                 <AnyRotatingText 
-                  texts={['Matching', 'Verification', 'Analysis', 'Insights']}
+                  texts={['Verification', 'Cross-referencing', 'Analysis', 'Insights']}
                   mainClassName="bg-bronze text-white px-3 py-1 rounded-lg overflow-hidden ml-2"
                   staggerFrom={"last"}
                   initial={{ y: "100%" }}
@@ -41,9 +41,9 @@ export default function CognitaAI() {
           </div>
 
           <p className="text-ink-600 font-medium leading-relaxed max-w-xl text-lg mt-4">
-            Cognita AI leverages the power of Google Gemini to deeply understand credential semantics. 
-            It doesn't just check for keywords — it understands the actual skills, coursework, and 
-            achievements backed by the blockchain to perfectly match candidates with recruiter requirements.
+            Cognita AI leverages the power of PyTorch deepfake detection and LLM-driven reasoning. 
+            It doesn't just check for keywords — it cross-references every market-moving claim against 
+            official exchange filings and the SEBI intermediary registry to flag scams instantly.
           </p>
 
           <div className="grid sm:grid-cols-2 gap-6 mt-8">
@@ -52,8 +52,8 @@ export default function CognitaAI() {
                 <BrainCircuit className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="font-bold text-ink-900 uppercase tracking-wide text-sm mb-1">Semantic Matching</h4>
-                <p className="text-xs font-medium text-ink-500 leading-relaxed">Goes beyond keywords to understand real-world skills.</p>
+                <h4 className="font-bold text-ink-900 uppercase tracking-wide text-sm mb-1">Claim Verification</h4>
+                <p className="text-xs font-medium text-ink-500 leading-relaxed">Cross-references claims against SEBI filings in real time.</p>
               </div>
             </div>
             <div className="flex gap-4 items-start">
@@ -61,8 +61,8 @@ export default function CognitaAI() {
                 <ScanSearch className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="font-bold text-ink-900 uppercase tracking-wide text-sm mb-1">Anomaly Detection</h4>
-                <p className="text-xs font-medium text-ink-500 leading-relaxed">Flags irregularities in issuing patterns or credentials.</p>
+                <h4 className="font-bold text-ink-900 uppercase tracking-wide text-sm mb-1">Multi-Threat Net</h4>
+                <p className="text-xs font-medium text-ink-500 leading-relaxed">Detects LLM phishing, deepfake video, and synthetic voice.</p>
               </div>
             </div>
           </div>
@@ -98,10 +98,10 @@ export default function CognitaAI() {
           <div className="flex flex-col gap-4 relative z-10 flex-1">
             {/* Mock Analysis Steps */}
             {[
-              "Parsing cryptographic payload...",
-              "Analyzing semantic skill overlap...",
-              "Verifying issuing authority signature...",
-              "Generating match confidence score..."
+              "Extracting claims from unverified text...",
+              "Querying SEBI registered-entity registry...",
+              "Cross-referencing latest NSE corporate filings...",
+              "Calculating multi-model risk score..."
             ].map((step, idx) => (
               <motion.div 
                 key={idx}
@@ -122,13 +122,13 @@ export default function CognitaAI() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 2.5, duration: 0.5 }}
-            className="mt-6 bg-bronze text-white p-4 rounded-xl flex items-center justify-between relative z-10 shadow-lg"
+            className="mt-6 bg-red-600 text-white p-4 rounded-xl flex items-center justify-between relative z-10 shadow-lg"
           >
             <div>
-              <div className="text-xs font-bold uppercase tracking-widest opacity-80 mb-1">Final Result</div>
-              <div className="font-display font-bold text-xl uppercase">Match Confidence</div>
+              <div className="text-xs font-bold uppercase tracking-widest opacity-80 mb-1">Final Verdict</div>
+              <div className="font-display font-bold text-xl uppercase">High Risk</div>
             </div>
-            <div className="text-4xl font-display font-black">98%</div>
+            <div className="text-xl font-display font-black text-right leading-tight uppercase">Fake<br/>Buyback</div>
           </motion.div>
         </motion.div>
 

@@ -51,7 +51,7 @@ export default function ShareLinkView() {
       const canvas = await html2canvas(element, { scale: 2, backgroundColor: "#ffffff" });
       const dataUrl = canvas.toDataURL("image/png");
       const link = document.createElement("a");
-      link.download = `ProofMind-Certificate-${credential.recipientName.replace(/\s+/g, "-")}.png`;
+      link.download = `SatyaCheck-Certificate-${credential.recipientName.replace(/\s+/g, "-")}.png`;
       link.href = dataUrl;
       link.click();
       toast.success("Certificate downloaded successfully!");
@@ -81,7 +81,7 @@ export default function ShareLinkView() {
         <div className="max-w-[90rem] mx-auto px-6 h-20 flex items-center justify-between relative">
           <div className="flex items-center gap-6">
             <Link href="/" className="flex items-center gap-2 group">
-              <img src="/logo.svg" alt="ProofMind Logo" className="w-6 h-6 group-hover:scale-110 transition-transform duration-500" />
+              <img src="/logo.svg" alt="SatyaCheck Logo" className="w-6 h-6 group-hover:scale-110 transition-transform duration-500" />
               <span className="font-display font-black text-xl tracking-tight text-ink-900 uppercase hidden sm:block">
                 Proof<span className="text-bronze">Mind</span>
               </span>

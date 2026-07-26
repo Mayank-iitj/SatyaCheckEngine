@@ -41,7 +41,7 @@ interface RebuildResult {
 
 async function rebuildFromChain(dryRun = false): Promise<void> {
   console.log("\n╔═══════════════════════════════════════════════════════════╗");
-  console.log("║  ProofMind — Rebuild Database from On-Chain Events        ║");
+  console.log("║  SatyaCheck — Rebuild Database from On-Chain Events        ║");
   console.log("╚═══════════════════════════════════════════════════════════╝\n");
 
   if (dryRun) {
@@ -144,7 +144,7 @@ async function rebuildFromChain(dryRun = false): Promise<void> {
 
         // Try to fetch rich metadata from IPFS URI
         let richMetadata: Record<string, any> = {};
-        if (metadataURI && !metadataURI.startsWith("proofmind://")) {
+        if (metadataURI && !metadataURI.startsWith("satyacheck://")) {
           try {
             richMetadata = await fetchIPFSMetadata(metadataURI);
           } catch {
@@ -310,14 +310,14 @@ async function findOrCreatePlaceholderStudent(
   credentialHash: string
 ): Promise<string> {
   const placeholder = await prisma.user.findFirst({
-    where: { email: "chain-rebuild-placeholder@proofmind.internal" },
+    where: { email: "chain-rebuild-placeholder@satyacheck.internal" },
   });
 
   if (placeholder) return placeholder.id;
 
   const created = await prisma.user.create({
     data: {
-      email: "chain-rebuild-placeholder@proofmind.internal",
+      email: "chain-rebuild-placeholder@satyacheck.internal",
       passwordHash: "CHAIN_REBUILD_PLACEHOLDER_NOT_FOR_LOGIN",
       name: "Chain-Rebuilt Record",
       role: "STUDENT",
@@ -344,10 +344,10 @@ async function findOrCreatePlaceholderInstitution(
 
   // Create placeholder institution
   const placeholderUser = await prisma.user.upsert({
-    where: { email: `chain-issuer-${walletAddress.toLowerCase().slice(2, 10)}@proofmind.internal` },
+    where: { email: `chain-issuer-${walletAddress.toLowerCase().slice(2, 10)}@satyacheck.internal` },
     update: {},
     create: {
-      email: `chain-issuer-${walletAddress.toLowerCase().slice(2, 10)}@proofmind.internal`,
+      email: `chain-issuer-${walletAddress.toLowerCase().slice(2, 10)}@satyacheck.internal`,
       passwordHash: "CHAIN_REBUILD_PLACEHOLDER_NOT_FOR_LOGIN",
       name,
       role: "UNIVERSITY",

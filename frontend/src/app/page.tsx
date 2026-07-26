@@ -5,8 +5,7 @@ import { useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { ShieldCheck, Plus, Minus, ArrowRight, Scan, Shield, ChevronDown, CheckCircle2, Building2, Wallet, Briefcase, GraduationCap, Home, Activity } from "lucide-react";
-import { InteractiveDoc } from "../components/InteractiveDoc";
+import { ShieldCheck, Plus, Minus, ArrowRight, Scan, Shield, ChevronDown, CheckCircle2, Building2, Briefcase, Home, Activity } from "lucide-react";
 import LogoLoop from "../components/LogoLoop";
 import StaggeredMenu from "../components/StaggeredMenu";
 import RotatingText from "../components/RotatingText";
@@ -17,7 +16,7 @@ import ScrollVelocity from "../components/ScrollVelocity";
 import FlowingMenu from "../components/FlowingMenu";
 import ShapeBlur from "../components/ShapeBlur";
 import CognitaAI from "../components/CognitaAI";
-import DigilockerDemo from "../components/DigilockerDemo";
+import Plasma from "../components/Plasma";
 
 export default function LandingPage() {
   const { scrollYProgress } = useScroll();
@@ -26,35 +25,44 @@ export default function LandingPage() {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
   const staggerMenuItems = [
-    { label: 'Student', ariaLabel: 'Go to student portal', link: '/student' },
-    { label: 'University', ariaLabel: 'Go to university portal', link: '/university' },
-    { label: 'Recruiter', ariaLabel: 'Go to recruiter portal', link: '/recruiter' },
-    { label: 'Admin', ariaLabel: 'Go to admin portal', link: '/admin' },
-    { label: 'Cognita AI', ariaLabel: 'Go to Cognita AI', link: '/cognita' }
+    { label: 'Engines', ariaLabel: 'Go to Engines', link: '/verify' },
+    { label: 'FAQ', ariaLabel: 'Go to FAQ', link: '#faq' },
+    { label: 'Launch Verifier', ariaLabel: 'Launch Verifier Hub', link: '/verify' },
   ];
 
   const staggerSocialItems = [
-    { label: 'Verify Credential', link: '/verify' },
-    { label: 'Sign In', link: '/sign-in' },
+    { label: 'Text Analyzer', link: '/engines/text' },
+    { label: 'Media Scanner', link: '/engines/media' },
+    { label: 'Claim Checker', link: '/engines/claims' },
+    { label: 'Call Guardian', link: '/engines/call-guardian' },
   ];
 
   const router = useRouter();
   const dockItems = [
     { icon: <Home className="w-5 h-5" />, label: 'Home', onClick: () => window.scrollTo({top: 0, behavior: 'smooth'}) },
-    { icon: <Shield className="w-5 h-5" />, label: 'Verify', onClick: () => router.push('/verify') },
-    { icon: <GraduationCap className="w-5 h-5" />, label: 'Student', onClick: () => router.push('/student') },
-    { icon: <Building2 className="w-5 h-5" />, label: 'University', onClick: () => router.push('/university') },
+    { icon: <Shield className="w-5 h-5" />, label: 'Capabilities', onClick: () => { const e = document.getElementById('portals'); e && e.scrollIntoView({behavior: 'smooth'}) } },
+    { icon: <Briefcase className="w-5 h-5" />, label: 'Why Us', onClick: () => { const e = document.getElementById('problem'); e && e.scrollIntoView({behavior: 'smooth'}) } },
+    { icon: <Building2 className="w-5 h-5" />, label: 'FAQ', onClick: () => { const e = document.getElementById('faq'); e && e.scrollIntoView({behavior: 'smooth'}) } },
   ];
 
   return (
     <div className="min-h-screen bg-parchment-100 text-ink-900 selection:bg-bronze selection:text-white overflow-hidden relative">
-      {/* Global Background Grid Lines */}
-      <div className="fixed inset-0 pointer-events-none bg-grid-lines z-0" />
+      {/* Global Plasma Background */}
+      <div className="fixed inset-0 z-0">
+        <Plasma 
+          color="#ff6b35"
+          speed={0.6}
+          direction="forward"
+          scale={1.1}
+          opacity={0.15}
+          mouseInteractive={true}
+        />
+      </div>
 
       {/* ── Marquee Top Bar ────────────────────────────────────────────── */}
       <div className="bg-ink-900 text-parchment-100 py-2.5 overflow-hidden whitespace-nowrap relative z-50">
         <div className="inline-block animate-marquee uppercase tracking-[0.15em] text-[11px] font-bold">
-          EXPERIENCE TAMPER-PROOF ACADEMIC CREDENTIALS IN EVERY SCAN — SECURE YOUR FUTURE • EXPERIENCE TAMPER-PROOF ACADEMIC CREDENTIALS IN EVERY SCAN — SECURE YOUR FUTURE • EXPERIENCE TAMPER-PROOF ACADEMIC CREDENTIALS IN EVERY SCAN — SECURE YOUR FUTURE • EXPERIENCE TAMPER-PROOF ACADEMIC CREDENTIALS IN EVERY SCAN — SECURE YOUR FUTURE • 
+          AI-DRIVEN DETECTION OF SYNTHETIC MEDIA & PHISHING • CRYPTOGRAPHIC VERIFICATION OF GENUINE COMMUNICATIONS • PROTECTING INDIA'S SECURITIES MARKETS • 
         </div>
       </div>
 
@@ -62,23 +70,23 @@ export default function LandingPage() {
       <header className="sticky top-0 z-30 bg-parchment-100/90 backdrop-blur-md border-b border-parchment-200">
         <div className="max-w-[90rem] mx-auto px-6 h-24 flex items-center justify-between">
           <nav className="hidden md:flex items-center gap-8 relative group cursor-pointer">
-            <Link href="#problem" className="text-xs font-bold uppercase tracking-widest hover:text-bronze transition-colors">Why Us</Link>
+            <Link href="#problem" className="text-xs font-bold uppercase tracking-widest hover:text-bronze transition-colors">Capabilities</Link>
             <Link href="#faq" className="text-xs font-bold uppercase tracking-widest hover:text-bronze transition-colors">FAQ</Link>
           </nav>
           
           <Link href="/" className="flex items-center gap-2 absolute left-1/2 -translate-x-1/2 group z-30">
-            <img src="/logo.svg" alt="ProofMind Logo" className="w-8 h-8 group-hover:scale-110 transition-transform duration-500" />
+            <img src="/logo.svg" alt="SatyaCheck Logo" className="w-8 h-8 group-hover:scale-110 transition-transform duration-500" />
             <span className="font-display font-black text-3xl tracking-tight text-ink-900 uppercase">
-              Proof<span className="text-bronze">Mind</span>
+              Satya<span className="text-bronze">Check</span>
             </span>
           </Link>
 
           <div className="flex items-center gap-4">
             <Link href="/verify" className="text-xs font-bold uppercase tracking-widest hover:text-bronze transition-colors hidden md:block mr-4">
-              Verify
+              Launch Verifier
             </Link>
             <Link href="/sign-in" className="btn-primary">
-              Sign In
+              Explore Sandbox
             </Link>
             
             <div className="flex items-center ml-2 border-l border-parchment-300 pl-4 h-8">
@@ -114,13 +122,14 @@ export default function LandingPage() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="text-center relative z-20"
           >
-            <h1 className="font-display font-black text-6xl md:text-8xl lg:text-[7.5rem] leading-[0.9] text-ink-900 uppercase mx-auto max-w-6xl flex flex-col items-center justify-center">
-              <span>Trust Every <span className="text-bronze">Degree</span></span>
-              <span className="flex items-center gap-4 flex-wrap justify-center mt-2">
-                <span>Verify Every</span>
+            <h1 className="font-display font-black text-5xl md:text-7xl lg:text-[6.5rem] leading-[0.9] text-ink-900 uppercase mx-auto max-w-6xl flex flex-col items-center justify-center">
+              <span>Presenting <span className="text-bronze">SatyaCheck</span></span>
+              <span>Trust Net</span>
+              <span className="flex items-center gap-4 flex-wrap justify-center mt-6 text-3xl md:text-5xl lg:text-6xl text-ink-600">
+                <span>Built for</span>
                 {/* @ts-ignore */}
                 <RotatingText
-                  texts={['Achievement', 'Transcript', 'Certificate', 'Diploma']}
+                  texts={['Market Integrity', 'Authenticity', 'Provenance', 'Investors']}
                   mainClassName="text-bronze overflow-hidden inline-flex items-center justify-center"
                   staggerFrom="last"
                   initial={{ y: "100%" }}
@@ -133,36 +142,39 @@ export default function LandingPage() {
                 />
               </span>
             </h1>
+            <p className="mt-8 text-ink-600 max-w-3xl mx-auto font-medium leading-relaxed text-lg">
+              AI-driven detection of synthetic media & phishing, and cryptographic verification of genuine communications, for India's securities markets.
+            </p>
+            <div className="mt-10 flex gap-4 justify-center">
+                <Link href="/verify" className="btn-primary py-3 px-8 text-sm">
+                  Launch Verifier Hub
+                </Link>
+                <Link href="/sign-in" className="btn-secondary py-3 px-8 text-sm bg-transparent border-2 border-ink-900 text-ink-900 hover:bg-ink-900 hover:text-white transition-colors uppercase tracking-widest font-bold rounded-md">
+                  Explore Sandbox
+                </Link>
+            </div>
           </motion.div>
 
-          {/* Left Interactive 3D Document */}
-          <motion.div style={{ y: yHero }} className="absolute -left-[40%] lg:-left-[30%] xl:-left-[20%] 2xl:-left-[10%] top-40 w-[400px] lg:w-[500px] z-10 h-[600px] hidden md:block opacity-80 hover:opacity-100 transition-opacity">
-            <InteractiveDoc />
-          </motion.div>
 
-          {/* Right Interactive 3D Document */}
-          <motion.div style={{ y: yHero }} className="absolute -right-[40%] lg:-right-[30%] xl:-right-[20%] 2xl:-right-[10%] top-40 w-[400px] lg:w-[500px] z-10 h-[600px] hidden md:block opacity-80 hover:opacity-100 transition-opacity">
-            <InteractiveDoc />
-          </motion.div>
         </div>
       </section>
 
       {/* ── LogoLoop Partners Section ──────────────────────────────────── */}
       <section className="border-t border-b border-parchment-200 bg-white py-12 relative overflow-hidden">
         <div className="max-w-[90rem] mx-auto px-6 mb-8 text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-ink-500">Trusted By Global Institutions</p>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-ink-500">Trusted by top market facilitators & custodians</p>
         </div>
         
         <div className="max-w-[90rem] mx-auto px-6 overflow-hidden">
           {/* @ts-ignore */}
           <LogoLoop
             logos={[
-              { node: <div className="flex items-center gap-2 text-ink-900 font-bold"><Building2 className="w-8 h-8 text-bronze" /> Harvard University</div>, href: "#" },
-              { node: <div className="flex items-center gap-2 text-ink-900 font-bold"><GraduationCap className="w-8 h-8 text-bronze" /> MIT</div>, href: "#" },
-              { node: <div className="flex items-center gap-2 text-ink-900 font-bold"><Building2 className="w-8 h-8 text-bronze" /> Oxford</div>, href: "#" },
-              { node: <div className="flex items-center gap-2 text-ink-900 font-bold"><Briefcase className="w-8 h-8 text-bronze" /> Google</div>, href: "#" },
-              { node: <div className="flex items-center gap-2 text-ink-900 font-bold"><Briefcase className="w-8 h-8 text-bronze" /> Microsoft</div>, href: "#" },
-              { node: <div className="flex items-center gap-2 text-ink-900 font-bold"><Shield className="w-8 h-8 text-bronze" /> DigiLocker</div>, href: "#" },
+              { node: <div className="flex items-center gap-2 text-ink-900 font-bold"><Building2 className="w-8 h-8 text-bronze" /> SEBI</div>, href: "#" },
+              { node: <div className="flex items-center gap-2 text-ink-900 font-bold"><Activity className="w-8 h-8 text-bronze" /> NSE</div>, href: "#" },
+              { node: <div className="flex items-center gap-2 text-ink-900 font-bold"><Activity className="w-8 h-8 text-bronze" /> BSE</div>, href: "#" },
+              { node: <div className="flex items-center gap-2 text-ink-900 font-bold"><Briefcase className="w-8 h-8 text-bronze" /> CDSL</div>, href: "#" },
+              { node: <div className="flex items-center gap-2 text-ink-900 font-bold"><Briefcase className="w-8 h-8 text-bronze" /> NSDL</div>, href: "#" },
+              { node: <div className="flex items-center gap-2 text-ink-900 font-bold"><Shield className="w-8 h-8 text-bronze" /> RBI</div>, href: "#" },
             ]}
             speed={120}
             direction="left"
@@ -188,14 +200,14 @@ export default function LandingPage() {
           stagger={0.05}
           textClassName="text-bronze font-display uppercase tracking-tighter"
         >
-          ABSOLUTE TRUST
+          PROTECTING INVESTORS
         </ScrollFloat>
       </section>
 
       {/* ── Scroll Velocity Divider ────────────────────────────────────── */}
       <section className="py-12 bg-bronze/10 overflow-hidden">
         <ScrollVelocity
-          texts={['ABSOLUTE TRUST', 'IMMUTABLE RECORDS', 'VERIFIED CAREERS']} 
+          texts={['LLM PHISHING', 'DEEPFAKE VIDEOS', 'SYNTHETIC VOICE', 'SOCIAL MANIPULATION']} 
           velocity={80}
           className="text-bronze font-display font-black uppercase tracking-tighter mx-4"
           numCopies={4}
@@ -204,107 +216,16 @@ export default function LandingPage() {
         />
       </section>
 
-      {/* ── Brand Philosophy ───────────────────────────────────────────── */}
-      <section id="problem" className="py-24 lg:py-40 px-6 relative z-10 overflow-hidden">
-        <div className="absolute inset-0 z-0 opacity-80">
-          <ShapeBlur
-            variation={0}
-            pixelRatioProp={typeof window !== 'undefined' ? window.devicePixelRatio : 2}
-            shapeSize={1.2}
-            roundness={0.4}
-            borderSize={0.05}
-            circleSize={0.3}
-            circleEdge={0.5}
-          />
-        </div>
-        <div className="max-w-5xl mx-auto text-center relative z-10 pointer-events-none">
-          <motion.p 
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 1 }}
-            className="text-bronze font-bold tracking-[0.2em] uppercase text-xs mb-8"
-          >
-            About ProofMind
-          </motion.p>
-          <motion.h2 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8 }}
-            className="font-display font-black text-4xl md:text-5xl lg:text-7xl leading-[1.1] text-ink-900 uppercase"
-          >
-            AT PROOFMIND, WE BELIEVE AN ACADEMIC RECORD IS 
-            <span className="inline-flex items-center justify-center mx-4 align-middle bg-parchment-50 w-24 h-16 rounded-full border border-parchment-200 shadow-sm relative -top-2">
-              <img src="/logo.svg" alt="ProofMind Logo" className="w-8 h-8" />
-            </span>
-            MORE THAN JUST PAPER — IT'S A CRYPTOGRAPHIC PROOF. 
-            <span className="text-ink-500">WE ELIMINATE FRAUD THROUGH BLOCKCHAIN IMMUTABILITY.</span>
-          </motion.h2>
-        </div>
-      </section>
-
-      {/* ── Blockchain Implementation Brief ────────────────────────────── */}
-      <section className="py-12 px-6 relative z-10">
-        <div className="max-w-4xl mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 15 }} 
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }} 
-            transition={{ delay: 0.2 }}
-            className="relative overflow-hidden rounded-3xl border border-indigo-500/20 bg-ink-900 shadow-2xl p-8 md:p-12"
-          >
-            {/* Glowing Orbs */}
-            <div className="absolute -top-24 -left-24 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl" />
-            <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl" />
-            
-            <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-10">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400">
-                    <Activity className="h-5 w-5 animate-pulse" />
-                  </div>
-                  <h3 className="font-display font-bold text-2xl uppercase tracking-wider text-parchment-100">
-                    Blockchain Infrastructure Live
-                  </h3>
-                </div>
-                <p className="text-parchment-400 text-sm md:text-base leading-relaxed">
-                  All credentials issued across the ProofMind platform are currently being anchored to the <span className="text-bronze font-bold">ProofMindRegistry</span> smart contract running on our live network. This guarantees cryptographic immutability, instant global verification, and zero reliance on centralized databases.
-                </p>
-              </div>
-              
-              <div className="flex flex-col gap-3 bg-ink-950/80 backdrop-blur-md p-6 rounded-2xl border border-ink-800 shrink-0 w-full md:w-80">
-                <div className="flex justify-between items-center gap-8 text-sm">
-                  <span className="text-parchment-500 uppercase tracking-widest font-bold text-[10px]">Network</span>
-                  <span className="text-emerald-400 font-mono">Localhost (31337)</span>
-                </div>
-                <div className="flex justify-between items-center gap-8 text-sm">
-                  <span className="text-parchment-500 uppercase tracking-widest font-bold text-[10px]">Registry ABI</span>
-                  <span className="text-parchment-100 font-mono">0x5FbDB...80aa3</span>
-                </div>
-                <div className="flex justify-between items-center gap-8 text-sm">
-                  <span className="text-parchment-500 uppercase tracking-widest font-bold text-[10px]">Gas Fees</span>
-                  <span className="text-emerald-400 font-mono">Subsidized (0 Gwei)</span>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── DigiLocker Gateway Demonstration ───────────────────────────── */}
-      <DigilockerDemo />
-
       {/* ── Features / Portals (Signature Brews Style) ─────────────────── */}
       <section id="portals" className="py-24 px-6 relative z-10 bg-parchment-50 border-y border-parchment-200">
         <div className="max-w-[90rem] mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
             <h2 className="font-display font-black text-5xl md:text-6xl text-ink-900 uppercase max-w-2xl leading-[0.9]">
-              EXPLORE OUR <br/>
-              <span className="text-bronze">POWERFUL PORTALS</span>
+              ONE TRUST <br/>
+              <span className="text-bronze">FABRIC, EVERY</span> <br/> CHANNEL
             </h2>
             <p className="text-ink-600 max-w-sm uppercase text-xs tracking-widest font-semibold leading-relaxed">
-              A selection of purpose-built interfaces crafted to delight every stakeholder in the academic ecosystem.
+              Verify the genuine. Don't just chase the fake. Authentication is a cryptographic guarantee. Detection alone is an arms race you eventually lose.
             </p>
           </div>
 
@@ -324,24 +245,33 @@ export default function LandingPage() {
           >
             {[
               {
-                title: "University Portal",
-                desc: "Issue, manage, and revoke credentials with batch minting directly on the blockchain.",
-                tag: "ISSUER",
-                href: "/university",
+                title: "Layer 1 — Authenticity Backbone",
+                desc: "Cryptographically signed official communications via C2PA standard, anchored to SEBI's registered-entity registry. Ensures instant, tamper-proof verification.",
+                tag: "PROVENANCE",
                 color: "bg-white"
               },
               {
-                title: "Student Wallet",
-                desc: "Digital wallet with QR codes, sharing links, and PDF downloads for all achievements.",
-                tag: "RECEIVER",
-                href: "/student",
+                title: "Layer 2 — AI Detection Net",
+                desc: "Net across ALL four threats: LLM phishing, deepfake video, synthetic voice calls (real-time Call-Guardian), and PROACTIVE social-media monitoring that flags scam reels before you forward them.",
+                tag: "SAFETY NET",
                 color: "bg-parchment-100"
               },
               {
-                title: "Recruiter Verification",
-                desc: "Instant QR scanning and bulk CSV verification — absolutely no login required.",
-                tag: "VERIFIER",
-                href: "/verify"
+                title: "Claim-vs-Ground-Truth Engine",
+                desc: "We check the claim, not just the pixels — everywhere. Cross-references claims against SEBI filings and intermediary registry in real time. A fake 'buyback' with no filing is flagged instantly.",
+                tag: "VERIFICATION"
+              },
+              {
+                title: "Multilingual & Scalable",
+                desc: "Full support via Bhashini for Indian languages — ensuring every retail investor can access protection in their native tongue.",
+                tag: "ACCESSIBILITY",
+                color: "bg-white"
+              },
+              {
+                title: "Ubiquitous Delivery Channels",
+                desc: "WhatsApp bot, browser extension, and web app — meeting investors on platforms they already trust and use daily. End-to-end verdict delivered in under 2 seconds.",
+                tag: "SANDBOX",
+                color: "bg-parchment-100"
               }
             ].map((portal, idx) => (
               <motion.div 
@@ -375,72 +305,141 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Value Pillars ──────────────────────────────────────────────── */}
-      <section className="py-32 px-6 relative z-10">
-        <div className="max-w-[90rem] mx-auto grid md:grid-cols-3 gap-16 md:gap-8">
-          {[
-            {
-              num: "01",
-              title: "IMMUTABLE RECORDS",
-              desc: "Every credential is cryptographically hashed and permanently anchored on Polygon. Once issued, it can never be altered or forged."
-            },
-            {
-              num: "02",
-              title: "INSTANT VERIFICATION",
-              desc: "Employers scan a QR or paste a hash and get an instant, tamper-proof authenticity confirmation in under 2 seconds."
-            },
-            {
-              num: "03",
-              title: "DECENTRALIZED STORAGE",
-              desc: "Actual certificate files are pinned securely to IPFS, ensuring 100% uptime and eliminating single points of failure."
-            }
-          ].map((pillar, idx) => (
-            <motion.div 
-              key={pillar.num}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: idx * 0.1 }}
-              className="relative"
-            >
-              <div className="font-display font-black text-8xl text-parchment-300 absolute -top-12 -left-4 z-0 pointer-events-none">
-                {pillar.num}
-              </div>
-              <div className="relative z-10">
-                <h3 className="font-display font-black text-2xl text-ink-900 uppercase mb-4">{pillar.title}</h3>
-                <p className="text-ink-600 leading-relaxed font-medium">{pillar.desc}</p>
-              </div>
-            </motion.div>
-          ))}
+      {/* ── Brand Philosophy ───────────────────────────────────────────── */}
+      <section id="problem" className="py-24 lg:py-40 px-6 relative z-10 overflow-hidden">
+        <div className="absolute inset-0 z-0 opacity-80">
+          <ShapeBlur
+            variation={0}
+            pixelRatioProp={typeof window !== 'undefined' ? window.devicePixelRatio : 2}
+            shapeSize={1.2}
+            roundness={0.4}
+            borderSize={0.05}
+            circleSize={0.3}
+            circleEdge={0.5}
+          />
+        </div>
+        <div className="max-w-5xl mx-auto text-center relative z-10 pointer-events-none">
+          <motion.p 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1 }}
+            className="text-bronze font-bold tracking-[0.2em] uppercase text-xs mb-8"
+          >
+            Why SatyaCheck?
+          </motion.p>
+          <motion.h2 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+            className="font-display font-black text-4xl md:text-5xl lg:text-7xl leading-[1.1] text-ink-900 uppercase"
+          >
+            THE DUAL-LAYER TRUST PROTOCOL
+            <span className="block text-ink-500 text-2xl md:text-3xl lg:text-4xl mt-6">
+              SatyaCheck leads with authentication as the primary trust layer and deploys AI detection only as a safety net for unsigned content.
+            </span>
+          </motion.h2>
         </div>
       </section>
 
-      {/* ── Cognita AI Section ─────────────────────────────────────────── */}
+      {/* ── Dual Layer Brief ────────────────────────────── */}
+      <section className="py-12 px-6 relative z-10">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 15 }} 
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }} 
+            transition={{ delay: 0.2 }}
+            className="relative overflow-hidden rounded-3xl border border-indigo-500/20 bg-ink-900 shadow-2xl p-8 md:p-12"
+          >
+            <div className="absolute -top-24 -left-24 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl" />
+            
+            <div className="relative z-10 flex flex-col items-start justify-between h-full">
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-500/20 text-indigo-400 font-black text-xl">
+                    L1
+                  </div>
+                  <h3 className="font-display font-bold text-2xl uppercase tracking-wider text-parchment-100">
+                    Layer 1: Cryptographic Guarantee
+                  </h3>
+                </div>
+                <p className="text-parchment-400 text-sm md:text-base leading-relaxed mb-6">
+                  Signing official communications with C2PA + verifiable credentials gives investors an unforgeable, instant verification signal. Any tampering — even one changed word or video frame — is instantly detected. Legitimate senders are finite and known.
+                </p>
+                <ul className="text-parchment-300 space-y-2 text-sm font-medium">
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400"/> C2PA Provenance Standard</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400"/> Registry Anchoring to SEBI's authorized entities</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400"/> 100% Tamper Detection</li>
+                </ul>
+              </div>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 15 }} 
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }} 
+            transition={{ delay: 0.4 }}
+            className="relative overflow-hidden rounded-3xl border border-emerald-500/20 bg-ink-900 shadow-2xl p-8 md:p-12"
+          >
+            <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl" />
+            
+            <div className="relative z-10 flex flex-col items-start justify-between h-full">
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 font-black text-xl">
+                    L2
+                  </div>
+                  <h3 className="font-display font-bold text-2xl uppercase tracking-wider text-parchment-100">
+                    Layer 2: AI Multi-Model Detection
+                  </h3>
+                </div>
+                <p className="text-parchment-400 text-sm md:text-base leading-relaxed mb-6">
+                  A PyTorch deepfake & anti-spoofing voice model suite combined with a RAG + LLM claim engine cross-references filings. Outputs a plain-language risk score with explanation — delivered in under 2 seconds.
+                </p>
+                <ul className="text-parchment-300 space-y-2 text-sm font-medium">
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400"/> Streaming Call-Guardian for real-time synthetic voice</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400"/> Proactive Social Media Manipulation detection</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400"/> LLM-powered Phishing Classifier</li>
+                </ul>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── Cognita AI Section (Retained for visual consistency if needed, or we can leave it out) ─────────────────────────────────────────── */}
       <CognitaAI />
 
       {/* ── FAQ Section ────────────────────────────────────────────────── */}
       <section id="faq" className="py-24 px-6 relative z-10 bg-ink-900 text-parchment-100">
         <div className="max-w-4xl mx-auto">
-          <h2 className="font-display font-black text-5xl md:text-6xl uppercase text-center mb-16">
-            FREQUENTLY ASKED
+          <p className="text-bronze font-bold tracking-[0.2em] uppercase text-xs mb-4 text-center">Frequently Asked Questions</p>
+          <h2 className="font-display font-black text-5xl md:text-6xl uppercase text-center mb-6">
+            BUILT TO PLUG INTO SEBI'S EXISTING TRUST FABRIC
           </h2>
+          <p className="text-center text-ink-400 mb-16 max-w-2xl mx-auto">
+            A modular, API-first architecture that extends SEBI Check without duplication. Each layer is independently scalable and privacy-respecting.
+          </p>
           <div className="space-y-4">
             {[
               {
-                q: "HOW LONG DOES VERIFICATION TAKE?",
-                a: "Verification is instant. The moment a QR code is scanned or a hash is entered, our system checks the Polygon blockchain and returns the authenticity status in under 2 seconds."
+                q: "HOW DOES THIS ADDRESS THE VERIFICATION VOID?",
+                a: "While SEBI + NPCI solved payment trust via '@valid' UPI handles, communications like WhatsApp messages, PDFs, voice calls, and video instructions remain completely unverified. SatyaCheck covers these unprotected channels."
               },
               {
-                q: "IS STUDENT DATA PUBLIC ON THE BLOCKCHAIN?",
-                a: "No. ProofMind never stores PII (Personally Identifiable Information) on the blockchain. We only store a cryptographic SHA-256 hash of the credential data, ensuring complete GDPR compliance."
+                q: "WHY NOT JUST USE AI DETECTION ALONE?",
+                a: "Chasing synthetic media alone means fighting every new model. Attackers iterate faster than detectors can follow. Authentication is a cryptographic guarantee that stops the arms race entirely for legitimate communications."
               },
               {
-                q: "WHAT IF AN INSTITUTION REVOKES A DEGREE?",
-                a: "Institutions can revoke credentials through their portal. The revocation is recorded on-chain, and any subsequent verification attempts will immediately show a 'REVOKED' status."
+                q: "IS IT ACCESSIBLE TO FIRST-GENERATION INVESTORS?",
+                a: "Yes. With Bhashini integration for Indian languages, full support is provided across WhatsApp, browser extensions, and web apps, ensuring every retail investor can access protection in their native tongue."
               },
               {
-                q: "DO EMPLOYERS NEED AN ACCOUNT TO VERIFY?",
-                a: "No. The Verification Portal is completely public. Anyone with a credential hash, ID, or QR code can verify its authenticity without creating an account or logging in."
+                q: "DO YOU PROVE YOUR PERFORMANCE?",
+                a: "Absolutely. We perform rigorous benchmarking across text, video, and audio channels with 100% tamper detection on C2PA artifacts and high precision/recall validated on FaceForensics++, ASVspoof, and a custom Indian securities-scam corpus."
               }
             ].map((faq, idx) => (
               <div key={idx} className="border-b border-ink-700/50 pb-4">
@@ -457,7 +456,7 @@ export default function LandingPage() {
                 </button>
                 <AnimatePresence>
                   {activeFaq === idx && (
-                    <motion.div
+                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
@@ -481,20 +480,25 @@ export default function LandingPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-24">
             <div className="col-span-2 md:col-span-1 flex flex-col gap-4">
               <span className="font-display font-black text-3xl uppercase tracking-tight">
-                Proof<span className="text-bronze">Mind</span>
+                Satya<span className="text-bronze">Check</span>
               </span>
               <p className="text-ink-400 font-medium text-sm">
-                Building trust in education through immutable digital credentials.
+                Protecting Investors and Market Integrity. SatyaCheck — before you trust it, verify it.
               </p>
+              <div className="mt-4">
+                <Link href="/verify" className="btn-primary py-2 px-6 text-sm">
+                  Launch Verifier Hub
+                </Link>
+              </div>
             </div>
             
             <div className="flex flex-col gap-4 font-display font-bold text-lg uppercase h-[300px] relative w-[200px]">
               <FlowingMenu 
                 items={[
-                  { link: '/about', text: 'ABOUT', image: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop' },
-                  { link: '/blog', text: 'BLOG', image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070&auto=format&fit=crop' },
-                  { link: '/verify', text: 'VERIFY', image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=2070&auto=format&fit=crop' },
-                  { link: '/sign-in', text: 'LOGIN', image: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=2070&auto=format&fit=crop' }
+                  { link: '/about', text: 'RESOURCES', image: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop' },
+                  { link: '#portals', text: 'CAPABILITIES', image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070&auto=format&fit=crop' },
+                  { link: '#problem', text: 'WHY US', image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=2070&auto=format&fit=crop' },
+                  { link: '#faq', text: 'FAQ', image: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=2070&auto=format&fit=crop' }
                 ]}
                 bgColor="transparent"
                 textColor="#D8C8B8" /* parchment-100 */
@@ -504,20 +508,18 @@ export default function LandingPage() {
               />
             </div>
             <div className="flex flex-col gap-4 font-display font-bold text-lg uppercase text-right">
-              <a href="https://github.com/proofmind" className="hover:text-bronze transition-colors">GITHUB</a>
-              <a href="https://linkedin.com/company/proofmind" className="hover:text-bronze transition-colors">LINKEDIN</a>
-              <a href="https://twitter.com/proofmind" className="hover:text-bronze transition-colors">TWITTER</a>
+              <a href="https://github.com/satyacheck" className="hover:text-bronze transition-colors">GITHUB</a>
+              <a href="https://linkedin.com/company/satyacheck" className="hover:text-bronze transition-colors">LINKEDIN</a>
+              <a href="https://twitter.com/satyacheck" className="hover:text-bronze transition-colors">TWITTER</a>
             </div>
           </div>
 
           <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-ink-800 text-ink-500 text-sm font-medium">
-            <p>© 2026 ProofMind. All rights reserved.</p>
-            <div className="flex gap-8 mt-4 md:mt-0">
-              <Link href="/privacy" className="hover:text-parchment-100 transition-colors">Privacy Policy</Link>
-              <Link href="/terms" className="hover:text-parchment-100 transition-colors">Terms of Service</Link>
-              <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-bronze transition-colors flex items-center gap-1">
-                BACK TO TOP
-              </button>
+            <p>© 2026 SatyaCheck Trust Network. All rights reserved.</p>
+            <div className="flex gap-8 mt-4 md:mt-0 uppercase font-bold tracking-widest text-xs">
+              <Link href="#portals" className="hover:text-parchment-100 transition-colors">Capabilities</Link>
+              <Link href="#problem" className="hover:text-parchment-100 transition-colors">Why SatyaCheck?</Link>
+              <Link href="#faq" className="hover:text-parchment-100 transition-colors">FAQ</Link>
             </div>
           </div>
         </div>

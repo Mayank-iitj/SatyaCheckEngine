@@ -28,7 +28,7 @@ export const authenticate = [
     if (authHeader && authHeader.startsWith("Bearer ")) {
       const token = authHeader.substring(7);
       try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || "proofmind-dev-jwt-secret-2024") as any;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || "satyacheck-dev-jwt-secret-2024") as any;
         if (decoded && decoded.role === "ADMIN") {
           req.user = {
             id: decoded.id,

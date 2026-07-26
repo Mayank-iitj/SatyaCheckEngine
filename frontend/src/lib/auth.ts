@@ -8,18 +8,17 @@ export function useAuth() {
 
   const email = clerkUser?.primaryEmailAddress?.emailAddress;
   
-  // Dynamically assign role based on the portal they are accessing
-  let role = "STUDENT";
-  if (pathname?.startsWith("/admin")) role = "ADMIN";
-  else if (pathname?.startsWith("/university")) role = "UNIVERSITY";
-  else if (pathname?.startsWith("/recruiter")) role = "RECRUITER";
+  // Role based on current portal
+  let role = "INVESTOR";
+  if (pathname?.startsWith("/cognita")) role = "REGULATOR";
+  else if (pathname?.startsWith("/verify") || pathname?.startsWith("/engines")) role = "INVESTOR";
 
-  // Map Clerk user to our expected legacy format
+  // Map Clerk user to our expected format
   const user = clerkUser ? {
     id: clerkUser.id,
     name: clerkUser.firstName ? `${clerkUser.firstName} ${clerkUser.lastName || ''}`.trim() : email?.split('@')[0],
     email: email,
-    role: role 
+    role: role
   } : null;
 
   const clearAuth = () => {

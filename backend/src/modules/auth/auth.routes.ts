@@ -8,7 +8,7 @@ router.post("/admin/login", async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   // Predefined credentials
-  const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@proofmind.com";
+  const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@satyacheck.com";
   const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
 
   if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
@@ -19,7 +19,7 @@ router.post("/admin/login", async (req: Request, res: Response) => {
       name: "System Admin"
     };
 
-    const token = jwt.sign(payload, process.env.JWT_SECRET || "proofmind-dev-jwt-secret-2024", {
+    const token = jwt.sign(payload, process.env.JWT_SECRET || "satyacheck-dev-jwt-secret-2024", {
       expiresIn: "12h"
     });
 

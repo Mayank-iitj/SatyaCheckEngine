@@ -2,7 +2,7 @@ import request from "supertest";
 import app from "../src/app";
 import { prisma } from "../src/lib/prisma";
 
-describe("ProofMind API Integration Tests", () => {
+describe("SatyaCheck API Integration Tests", () => {
   let adminToken: string;
   let testUserEmail = `testuser_${Date.now()}@test.com`;
 
@@ -31,7 +31,7 @@ describe("ProofMind API Integration Tests", () => {
       const res = await request(app).get("/api/health");
       expect(res.status).toBe(200);
       expect(res.body.status).toBe("ok");
-      expect(res.body.name).toBe("ProofMind API");
+      expect(res.body.name).toBe("SatyaCheck API");
     });
   });
 

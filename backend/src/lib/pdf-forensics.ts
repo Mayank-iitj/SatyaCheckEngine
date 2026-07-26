@@ -90,7 +90,7 @@ const LEGITIMATE_PRODUCERS = [
   "XeTeX",
   "LuaTeX",
   "PDFCreator",
-  "proofmind-issuer",
+  "satyacheck-issuer",
 ];
 
 /**

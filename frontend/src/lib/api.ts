@@ -19,8 +19,7 @@ export function getStoredUser() {
     id: user.id,
     name: user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user.primaryEmailAddress?.emailAddress?.split('@')[0],
     email: user.primaryEmailAddress?.emailAddress,
-    // We assume role STUDENT for now, in a real app this would come from publicMetadata
-    role: "STUDENT" 
+    role: "INVESTOR"
   };
 }
 
@@ -41,9 +40,8 @@ async function apiFetch(endpoint: string, options: RequestInit = {}) {
 
   if (typeof window !== "undefined") {
     const path = window.location.pathname;
-    if (path.startsWith("/university")) headers["x-requested-role"] = "UNIVERSITY";
-    else if (path.startsWith("/recruiter")) headers["x-requested-role"] = "RECRUITER";
-    else headers["x-requested-role"] = "STUDENT";
+    if (path.startsWith("/cognita")) headers["x-requested-role"] = "REGULATOR";
+    else headers["x-requested-role"] = "INVESTOR";
   }
 
   if (token) {

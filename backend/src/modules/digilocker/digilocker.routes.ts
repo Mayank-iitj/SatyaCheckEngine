@@ -161,7 +161,7 @@ router.post(
       docType: docType || "ALL",
       message:
         "[SANDBOX] In production, redirect student to the real DigiLocker OAuth2 authorization URL. " +
-        "The student logs in with their DigiLocker credentials and approves ProofMind's access request.",
+        "The student logs in with their DigiLocker credentials and approves SatyaCheck's access request.",
       mockNote:
         "For demo: call POST /api/digilocker/consent/approve with this consentToken to simulate the student approving access.",
     });

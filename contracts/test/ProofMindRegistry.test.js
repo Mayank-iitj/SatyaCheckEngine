@@ -1,7 +1,7 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-describe("ProofMindRegistry", function () {
+describe("SatyaCheckRegistry", function () {
   let registry;
   let owner;
   let institution;
@@ -15,8 +15,8 @@ describe("ProofMindRegistry", function () {
 
   beforeEach(async function () {
     [owner, institution, otherAccount, student] = await ethers.getSigners();
-    const ProofMindRegistry = await ethers.getContractFactory("ProofMindRegistry");
-    registry = await ProofMindRegistry.deploy();
+    const SatyaCheckRegistry = await ethers.getContractFactory("SatyaCheckRegistry");
+    registry = await SatyaCheckRegistry.deploy();
     await registry.waitForDeployment();
   });
 
@@ -51,13 +51,13 @@ describe("ProofMindRegistry", function () {
       await registry.registerInstitution(institution.address, institutionName);
       await expect(
         registry.registerInstitution(institution.address, institutionName)
-      ).to.be.revertedWith("ProofMind: institution already registered");
+      ).to.be.revertedWith("SatyaCheck: institution already registered");
     });
 
     it("should reject zero address", async function () {
       await expect(
         registry.registerInstitution(ethers.ZeroAddress, institutionName)
-      ).to.be.revertedWith("ProofMind: zero address");
+      ).to.be.revertedWith("SatyaCheck: zero address");
     });
 
     it("should allow owner to remove an institution", async function () {
@@ -88,20 +88,20 @@ describe("ProofMindRegistry", function () {
     it("should reject issuance from non-institution", async function () {
       await expect(
         registry.connect(otherAccount).issueCredential(sampleHash, metadataURI)
-      ).to.be.revertedWith("ProofMind: caller is not a registered institution");
+      ).to.be.revertedWith("SatyaCheck: caller is not a registered institution");
     });
 
     it("should reject duplicate credential hash", async function () {
       await registry.connect(institution).issueCredential(sampleHash, metadataURI);
       await expect(
         registry.connect(institution).issueCredential(sampleHash, metadataURI)
-      ).to.be.revertedWith("ProofMind: credential already exists");
+      ).to.be.revertedWith("SatyaCheck: credential already exists");
     });
 
     it("should reject empty hash", async function () {
       await expect(
         registry.connect(institution).issueCredential(ethers.ZeroHash, metadataURI)
-      ).to.be.revertedWith("ProofMind: empty hash");
+      ).to.be.revertedWith("SatyaCheck: empty hash");
     });
   });
 
@@ -121,13 +121,13 @@ describe("ProofMindRegistry", function () {
     it("should reject mismatched array lengths", async function () {
       await expect(
         registry.connect(institution).batchIssueCredentials([sampleHash], [])
-      ).to.be.revertedWith("ProofMind: arrays length mismatch");
+      ).to.be.revertedWith("SatyaCheck: arrays length mismatch");
     });
 
     it("should reject empty arrays", async function () {
       await expect(
         registry.connect(institution).batchIssueCredentials([], [])
-      ).to.be.revertedWith("ProofMind: empty arrays");
+      ).to.be.revertedWith("SatyaCheck: empty arrays");
     });
   });
 
@@ -149,20 +149,20 @@ describe("ProofMindRegistry", function () {
     it("should reject revocation by non-issuer", async function () {
       await expect(
         registry.connect(otherAccount).revokeCredential(sampleHash, "fake reason")
-      ).to.be.revertedWith("ProofMind: only the issuer can revoke");
+      ).to.be.revertedWith("SatyaCheck: only the issuer can revoke");
     });
 
     it("should reject revoking a non-existent credential", async function () {
       await expect(
         registry.connect(institution).revokeCredential(sampleHash2, "reason")
-      ).to.be.revertedWith("ProofMind: credential not found");
+      ).to.be.revertedWith("SatyaCheck: credential not found");
     });
 
     it("should reject double revocation", async function () {
       await registry.connect(institution).revokeCredential(sampleHash, "reason");
       await expect(
         registry.connect(institution).revokeCredential(sampleHash, "again")
-      ).to.be.revertedWith("ProofMind: already revoked");
+      ).to.be.revertedWith("SatyaCheck: already revoked");
     });
   });
 
