@@ -21,6 +21,8 @@ export const metadata: Metadata = {
 
 import { Toaster } from 'sonner';
 
+import WakeUpBackend from "@/components/WakeUpBackend";
+
 export default function RootLayout({
   children,
 }: {
@@ -34,6 +36,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased">
         <ClerkProvider>
           <Toaster position="top-right" richColors closeButton />
+          <WakeUpBackend />
           {children}
         </ClerkProvider>
       </body>
