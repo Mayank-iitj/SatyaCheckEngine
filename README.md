@@ -1,158 +1,126 @@
 <div align="center">
-  <img src="./frontend/public/logo.svg" alt="SatyaCheck Logo" width="120" />
-  <h1 align="center">SatyaCheck</h1>
-  <p align="center">
-    <strong>Trust Every Degree. Verify Every Achievement.</strong>
-  </p>
-  <p align="center">
-    A decentralized, AI-powered platform for tamper-proof academic credential verification.
-  </p>
+  <img src="https://img.shields.io/badge/SEBI-Hackathon_Spec-4f46e5?style=for-the-badge" alt="SEBI Hackathon Spec" />
+  <br/>
+  <h1>🛡️ SatyaCheck</h1>
+  <p><strong>AI-Driven Detection & Authenticity Backbone for Securities Markets</strong></p>
   
-  <p align="center">
-    <a href="https://github.com/yourusername/satyacheck"><img src="https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge" alt="License" /></a>
-    <a href="https://nextjs.org/"><img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js" /></a>
-    <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" /></a>
-    <a href="https://polygon.technology/"><img src="https://img.shields.io/badge/Polygon-7B3FE4?style=for-the-badge&logo=polygon&logoColor=white" alt="Polygon" /></a>
-    <a href="https://deepmind.google/technologies/gemini/"><img src="https://img.shields.io/badge/Gemini_AI-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Gemini AI" /></a>
-    <a href="https://clerk.com/"><img src="https://img.shields.io/badge/Clerk_Auth-6C47FF?style=for-the-badge&logo=clerk&logoColor=white" alt="Clerk Auth" /></a>
+  <p>
+    <img src="https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB" alt="React" />
+    <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+    <img src="https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI" />
+    <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python" />
+    <img src="https://img.shields.io/badge/GSAP-88CE02?style=flat-square&logo=greensock&logoColor=white" alt="GSAP" />
   </p>
 </div>
 
-<hr />
+---
 
-## 🌟 Vision
+## 📖 Overview
 
-In a world where degree mills and fabricated resumes run rampant, verifying academic credentials has become a slow, expensive, and manual process. **SatyaCheck** revolutionizes the academic ecosystem by replacing phone calls and emails to university registrars with instantaneous, cryptographic verification on the **Polygon blockchain**.
+**SatyaCheck** is a next-generation security and verification ecosystem designed specifically to combat market manipulation, financial fraud, and deepfakes in the securities market. Built as a specification for the SEBI Hackathon, SatyaCheck acts as a zero-trust architecture verifying the provenance and authenticity of financial claims, circulars, and notices.
 
-If an institution issues it on SatyaCheck, it is **mathematically guaranteed to be authentic**.
+It employs a strict **Two-Layer Trust Architecture**:
+1. **Layer 1 (Provenance):** Cryptographic Ed25519 signatures and C2PA manifests to guarantee 100% authenticity of official documents and media.
+2. **Layer 2 (AI Heuristics):** Advanced NLP and media classifiers to catch unsigned anomalies, deepfakes, phishing attempts, and stock pumping claims against ground-truth registries.
 
-## ✨ Key Features
+---
 
-- **🔗 Cryptographic Immutability**: Every credential is hashed (SHA-256) and permanently anchored to the Polygon blockchain. It cannot be altered or forged.
-- **⚡ Instant Verification**: Employers and recruiters can scan a QR code or paste a credential hash to receive a tamper-proof verification in under 2 seconds. No login required.
-- **👁️ Digital Forensics Engine**: Upload any credential PDF to run a deep forensic analysis using `pdf-lib` and `sharp` to detect tampering, metadata manipulation, or forged digital signatures.
-- **🛡️ Verification-Integrity Module**: A robust microservice that acts as the source of truth, cross-referencing off-chain records against on-chain transaction logs and IPFS CIDs to guarantee data integrity.
-- **🏛️ DigiLocker Integration**: Students can seamlessly sync and fetch government-issued verifiable credentials through a secure, mock Digilocker API layer.
-- **🤖 AI-Powered Job Matching**: Integrated with **Google Gemini AI**, the platform semantically matches a student's verified skills and degrees to active job postings, acting as a hyper-intelligent technical recruiter.
-- **🎓 AI Equivalency Engine**: Cross-border credentials are automatically mapped to local qualification frameworks using an AI evaluation engine (e.g., mapping an Indian B.Tech to a US B.S. in Engineering).
-- **🔒 Enterprise Auth via Clerk**: Bank-grade authentication and user management powered by Clerk, ensuring secure identity verification for Universities and Students.
+## ✨ Core Modules
+
+SatyaCheck isn't just a single app; it's an entire ecosystem:
+
+*   **🛡️ Verifier Hub:** The central nervous system. Drag and drop PDFs, media files, or paste text to instantly scan for cryptographic signatures or AI-detected anomalies.
+*   **🔑 Intermediary Portal:** A dedicated zone for registered brokers (e.g., Zerodha, Groww) to cryptographically sign and publish their communications, ensuring their brand isn't weaponized by scammers.
+*   **📞 Call-Guardian (Voice API):** Real-time streaming voice analysis to detect AI-synthesized audio profiles (voice cloning) common in fraudulent "advisory" calls.
+*   **💬 WhatsApp Bot Emulator:** Validates claims sent via chat messages against official SEBI registry data in real-time.
+*   **🌐 Social Guard Feed:** Live monitoring of social media streams to flag pump-and-dump schemes or unregistered advisory handles.
+*   **🧩 Browser Extension:** Real-time on-page verification of financial news, highlighting verified claims and blurring suspicious phishing links.
 
 ---
 
 ## 🏗️ Architecture
 
-SatyaCheck is built on a modern, robust, and scalable tech stack:
-
-```text
-satyacheck/
-├── contracts/          # Solidity smart contracts (Hardhat, Ethers.js)
-├── backend/            # Node.js + Express API (Prisma, PostgreSQL, Gemini SDK)
-├── frontend/           # Next.js 14, Tailwind CSS, Framer Motion, Three.js
-└── demo-data/          # Synthetic demo assets (QR codes, mocked certificates)
+```mermaid
+graph TD
+    User([Retail Investor]) --> Hub[Verifier Hub]
+    User --> Ext[Browser Extension]
+    User --> WA[WhatsApp Bot]
+    
+    Hub --> API[FastAPI Backend]
+    Ext --> API
+    WA --> API
+    
+    API --> L1{Layer 1: Ed25519 Signatures}
+    L1 -- Valid Signature --> Verified[Genuine / Verified]
+    L1 -- Invalid / Missing --> L2{Layer 2: AI Heuristics}
+    
+    L2 --> NLP[NLP Claims Matching]
+    L2 --> Phishing[Phishing & Urgency Scanner]
+    L2 --> Media[Voice / Video Deepfake Scoring]
+    
+    NLP --> DB[(SEBI Ground-Truth Registry)]
+    Phishing --> DB
 ```
-
-**Core Technologies:**
-- **Frontend**: Next.js 14, React, Tailwind CSS, Framer Motion, Clerk UI components
-- **Backend**: Node.js, Express, Prisma ORM, PostgreSQL, `@clerk/express`, Google Gemini GenAI SDK
-- **Web3**: Solidity, Hardhat, Ethers.js, Polygon Network, IPFS (Pinata)
-- **Security**: Clerk Authentication, helmet, Rate Limiting, Digital Forensics (pdf-lib, sharp)
 
 ---
 
-## 🚀 Quick Start Guide
+## 🚀 Quick Start (Local Development)
+
+The repository is split into a monolithic structure containing both the React frontend and the Python backend.
 
 ### Prerequisites
-- Node.js 18+
-- Docker & Docker Compose (for PostgreSQL)
-- An active [Google Gemini API Key](https://aistudio.google.com/)
+*   Node.js (v18+)
+*   Python (3.9+)
 
-### 1. Clone & Install
+### 1️⃣ Start the Backend
+The backend is powered by FastAPI and contains all the cryptographic logic and mock ML heuristic engines.
+
 ```bash
-git clone https://github.com/yourusername/satyacheck.git
-cd satyacheck
-
-# Install dependencies for all workspaces
-npm run install:all
-```
-
-### 2. Environment Configuration
-Copy the `.env.example` file to `.env` in the root directory:
-```bash
-cp .env.example .env
-```
-Ensure you insert your **Gemini API Key**:
-```env
-GEMINI_API_KEY="YOUR_API_KEY_HERE"
-```
-*(Note: If the key is omitted or rate-limited, the system will gracefully degrade to a highly-optimized local heuristic engine.)*
-
-### 3. Spin Up Infrastructure
-```bash
-# Start PostgreSQL Database
-docker-compose up -d
-
-# Push schema and seed the database with robust demo data
 cd backend
-npx prisma db push
-npx tsx prisma/seed.ts
-cd ..
+python -m venv venv
+
+# Windows
+venv\Scripts\activate
+# Mac/Linux
+source venv/bin/activate
+
+pip install -r requirements.txt
+uvicorn main:app --reload --host 127.0.0.1 --port 8000
 ```
+> *The backend will be live at `http://127.0.0.1:8000`*
 
-### 4. Deploy Smart Contracts (Local Testnet)
+### 2️⃣ Start the Frontend
+The frontend is a gorgeous, responsive, and dynamic Vite + React application.
+
 ```bash
-# Terminal 1: Start local Hardhat blockchain
-cd contracts
-npx hardhat node
-
-# Terminal 2: Deploy the SatyaCheckRegistry contract
-cd contracts
-npx hardhat run scripts/deploy.js --network localhost
-```
-
-### 5. Launch the Application
-```bash
-# Terminal 1: Start Backend API (Port 4000)
-cd backend
-npm run dev
-
-# Terminal 2: Start Frontend App (Port 3000)
 cd frontend
+npm install
 npm run dev
 ```
-
-Visit **[http://localhost:3000](http://localhost:3000)** in your browser!
-
----
-
-## 👤 Demo Accounts
-
-The database seed provides several pre-configured profiles. Simply sign in via Clerk using the matching email address to be automatically mapped to these roles (or sign up as a new user to receive the default Student role):
-
-| Persona | Email | Role Features |
-|---------|-------|---------------|
-| **Admin** | `admin@satyacheck.io` | Analytics dashboard, institution verification |
-| **University** | `registrar@mit-demo.edu` | Issue credentials, digital forensics, revoke |
-| **Student** | `alice@student.demo` | Digital wallet, DigiLocker sync, AI job matching |
-| **Recruiter** | `hr@techcorp.demo` | Post jobs, source verified candidates |
+> *The frontend will be live at `http://localhost:5173`*
 
 ---
 
-## 🔒 Security Posture
+## 📡 API Endpoints
 
-SatyaCheck takes trust and security seriously:
-- **Zero PII on Chain**: We never store Personally Identifiable Information on the blockchain. We only store a cryptographic SHA-256 hash of the credential data, ensuring 100% GDPR compliance.
-- **ECDSA Signatures**: Ensures that only verified institutional wallets can interact with the registry contract.
-- **Decentralized Storage**: Certificate PDFs and metadata are pinned securely to IPFS, eliminating single points of failure.
-- **Failover Redundancy**: AI integrations are backed by deterministic local heuristic engines to guarantee uptime even during API outages.
+The FastAPI backend exposes several critical endpoints for ecosystem integration:
+
+*   `GET /api/health` - Check backend health status.
+*   `GET /api/registry` - Retrieve the mock SEBI intermediary and filings registry.
+*   `POST /api/verify` - **Core Engine:** Accepts `text`, `envelope_json`, or `file`. Applies Layer 1 and Layer 2 checks and returns a comprehensive JSON verdict.
+*   `POST /api/sign` - Utility endpoint to generate Ed25519 signed JSON envelopes or C2PA-injected files.
+*   `POST /api/call-guardian` - Accepts sequential base64 audio chunks for real-time voice cloning detection.
+*   `POST /api/translate` - Bhashini-mocked regional language translation for verification explanations.
 
 ---
 
-## 📄 License
+## 🛡️ Security & Scalability Notes
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+*   **Robust Fetch Handling:** The frontend is strictly hardened with `AbortSignal` timeouts and HTTP 4xx/5xx interception to ensure no eternal buffering occurs if the network drops.
+*   **Stateless Verification:** The backend verifies Ed25519 signatures completely statelessly using public keys, allowing infinite horizontal scaling for the `/api/verify` endpoint.
+*   **Privacy-First:** Files uploaded for verification are analyzed in-memory and instantly discarded.
 
+---
 <div align="center">
-  <br/>
-  <p>Built with ❤️ to secure the future of academic achievements.</p>
+  <i>Built with precision for the future of secure markets.</i>
 </div>
-# satyacheck
