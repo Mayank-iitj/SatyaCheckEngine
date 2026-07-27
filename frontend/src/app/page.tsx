@@ -12,7 +12,6 @@ import StaggeredMenu from "../components/StaggeredMenu";
 import RotatingText from "../components/RotatingText";
 import ScrollFloat from "../components/ScrollFloat";
 import ScrollStack, { ScrollStackItem } from "../components/ScrollStack";
-import Dock from "../components/Dock";
 import ScrollVelocity from "../components/ScrollVelocity";
 import FlowingMenu from "../components/FlowingMenu";
 import ShapeBlur from "../components/ShapeBlur";
@@ -107,12 +106,6 @@ export default function LandingPage() {
   ];
 
   const router = useRouter();
-  const dockItems = [
-    { icon: <Home className="w-5 h-5" />, label: 'Home', onClick: () => window.scrollTo({top: 0, behavior: 'smooth'}) },
-    { icon: <Shield className="w-5 h-5" />, label: 'Capabilities', onClick: () => { const e = document.getElementById('portals'); e && e.scrollIntoView({behavior: 'smooth'}) } },
-    { icon: <Briefcase className="w-5 h-5" />, label: 'Why Us', onClick: () => { const e = document.getElementById('problem'); e && e.scrollIntoView({behavior: 'smooth'}) } },
-    { icon: <Building2 className="w-5 h-5" />, label: 'FAQ', onClick: () => { const e = document.getElementById('faq'); e && e.scrollIntoView({behavior: 'smooth'}) } },
-  ];
 
   const portalsRef = useRef<HTMLDivElement>(null);
 
@@ -618,13 +611,19 @@ export default function LandingPage() {
         </div>
       </footer>
       
-      {/* ── Global Floating Dock ───────────────────────────────────────── */}
-      <Dock 
-        items={dockItems}
-        panelHeight={68}
-        baseItemSize={50}
-        magnification={70}
-      />
+      {/* ── Giant Background Watermark ─────────────────────────────────── */}
+      <div className="relative w-full flex justify-center overflow-hidden select-none bg-ink-900 pt-8 pb-4 border-t border-ink-800">
+        <span 
+          className="text-[18vw] font-black tracking-tighter leading-none"
+          style={{
+            background: "linear-gradient(to bottom, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.01))",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent"
+          }}
+        >
+          SatyaCheck
+        </span>
+      </div>
       
       {/* ── Backend Spin-Up Overlay ────────────────────────────────────── */}
       <BackendSpinUpOverlay />
