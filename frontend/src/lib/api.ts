@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || (process.env.NODE_ENV === "production" ? "https://satyacheck-backend.onrender.com/api" : "http://localhost:4000/api");
 
 // Get auth token from Clerk or Admin local storage
 async function getToken(): Promise<string | null> {

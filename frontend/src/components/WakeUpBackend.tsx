@@ -8,7 +8,7 @@ export default function WakeUpBackend() {
     let timer: NodeJS.Timeout | null = null;
 
     const getHealthUrl = () => {
-      const baseUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api").replace(/\/$/, "");
+      const baseUrl = (process.env.NEXT_PUBLIC_API_URL || (process.env.NODE_ENV === "production" ? "https://satyacheck-backend.onrender.com/api" : "http://localhost:4000/api")).replace(/\/$/, "");
       return `${baseUrl}/health`;
     };
 

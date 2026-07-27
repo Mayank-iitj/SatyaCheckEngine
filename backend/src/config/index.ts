@@ -10,7 +10,7 @@ export const config = {
   port: parseInt(process.env.PORT || "4000", 10),
   jwtSecret: process.env.JWT_SECRET || "dev-secret-change-me",
   bcryptRounds: parseInt(process.env.BCRYPT_ROUNDS || "10", 10),
-  corsOrigin: process.env.CORS_ORIGIN || "http://localhost:3000",
+  corsOrigin: process.env.CORS_ORIGIN || (process.env.NODE_ENV === "production" ? "https://satyacheck.mayankiitj.in" : "http://localhost:3000"),
 
   // Blockchain
   rpcUrl: process.env.RPC_URL || "http://127.0.0.1:8545",
@@ -26,7 +26,7 @@ export const config = {
   pinataGateway: process.env.PINATA_GATEWAY || "",
 
   // App
-  appUrl: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  appUrl: process.env.NEXT_PUBLIC_APP_URL || (process.env.NODE_ENV === "production" ? "https://satyacheck.mayankiitj.in" : "http://localhost:3000"),
 
   // Database
   databaseUrl: process.env.DATABASE_URL || "",
