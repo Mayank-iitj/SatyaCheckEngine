@@ -53,10 +53,18 @@ async function apiFetch(endpoint: string, options: RequestInit = {}) {
     headers["Content-Type"] = "application/json";
   }
 
-  const res = await fetch(`${API_URL}${endpoint}`, {
-    ...options,
-    headers,
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}${endpoint}`, {
+      ...options,
+      headers,
+    });
+  } catch (error: any) {
+    if (error.message === "Failed to fetch" || error.name === "TypeError") {
+      throw new Error(`Network Error: Cannot reach backend at ${API_URL}. Please check your connection or CORS settings.`);
+    }
+    throw error;
+  }
 
   if (res.status === 401) {
     if (typeof window !== "undefined") {

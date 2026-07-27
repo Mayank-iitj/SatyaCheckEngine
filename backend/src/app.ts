@@ -22,7 +22,10 @@ app.use(helmet({
 }));
 
 app.use(cors({
-  origin: "*",
+  origin: function (origin, callback) {
+    // Allow all origins dynamically
+    callback(null, true);
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 }));
