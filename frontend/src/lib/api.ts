@@ -271,9 +271,20 @@ export const forensicsAPI = {
     apiFetch(`/forensics/report/${credentialId}`),
 };
 
-// ── NEW: Scanner API ───────────────────────────────────────────────────
+// ── Scanner API ───────────────────────────────────────────────────
 export const scannerAPI = {
   status: () => apiFetch("/scanner/status"),
   run: () => apiFetch("/scanner/run", { method: "POST" }),
 };
 
+// ── Innovation Features API ─────────────────────────────────────────────
+export const featuresAPI = {
+  getXRay: () => apiFetch("/features/xray"),
+  getWhistleblower: () => apiFetch("/features/whistleblower"),
+  submitWhistleblower: (data: any) =>
+    apiFetch("/features/whistleblower", { method: "POST", body: JSON.stringify(data) }),
+  checkVernacular: (data: any) =>
+    apiFetch("/features/vernacular-check", { method: "POST", body: JSON.stringify(data) }),
+  getCloneRadar: () => apiFetch("/features/clone-radar"),
+  getHeatmap: () => apiFetch("/features/heatmap"),
+};

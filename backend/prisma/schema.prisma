@@ -1,6 +1,3 @@
-// This is your Prisma schema file
-// Learn more: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,381 +7,90 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// SQLite does not support enums, using Strings instead.
-// UserRole: STUDENT | UNIVERSITY | RECRUITER | ADMIN
-// CredentialStatus: VALID | REVOKED
-// CredentialType: DEGREE | DIPLOMA | TRANSCRIPT | MICRO_CREDENTIAL | CERTIFICATE
-// ExpiryStatus: ACTIVE | EXPIRING_SOON | EXPIRED | NEEDS_RENEWAL
-// RecoveryStatus: PENDING | ATTESTED | REJECTED
-// BridgeStatus: PENDING | BRIDGED | FAILED
-// InstitutionTier: FREE | PRO | ENTERPRISE
-
-// ── Models ──────────────────────────────────────────────────────────────
-
 model User {
   id            String    @id @default(uuid())
   email         String    @unique
   clerkId       String?   @unique
-  passwordHash  String?
   name          String
-  role          String
-  walletAddress String?
-  avatarUrl     String?
+  role          String    @default("INVESTOR") // INVESTOR | INTERMEDIARY | ADMIN
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-
-  // Relations
-  institution         Institution?
-  studentCredentials  Credential[]          @relation("StudentCredentials")
-  verificationLogs    VerificationLog[]     @relation("RequesterLogs")
-  auditEvents         AuditEvent[]
-  jobMatches          JobMatch[]
-  skillProfile        SkillProfile?
-  recoveryRequests    RecoveryRequest[]     @relation("StudentRecovery")
-  verificationReceipts VerificationReceipt[] @relation("CredentialOwnerReceipts")
-  jobPostings         JobPosting[]          @relation("RecruiterJobs")
-
-  @@map("users")
 }
 
-model Institution {
-  id              String    @id @default(uuid())
-  userId          String    @unique
-  name            String
-  country         String
-  verified        Boolean   @default(false)
-  walletAddress   String?
-  publicKey       String?
-  reputationScore Float     @default(0)
-  logoUrl         String?
-  description     String?
-  // Staking model
-  stakeBond       Float     @default(0)
-  tier            String    @default("FREE") // FREE | PRO | ENTERPRISE
-  slashCount      Int       @default(0)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  // Relations
-  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  credentials       Credential[]
-  recoveryRequests  RecoveryRequest[]   @relation("InstitutionRecovery")
-
-  @@map("institutions")
-}
-
-model Credential {
-  id              String    @id @default(uuid())
-  credentialHash  String    @unique
-  // Human-shareable ID — UUID v4, safe to print on physical certificate
-  // This is NOT the cryptographic fingerprint; it reveals nothing about document contents
-  credentialId    String?   @unique
-  studentId       String
-  institutionId   String
-  credentialType  String
-  title           String
-  description     String?
-  recipientName   String
-  issueDate       DateTime
-  expiryDate      DateTime?
-  ipfsCID         String?
-  metadataURI     String?
-  txHash          String?
-  signature       String?
-  status          String    @default("VALID")
-  revokedReason   String?
-  revokedAt       DateTime?
-  metadata        Json?
-  // Merkle-tree batch issuance
-  merkleRoot      String?
-  merkleProof     Json?
-  batchId         String?
-  // Plagiarism detection
-  thesisFingerprint String?
-  // Expiry tracking
-  expiryStatus    String    @default("ACTIVE") // ACTIVE | EXPIRING_SOON | EXPIRED | NEEDS_RENEWAL
-  // ── Verification-Integrity Module ───────────────────────────────────────
-  // Source of issuance: MANUAL (uploaded) | DIGILOCKER_VERIFIED (government-attested)
-  source          String    @default("MANUAL")
-  // Sealed PDF (rasterized, watermarked, digitally signed)
-  sealedCopyCID   String?   // IPFS CID of the sealed PDF
-  sealedCopyHash  String?   // SHA-256 of the sealed PDF itself
-  // Forensics pipeline result (stored as JSON for quick retrieval)
-  forensicsReport Json?
-  integrityChecked Boolean  @default(false)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  // Relations
-  student              User                  @relation("StudentCredentials", fields: [studentId], references: [id])
-  institution          Institution           @relation(fields: [institutionId], references: [id])
-  verificationLogs     VerificationLog[]
-  shareLinks           ShareLink[]
-  skillProfileEntries  SkillProfileEntry[]
-  verificationReceipts VerificationReceipt[]
-  equivalencies        EquivalencyMapping[]
-  recoveryRequests     RecoveryRequest[]
-  bridgeRequests       BridgeRequest[]
-
-  @@map("credentials")
-}
-
-model VerificationLog {
-  id           String    @id @default(uuid())
-  credentialId String?
-  requesterId  String?
-  requesterIp  String?
-  queryHash    String?
-  queryType    String?   // "hash", "qr", "id", "shareLink"
-  result       String
-  responseTime Int?      // milliseconds
-  // Fraud risk breakdown
-  fraudRiskScore Json?
-  createdAt    DateTime  @default(now())
-
-  // Relations
-  credential Credential? @relation(fields: [credentialId], references: [id])
-  requester  User?       @relation("RequesterLogs", fields: [requesterId], references: [id])
-
-  @@map("verification_logs")
-}
-
-model ShareLink {
-  id           String    @id @default(uuid())
-  credentialId String
-  token        String    @unique
-  expiresAt    DateTime
-  singleUse    Boolean   @default(false)
-  usedAt       DateTime?
-  createdAt    DateTime  @default(now())
-
-  // Relations
-  credential Credential @relation(fields: [credentialId], references: [id])
-
-  @@map("share_links")
-}
-
-model AuditEvent {
-  id         String   @id @default(uuid())
-  actorId    String?
-  action     String
-  entityType String
-  entityId   String
-  metadata   Json?
-  ipAddress  String?
-  createdAt  DateTime @default(now())
-
-  // Relations
-  actor User? @relation(fields: [actorId], references: [id])
-
-  @@map("audit_events")
-}
-
-// ── NEW: Job Matching ───────────────────────────────────────────────────
-
-model JobPosting {
-  id                String   @id @default(uuid())
-  recruiterId       String
-  title             String
-  company           String
-  location          String
-  description       String
-  requiredCredTypes String   // comma-separated: "DEGREE,CERTIFICATE"
-  requiredKeywords  String   // comma-separated: "Computer Science,Machine Learning"
-  minReputationScore Float   @default(0)
-  salaryRange       String?
-  isActive          Boolean  @default(true)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  // Relations
-  recruiter  User       @relation("RecruiterJobs", fields: [recruiterId], references: [id])
-  matches    JobMatch[]
-
-  @@map("job_postings")
-}
-
-model JobMatch {
-  id           String   @id @default(uuid())
-  jobId        String
-  studentId    String
-  matchScore   Float    // 0-100
-  matchReasons Json     // breakdown of why they matched
-  status       String   @default("NEW") // NEW | VIEWED | APPLIED | REJECTED
-  createdAt    DateTime @default(now())
-
-  // Relations
-  job     JobPosting @relation(fields: [jobId], references: [id])
-  student User       @relation(fields: [studentId], references: [id])
-
-  @@unique([jobId, studentId])
-  @@map("job_matches")
-}
-
-// ── NEW: Skill Profile (Micro-Credential Stacking) ──────────────────────
-
-model SkillProfile {
-  id          String   @id @default(uuid())
-  userId      String   @unique
-  title       String   @default("My Skill Profile")
-  bio         String?
-  totalScore  Float    @default(0)
-  isPublic    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  user    User                @relation(fields: [userId], references: [id])
-  entries SkillProfileEntry[]
-
-  @@map("skill_profiles")
-}
-
-model SkillProfileEntry {
-  id           String   @id @default(uuid())
-  profileId    String
-  credentialId String
-  skillTag     String   // e.g. "Machine Learning", "Blockchain", "Data Science"
-  weight       Float    @default(1.0) // how much this cred contributes
-  createdAt    DateTime @default(now())
-
-  // Relations
-  profile    SkillProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  credential Credential   @relation(fields: [credentialId], references: [id])
-
-  @@unique([profileId, credentialId])
-  @@map("skill_profile_entries")
-}
-
-// ── NEW: Credential Equivalency ─────────────────────────────────────────
-
-model EquivalencyMapping {
-  id              String   @id @default(uuid())
-  credentialId    String
-  sourceCountry   String
-  sourceFramework String   // e.g. "Indian B.Tech"
-  targetCountry   String
-  targetFramework String   // e.g. "US Bachelor of Science"
-  confidenceScore Float    // 0-100
-  details         Json?    // AI reasoning
-  createdAt       DateTime @default(now())
-
-  // Relations
-  credential Credential @relation(fields: [credentialId], references: [id])
-
-  @@map("equivalency_mappings")
-}
-
-// ── NEW: Thesis Plagiarism Detection ────────────────────────────────────
-
-model ThesisFingerprint {
-  id             String   @id @default(uuid())
-  credentialHash String?
-  fingerprint    String   // SimHash of thesis text
-  title          String
-  authorName     String
-  institutionId  String?
-  wordCount      Int      @default(0)
-  createdAt      DateTime @default(now())
-
-  @@map("thesis_fingerprints")
-}
-
-// ── NEW: Refugee / Disaster Recovery ────────────────────────────────────
-
-model RecoveryRequest {
+model Intermediary {
   id             String    @id @default(uuid())
-  studentId      String
-  institutionId  String
-  credentialId   String?   // null if original credential is lost
-  originalTitle  String
-  originalType   String
-  originalDate   String    // approximate
-  evidenceNotes  String?   // any supporting info the student can provide
-  status         String    @default("PENDING") // PENDING | ATTESTED | REJECTED
-  reviewNotes    String?
-  attestedAt     DateTime?
-  newCredentialId String?  // the re-issued credential if attested
+  registrationNo String    @unique // SEBI Reg No
+  name           String
+  publicKey      String?
+  isActive       Boolean   @default(true)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
-
-  // Relations
-  student     User         @relation("StudentRecovery", fields: [studentId], references: [id])
-  institution Institution  @relation("InstitutionRecovery", fields: [institutionId], references: [id])
-  credential  Credential?  @relation(fields: [credentialId], references: [id])
-
-  @@map("recovery_requests")
 }
 
-// ── NEW: Verification Receipts (Consent-based) ──────────────────────────
-
-model VerificationReceipt {
-  id              String   @id @default(uuid())
-  credentialId    String
-  credentialOwnerId String
-  verifierIp      String?
-  verifierName    String?  // if authenticated
-  verifierRole    String?
-  queryType       String   // "hash", "qr", "shareLink"
-  isRead          Boolean  @default(false)
-  createdAt       DateTime @default(now())
-
-  // Relations
-  credential      Credential @relation(fields: [credentialId], references: [id])
-  credentialOwner User       @relation("CredentialOwnerReceipts", fields: [credentialOwnerId], references: [id])
-
-  @@map("verification_receipts")
+model Circular {
+  id            String    @id @default(uuid())
+  title         String
+  content       String
+  issuerId      String    // Intermediary ID or "SEBI"
+  signature     String?   // Ed25519 signature
+  c2paHash      String?
+  createdAt     DateTime  @default(now())
 }
 
-// ── NEW: Cross-Chain Bridging ───────────────────────────────────────────
-
-model BridgeRequest {
-  id           String    @id @default(uuid())
-  credentialId String
-  sourceChain  String    @default("Polygon")
-  targetChain  String    // "Ethereum", "BSC", "Arbitrum"
-  status       String    @default("PENDING") // PENDING | BRIDGED | FAILED
-  sourceTxHash String?
-  targetTxHash String?
-  bridgedAt    DateTime?
-  createdAt    DateTime  @default(now())
-
-  // Relations
-  credential Credential @relation(fields: [credentialId], references: [id])
-
-  @@map("bridge_requests")
+model WhistleblowerReport {
+  id            String    @id @default(uuid())
+  zkProofHash   String    // The ZKP hash verifying they are an insider
+  companyName   String
+  reportData    String    // The actual encrypted/anonymous report payload
+  status        String    @default("UNVERIFIED") // UNVERIFIED | INVESTIGATING | RESOLVED
+  createdAt     DateTime  @default(now())
 }
 
-// ── NEW: Platform Stats (Live Leaderboard) ──────────────────────────────
-
-model PlatformStats {
-  id                   String   @id @default("global")
-  credentialsVerified  Int      @default(0)
-  institutionsOnboarded Int     @default(0)
-  fraudBlocked         Int      @default(0)
-  countriesCovered     Int      @default(0)
-  credentialsIssued    Int      @default(0)
-  recoveryCompleted    Int      @default(0)
-  jobsMatched          Int      @default(0)
-  updatedAt            DateTime @updatedAt
-
-  @@map("platform_stats")
+model ScamDomain {
+  id            String    @id @default(uuid())
+  domain        String    @unique
+  targetBroker  String    // e.g. "Zerodha"
+  similarityScore Float
+  status        String    @default("ACTIVE") // ACTIVE | BLOCKED
+  createdAt     DateTime  @default(now())
 }
 
-// ── NEW: DigiLocker Consent Sessions (mock adapter) ─────────────────────
+model HeatmapCampaign {
+  id          String        @id @default(uuid())
+  name        String
+  assetName   String        // e.g., "Suzlon Energy"
+  createdAt   DateTime      @default(now())
+  nodes       HeatmapNode[]
+}
 
-model DigiLockerConsent {
-  id           String   @id @default(uuid())
-  studentId    String
-  consentToken String   @unique
-  // PENDING | APPROVED | EXPIRED | USED
-  status       String   @default("PENDING")
-  docType      String?  // e.g. "DEGREE", "TRANSCRIPT"
-  expiresAt    DateTime
-  approvedAt   DateTime?
-  // Simulated DigiLocker student ID (like an Aadhar-linked digilocker account)
-  digiLockerId String?
-  createdAt    DateTime @default(now())
+model HeatmapNode {
+  id            String    @id @default(uuid())
+  campaignId    String
+  handle        String    // E.g., username or display name
+  type          String    // USER | GROUP | CHANNEL
+  platform      String    // TELEGRAM | TWITTER | WHATSAPP
+  isPatientZero Boolean   @default(false)
+  
+  campaign      HeatmapCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  edgesSource   HeatmapEdge[] @relation("SourceEdges")
+  edgesTarget   HeatmapEdge[] @relation("TargetEdges")
+}
 
-  @@map("digilocker_consents")
+model HeatmapEdge {
+  id            String    @id @default(uuid())
+  sourceId      String
+  targetId      String
+  messageHash   String
+  timestamp     DateTime  @default(now())
+
+  sourceNode    HeatmapNode @relation("SourceEdges", fields: [sourceId], references: [id], onDelete: Cascade)
+  targetNode    HeatmapNode @relation("TargetEdges", fields: [targetId], references: [id], onDelete: Cascade)
+}
+
+model DeepfakeRecord {
+  id            String    @id @default(uuid())
+  mediaUrl      String
+  confidence    Float     // 0-100%
+  anomalies     String    // JSON string of bounding boxes
+  createdAt     DateTime  @default(now())
 }

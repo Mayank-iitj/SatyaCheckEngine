@@ -5,10 +5,11 @@
   <p><strong>AI-Driven Detection & Authenticity Backbone for Securities Markets</strong></p>
   
   <p>
-    <img src="https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB" alt="React" />
+    <img src="https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=next.js&logoColor=white" alt="Next.js" />
     <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
-    <img src="https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI" />
-    <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python" />
+    <img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js" />
+    <img src="https://img.shields.io/badge/Express.js-000000?style=flat-square&logo=express&logoColor=white" alt="Express" />
+    <img src="https://img.shields.io/badge/Prisma-2D3748?style=flat-square&logo=prisma&logoColor=white" alt="Prisma" />
     <img src="https://img.shields.io/badge/GSAP-88CE02?style=flat-square&logo=greensock&logoColor=white" alt="GSAP" />
   </p>
 </div>
@@ -30,11 +31,12 @@ It employs a strict **Two-Layer Trust Architecture**:
 SatyaCheck isn't just a single app; it's an entire ecosystem:
 
 *   **🛡️ Verifier Hub:** The central nervous system. Drag and drop PDFs, media files, or paste text to instantly scan for cryptographic signatures or AI-detected anomalies.
-*   **🔑 Intermediary Portal:** A dedicated zone for registered brokers (e.g., Zerodha, Groww) to cryptographically sign and publish their communications, ensuring their brand isn't weaponized by scammers.
-*   **📞 Call-Guardian (Voice API):** Real-time streaming voice analysis to detect AI-synthesized audio profiles (voice cloning) common in fraudulent "advisory" calls.
-*   **💬 WhatsApp Bot Emulator:** Validates claims sent via chat messages against official SEBI registry data in real-time.
-*   **🌐 Social Guard Feed:** Live monitoring of social media streams to flag pump-and-dump schemes or unregistered advisory handles.
-*   **🧩 Browser Extension:** Real-time on-page verification of financial news, highlighting verified claims and blurring suspicious phishing links.
+*   **🔑 Intermediary Portal:** A dedicated zone for registered brokers to cryptographically sign and publish their communications.
+*   **🕸️ "Patient Zero" Heatmap:** A 3D interactive visualization showing how a fraudulent pump-and-dump rumor is spreading across social networks.
+*   **🕵️ Zero-Knowledge (ZKP) Whistleblower Drop:** A portal for corporate insiders to submit proof of fraud without revealing their identity.
+*   **🔍 Deepfake "X-Ray" Sandbox:** An interactive video player that highlights the exact anomalies (lip-sync, unnatural blinking) the AI caught.
+*   **🌐 Proactive Typo-squatting Radar:** A dashboard that continuously monitors global domain registries for fake clone sites of SEBI brokers.
+*   **🗣️ Vernacular Scam Interceptor:** Simulates intercepting scam calls in regional languages and playing automated warnings in the same language.
 
 ---
 
@@ -66,51 +68,46 @@ graph TD
 
 ## 🚀 Quick Start (Local Development)
 
-The repository is split into a monolithic structure containing both the React frontend and the Python backend.
+The repository is split into a monolithic structure containing both the Next.js frontend and the Node.js/Express backend.
 
 ### Prerequisites
 *   Node.js (v18+)
-*   Python (3.9+)
 
 ### 1️⃣ Start the Backend
-The backend is powered by FastAPI and contains all the cryptographic logic and mock ML heuristic engines.
+The backend is powered by Express and Prisma and contains the APIs and mock AI models.
 
 ```bash
 cd backend
-python -m venv venv
-
-# Windows
-venv\Scripts\activate
-# Mac/Linux
-source venv/bin/activate
-
-pip install -r requirements.txt
-uvicorn main:app --reload --host 127.0.0.1 --port 8000
+npm install
+npm run db:push
+npm run db:seed
+npm run dev
 ```
 > *The backend will be live at `http://127.0.0.1:8000`*
 
 ### 2️⃣ Start the Frontend
-The frontend is a gorgeous, responsive, and dynamic Vite + React application.
+The frontend is a modern Next.js application with Three.js and GSAP.
 
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-> *The frontend will be live at `http://localhost:5173`*
+> *The frontend will be live at `http://localhost:3000`*
 
 ---
 
 ## 📡 API Endpoints
 
-The FastAPI backend exposes several critical endpoints for ecosystem integration:
+The backend exposes several critical endpoints for ecosystem integration:
 
 *   `GET /api/health` - Check backend health status.
-*   `GET /api/registry` - Retrieve the mock SEBI intermediary and filings registry.
-*   `POST /api/verify` - **Core Engine:** Accepts `text`, `envelope_json`, or `file`. Applies Layer 1 and Layer 2 checks and returns a comprehensive JSON verdict.
-*   `POST /api/sign` - Utility endpoint to generate Ed25519 signed JSON envelopes or C2PA-injected files.
-*   `POST /api/call-guardian` - Accepts sequential base64 audio chunks for real-time voice cloning detection.
-*   `POST /api/translate` - Bhashini-mocked regional language translation for verification explanations.
+*   `POST /api/verify` - **Core Engine:** Applies Layer 1 and Layer 2 checks.
+*   `GET /api/heatmap` - Returns the 3D network graph data for pump-and-dump tracking.
+*   `POST /api/whistleblower` - Submits a ZKP verified tip.
+*   `GET /api/clone-radar` - Returns live typo-squatting threats.
+*   `POST /api/vernacular-check` - Simulates regional language scam call analysis.
+*   `POST /api/xray` - Returns deepfake bounding box telemetry for the sandbox player.
 
 ---
 

@@ -18,7 +18,9 @@ import FlowingMenu from "../components/FlowingMenu";
 import ShapeBlur from "../components/ShapeBlur";
 import CognitaAI from "../components/CognitaAI";
 import Plasma from "../components/Plasma";
-import { useEffect } from "react";
+import FallingText from "../components/FallingText";
+import { useEffect, useLayoutEffect } from "react";
+import gsap from "gsap";
 
 function CanvasCircularGallery() {
   const galleryItems = [
@@ -54,10 +56,11 @@ export default function LandingPage() {
   ];
 
   const staggerSocialItems = [
-    { label: 'Text Analyzer', link: '/engines/text' },
-    { label: 'Media Scanner', link: '/engines/media' },
-    { label: 'Claim Checker', link: '/engines/claims' },
-    { label: 'Call Guardian', link: '/engines/call-guardian' },
+    { label: 'Patient Zero Heatmap', link: '/heatmap' },
+    { label: 'ZKP Whistleblower', link: '/whistleblower' },
+    { label: 'Deepfake X-Ray', link: '/xray-sandbox' },
+    { label: 'Clone Radar', link: '/radar' },
+    { label: 'Vernacular Interceptor', link: '/vernacular' },
   ];
 
   const router = useRouter();
@@ -67,6 +70,25 @@ export default function LandingPage() {
     { icon: <Briefcase className="w-5 h-5" />, label: 'Why Us', onClick: () => { const e = document.getElementById('problem'); e && e.scrollIntoView({behavior: 'smooth'}) } },
     { icon: <Building2 className="w-5 h-5" />, label: 'FAQ', onClick: () => { const e = document.getElementById('faq'); e && e.scrollIntoView({behavior: 'smooth'}) } },
   ];
+
+  const portalsRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    let ctx = gsap.context(() => {
+      gsap.from(".portal-card", {
+        scrollTrigger: {
+          trigger: "#portals",
+          start: "top center",
+        },
+        y: 100,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.2,
+        ease: "back.out(1.7)",
+      });
+    }, portalsRef);
+    return () => ctx.revert();
+  }, []);
 
   return (
     <div className="min-h-screen bg-parchment-100 text-ink-900 selection:bg-bronze selection:text-white overflow-hidden relative">
@@ -240,16 +262,27 @@ export default function LandingPage() {
       </section>
 
       {/* ── Features / Portals (Signature Brews Style) ─────────────────── */}
-      <section id="portals" className="py-24 px-6 relative z-10 bg-parchment-50 border-y border-parchment-200">
+      <section id="portals" ref={portalsRef} className="py-24 px-6 relative z-10 bg-parchment-50 border-y border-parchment-200">
         <div className="max-w-[90rem] mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
             <h2 className="font-display font-black text-5xl md:text-6xl text-ink-900 uppercase max-w-2xl leading-[0.9]">
               ONE TRUST <br/>
               <span className="text-bronze">FABRIC, EVERY</span> <br/> CHANNEL
             </h2>
-            <p className="text-ink-600 max-w-sm uppercase text-xs tracking-widest font-semibold leading-relaxed">
-              Verify the genuine. Don't just chase the fake. Authentication is a cryptographic guarantee. Detection alone is an arms race you eventually lose.
-            </p>
+            <div className="h-48 w-full max-w-2xl relative">
+              <FallingText
+                text="Verify the genuine. Don't just chase the fake. Authentication is a cryptographic guarantee. Detection alone is an arms race you eventually lose."
+                highlightWords={["Verify", "genuine.", "fake.", "cryptographic", "guarantee.", "arms", "race"]}
+                highlightClass="text-bronze font-bold"
+                trigger="hover"
+                backgroundColor="transparent"
+                wireframes={false}
+                gravity={0.6}
+                fontSize="1.1rem"
+                mouseConstraintStiffness={0.9}
+                className="uppercase tracking-widest font-semibold leading-relaxed text-ink-600"
+              />
+            </div>
           </div>
 
           {/* @ts-ignore */}
@@ -268,61 +301,61 @@ export default function LandingPage() {
           >
             {[
               {
-                title: "Layer 1 — Authenticity Backbone",
-                desc: "Cryptographically signed official communications via C2PA standard, anchored to SEBI's registered-entity registry. Ensures instant, tamper-proof verification.",
-                tag: "PROVENANCE",
-                color: "bg-white"
+                title: "Patient Zero Heatmap",
+                desc: "Live 3D visualization tracking fraudulent pump-and-dump rumors spreading across social networks. Maps nodes from origin to retail investors.",
+                tag: "NETWORK ANALYSIS",
+                link: "/heatmap"
               },
               {
-                title: "Layer 2 — AI Detection Net",
-                desc: "Net across ALL four threats: LLM phishing, deepfake video, synthetic voice calls (real-time Call-Guardian), and PROACTIVE social-media monitoring that flags scam reels before you forward them.",
-                tag: "SAFETY NET",
-                color: "bg-parchment-100"
+                title: "ZKP Whistleblower Drop",
+                desc: "Submit corporate fraud evidence with mathematical anonymity. Powered by ZK-SNARKs to protect insider identity while verifying credentials.",
+                tag: "CRYPTOGRAPHY",
+                link: "/whistleblower"
               },
               {
-                title: "Claim-vs-Ground-Truth Engine",
-                desc: "We check the claim, not just the pixels — everywhere. Cross-references claims against SEBI filings and intermediary registry in real time. A fake 'buyback' with no filing is flagged instantly.",
-                tag: "VERIFICATION"
+                title: "Deepfake X-Ray Sandbox",
+                desc: "Interactive video player that highlights the exact anomalies (lip-sync, unnatural blinking) the AI caught using Explainable AI telemetry.",
+                tag: "EXPLAINABLE AI",
+                link: "/xray-sandbox"
               },
               {
-                title: "Multilingual & Scalable",
-                desc: "Full support via Bhashini for Indian languages — ensuring every retail investor can access protection in their native tongue.",
-                tag: "ACCESSIBILITY",
-                color: "bg-white"
+                title: "Proactive Clone Radar",
+                desc: "Continuous monitoring of global domain registries to intercept typo-squatting broker clones (e.g. zerodha-wealth.in) at the DNS level.",
+                tag: "THREAT INTEL",
+                link: "/radar"
               },
               {
-                title: "Ubiquitous Delivery Channels",
-                desc: "WhatsApp bot, browser extension, and web app — meeting investors on platforms they already trust and use daily. End-to-end verdict delivered in under 2 seconds.",
-                tag: "SANDBOX",
-                color: "bg-parchment-100"
+                title: "Vernacular Scam Interceptor",
+                desc: "Real-time analysis of regional language calls (Marathi, Hindi) with automated native-language warnings that drop active scam calls.",
+                tag: "VOICE AI",
+                link: "/vernacular"
               }
             ].map((portal, idx) => (
-              <motion.div 
+              <div 
                 key={portal.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.6, delay: idx * 0.1 }}
-                className="bg-parchment-100 rounded-[2rem] p-10 border border-parchment-200 hover:-translate-y-2 transition-transform duration-500 group flex flex-col h-full"
+                className="portal-card bg-parchment-100 rounded-[2rem] p-10 border border-parchment-200 hover:-translate-y-2 transition-transform duration-500 group flex flex-col h-full"
               >
                 <div className="flex justify-between items-start mb-16">
                   <span className="text-xs font-bold text-bronze uppercase tracking-widest bg-bronze/10 px-3 py-1 rounded-full">
                     {portal.tag}
                   </span>
-                  <div className="w-12 h-12 rounded-full border border-ink-900/10 flex items-center justify-center group-hover:bg-bronze group-hover:border-bronze group-hover:text-white transition-colors duration-300">
+                  <Link href={portal.link} className="w-12 h-12 rounded-full border border-ink-900/10 flex items-center justify-center group-hover:bg-bronze group-hover:border-bronze group-hover:text-white transition-colors duration-300">
                     <ArrowRight className="w-5 h-5" />
-                  </div>
+                  </Link>
                 </div>
                 
                 <div className="mt-auto">
                   <h3 className="font-display font-black text-3xl text-ink-900 uppercase mb-4 leading-none">
                     {portal.title}
                   </h3>
-                  <p className="text-ink-600 leading-relaxed font-medium">
+                  <p className="text-ink-600 leading-relaxed font-medium mb-6">
                     {portal.desc}
                   </p>
+                  <Link href={portal.link} className="inline-flex items-center text-sm font-bold uppercase tracking-widest text-bronze hover:text-ink-900 transition-colors">
+                    Launch Module <ArrowRight className="ml-2 w-4 h-4" />
+                  </Link>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </ScrollStack>
         </div>
