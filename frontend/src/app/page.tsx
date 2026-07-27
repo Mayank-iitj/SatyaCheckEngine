@@ -21,7 +21,7 @@ import Plasma from "../components/Plasma";
 import FallingText from "../components/FallingText";
 import VariableProximity from "../components/VariableProximity";
 import StarBorder from "../components/StarBorder";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import gsap from "gsap";
 
 function BackendSpinUpOverlay() {
