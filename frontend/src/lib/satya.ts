@@ -1,4 +1,5 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || (process.env.NODE_ENV === "production" ? "https://satyacheck-backend.onrender.com/api" : "http://localhost:4000/api");
+// Proxy all requests through Next.js rewrites
+const API_URL = "/api";
 
 // ── SatyaCheck Core Engine API ───────────────────────────────────────────
 
