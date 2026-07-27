@@ -296,4 +296,5 @@ export const featuresAPI = {
     apiFetch("/features/vernacular-check", { method: "POST", body: JSON.stringify(data) }),
   getCloneRadar: () => apiFetch("/features/clone-radar"),
   getHeatmap: () => apiFetch("/features/heatmap"),
+  verifyMedia: (formData: FormData) => apiFetch("/satyacheck/media-verify", { method: "POST", body: formData }),
 };

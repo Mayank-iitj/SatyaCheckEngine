@@ -19,8 +19,35 @@ import ShapeBlur from "../components/ShapeBlur";
 import CognitaAI from "../components/CognitaAI";
 import Plasma from "../components/Plasma";
 import FallingText from "../components/FallingText";
+import VariableProximity from "../components/VariableProximity";
 import { useEffect, useLayoutEffect } from "react";
 import gsap from "gsap";
+
+function BackendSpinUpOverlay() {
+  const containerRef = useRef(null);
+
+  return (
+    <div 
+      ref={containerRef}
+      className="fixed bottom-24 right-6 z-50 bg-ink-900/90 backdrop-blur-md text-parchment-100 p-5 rounded-2xl border border-ink-700 shadow-[0_10px_40px_rgba(0,0,0,0.5)] max-w-[280px] flex flex-col gap-2 cursor-pointer hover:border-bronze/50 transition-colors"
+      onClick={() => window.open('https://satyacheckengine.onrender.com', '_blank')}
+    >
+      <div className="flex items-center gap-2 mb-1">
+        <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse shadow-[0_0_8px_rgba(234,179,8,0.8)]"></div>
+        <span className="text-xs font-bold uppercase tracking-widest text-parchment-400">System Status</span>
+      </div>
+      <VariableProximity
+        label="Click here to wake up backend services for AI features"
+        className="text-sm font-bold text-parchment-100"
+        fromFontVariationSettings="'wght' 400, 'opsz' 9"
+        toFontVariationSettings="'wght' 900, 'opsz' 40"
+        containerRef={containerRef}
+        radius={150}
+        falloff="gaussian"
+      />
+    </div>
+  );
+}
 
 function CanvasCircularGallery() {
   const galleryItems = [
@@ -582,6 +609,9 @@ export default function LandingPage() {
         baseItemSize={50}
         magnification={70}
       />
+      
+      {/* ── Backend Spin-Up Overlay ────────────────────────────────────── */}
+      <BackendSpinUpOverlay />
     </div>
   );
 }
