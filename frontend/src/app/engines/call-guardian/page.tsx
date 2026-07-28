@@ -3,7 +3,8 @@
 import { useState, useRef } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Phone, Mic, FileText, AlertTriangle, ShieldAlert, ShieldCheck, ExternalLink } from "lucide-react";
+import { ArrowLeft, Phone, Mic, FileText, AlertTriangle, ShieldAlert, ShieldCheck, ExternalLink, Volume2 } from "lucide-react";
+import Script from "next/script";
 import { satya } from "@/lib/satya";
 
 const EXAMPLE_TRANSCRIPTS = [
@@ -58,7 +59,7 @@ function ScoreRing({ score }: { score: number }) {
 }
 
 export default function CallGuardianPage() {
-  const [mode, setMode] = useState<"transcript" | "audio">("transcript");
+  const [mode, setMode] = useState<"transcript" | "audio" | "simulate">("transcript");
   const [transcript, setTranscript] = useState("");
   const [callerClaim, setCallerClaim] = useState("");
   const [audioFile, setAudioFile] = useState<File | null>(null);
@@ -66,6 +67,10 @@ export default function CallGuardianPage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isGeneratingAudio, setIsGeneratingAudio] = useState(false);
+  const [adviceAudioUrl, setAdviceAudioUrl] = useState<string | null>(null);
+  const [isGeneratingTranscriptAudio, setIsGeneratingTranscriptAudio] = useState(false);
+  const [transcriptAudioUrl, setTranscriptAudioUrl] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const fillExample = (ex: typeof EXAMPLE_TRANSCRIPTS[0]) => {
@@ -80,6 +85,8 @@ export default function CallGuardianPage() {
     }
     setAudioFile(null);
     setResult(null); setError(null);
+    setAdviceAudioUrl(null);
+    setTranscriptAudioUrl(null);
   };
 
   const analyze = async () => {
@@ -122,11 +129,13 @@ export default function CallGuardianPage() {
         </motion.div>
 
         {/* Mode Toggle */}
-        <div className="flex gap-2 mb-6">
-          {(["transcript", "audio"] as const).map(m => (
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+          {(["transcript", "audio", "simulate"] as const).map(m => (
             <button key={m} onClick={() => { setMode(m); setResult(null); setError(null); }}
-              className={`px-5 py-2.5 rounded-xl font-bold uppercase tracking-widest text-xs transition-all ${mode === m ? "bg-red-700 text-white" : "bg-ink-800 text-ink-400 hover:text-parchment-100 border border-ink-700"}`}>
-              {m === "transcript" ? <><FileText className="w-3 h-3 inline mr-1.5" />Call Transcript</> : <><Mic className="w-3 h-3 inline mr-1.5" />Audio File</>}
+              className={`whitespace-nowrap px-5 py-2.5 rounded-xl font-bold uppercase tracking-widest text-xs transition-all ${mode === m ? "bg-red-700 text-white" : "bg-ink-800 text-ink-400 hover:text-parchment-100 border border-ink-700"}`}>
+              {m === "transcript" ? <><FileText className="w-3 h-3 inline mr-1.5" />Call Transcript</> : 
+               m === "audio" ? <><Mic className="w-3 h-3 inline mr-1.5" />Audio File</> :
+               <><Phone className="w-3 h-3 inline mr-1.5" />Simulate Scam Call</>}
             </button>
           ))}
         </div>
@@ -139,12 +148,64 @@ export default function CallGuardianPage() {
               placeholder='e.g. "SEBI Officer", "RBI Compliance", "Stock Advisor"' />
           </div>
 
-          {mode === "transcript" ? (
+          {mode === "simulate" ? (
+             <div className="flex flex-col items-center justify-center p-12 bg-ink-800 border border-ink-700 rounded-xl">
+                <Script src="https://elevenlabs.io/convai-widget/index.js" strategy="lazyOnload" />
+                 <h2 className="text-2xl font-black font-display text-parchment-100 mb-4 uppercase">Interactive Simulator</h2>
+                 <p className="text-ink-400 text-center text-sm max-w-md mb-6 leading-relaxed">
+                    Talk directly to a real-time AI scammer powered by ElevenLabs Conversational AI. Practice identifying manipulative tactics.
+                 </p>
+                 
+                 <div className="flex flex-col items-center justify-center min-h-[140px] w-full max-w-sm rounded-2xl bg-ink-900 border border-ink-700 relative group pt-4">
+                   {/* CSS trick: transform creates a new containing block for position:fixed elements inside shadow DOM. 
+                       We size it specifically so the bottom-right pinned widget appears centered, and we remove overflow-hidden so it can expand when clicked. */}
+                   <div style={{ transform: "translateZ(0)", width: "320px", height: "140px", position: "relative" }}>
+                     {/* @ts-ignore */}
+                     <elevenlabs-convai agent-id="agent_4901kyktqzexf70byty368gntemh"></elevenlabs-convai>
+                   </div>
+                   
+                   {/* Fallback/Background text */}
+                   <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none opacity-30 group-hover:opacity-60 transition-opacity">
+                     <span className="text-sm font-bold text-ink-400 uppercase tracking-widest mt-12">Click to Start</span>
+                   </div>
+                 </div>
+
+                 <p className="text-xs text-ink-500 mt-6 font-mono">Powered by ElevenLabs Web Widget</p>
+             </div>
+          ) : mode === "transcript" ? (
             <div>
               <label className="text-xs font-bold uppercase tracking-widest text-ink-400 mb-2 block">Call Transcript *</label>
               <textarea value={transcript} onChange={e => setTranscript(e.target.value)}
                 className="w-full bg-ink-800 border border-ink-700 rounded-xl p-4 text-parchment-100 text-sm font-mono leading-relaxed resize-none focus:outline-none focus:border-red-500 transition-colors placeholder:text-ink-500 min-h-[160px]"
                 placeholder="Type or paste the call transcript here (as accurately as possible)..." />
+              
+              {transcript.trim().length > 10 && (
+                <div className="mt-3 flex justify-end">
+                  <button 
+                    onClick={async () => {
+                      if (transcriptAudioUrl) {
+                        new Audio(transcriptAudioUrl).play();
+                        return;
+                      }
+                      try {
+                        setIsGeneratingTranscriptAudio(true);
+                        const url = await satya.generateTTS(transcript);
+                        setTranscriptAudioUrl(url);
+                        new Audio(url).play();
+                      } catch(e) {
+                        console.error(e);
+                      } finally {
+                        setIsGeneratingTranscriptAudio(false);
+                      }
+                    }}
+                    disabled={isGeneratingTranscriptAudio}
+                    className="text-xs flex items-center gap-1.5 bg-ink-800 border border-ink-700 text-ink-300 px-3 py-1.5 rounded-lg hover:bg-ink-700 hover:text-parchment-100 transition-colors font-bold uppercase tracking-wider"
+                  >
+                    {isGeneratingTranscriptAudio ? <div className="w-3 h-3 border-2 border-ink-500 border-t-parchment-100 rounded-full animate-spin" /> : <Volume2 className="w-3 h-3" />}
+                    {isGeneratingTranscriptAudio ? "Generating..." : "Synthesize Voice"}
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
             <div>
@@ -185,14 +246,16 @@ export default function CallGuardianPage() {
             ))}
           </div>
 
-          <button onClick={analyze} disabled={loading || !canSubmit}
-            className="w-full py-4 bg-red-800 text-white font-bold uppercase tracking-widest rounded-xl hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm flex items-center justify-center gap-2">
-            {loading ? (
-              <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Running Call Guardian AI...</>
-            ) : (
-              <><Phone className="w-4 h-4" /> Analyze for Vishing / Voice Scam</>
-            )}
-          </button>
+          {mode !== "simulate" && (
+            <button onClick={analyze} disabled={loading || !canSubmit}
+              className="w-full py-4 bg-red-800 text-white font-bold uppercase tracking-widest rounded-xl hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm flex items-center justify-center gap-2 mt-4">
+              {loading ? (
+                <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Running Call Guardian AI...</>
+              ) : (
+                <><Phone className="w-4 h-4" /> Analyze for Vishing / Voice Scam</>
+              )}
+            </button>
+          )}
         </motion.div>
 
         {error && (
@@ -276,8 +339,33 @@ export default function CallGuardianPage() {
                 )}
 
                 {/* Safety Advice */}
-                <div className="mt-5 p-4 bg-bronze/10 border border-bronze/30 rounded-xl">
-                  <h3 className="text-xs font-bold uppercase tracking-widest text-bronze mb-2">Immediate Safety Advice</h3>
+                <div className="mt-5 p-4 bg-bronze/10 border border-bronze/30 rounded-xl relative">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-xs font-bold uppercase tracking-widest text-bronze">Immediate Safety Advice</h3>
+                    <button 
+                      onClick={async () => {
+                        if (adviceAudioUrl) {
+                          new Audio(adviceAudioUrl).play();
+                          return;
+                        }
+                        try {
+                          setIsGeneratingAudio(true);
+                          const url = await satya.generateTTS(result.safetyAdvice);
+                          setAdviceAudioUrl(url);
+                          new Audio(url).play();
+                        } catch(e) {
+                          console.error(e);
+                        } finally {
+                          setIsGeneratingAudio(false);
+                        }
+                      }}
+                      disabled={isGeneratingAudio}
+                      className="text-xs flex items-center gap-1.5 bg-bronze/20 text-bronze px-3 py-1.5 rounded-full hover:bg-bronze/30 transition-colors font-bold uppercase tracking-wider"
+                    >
+                      {isGeneratingAudio ? <div className="w-3 h-3 border-2 border-bronze/30 border-t-bronze rounded-full animate-spin" /> : <Volume2 className="w-3 h-3" />}
+                      {isGeneratingAudio ? "Generating..." : "Listen"}
+                    </button>
+                  </div>
                   <p className="text-sm text-parchment-300 leading-relaxed">{result.safetyAdvice}</p>
                 </div>
 

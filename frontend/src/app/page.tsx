@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { ShieldCheck, Plus, Minus, ArrowRight, Scan, Shield, ChevronDown, CheckCircle2, Building2, Briefcase, Home, Activity } from "lucide-react";
+import { Terminal, TypingAnimation, AnimatedSpan } from "@/registry/magicui/terminal";
+import TrueFocus from "@/components/TrueFocus";
 import LogoLoop from "../components/LogoLoop";
 import CircularGallery from "../components/CircularGallery";
 import StaggeredMenu from "../components/StaggeredMenu";
@@ -22,6 +24,46 @@ import VariableProximity from "../components/VariableProximity";
 import StarBorder from "../components/StarBorder";
 import { useEffect, useLayoutEffect } from "react";
 import gsap from "gsap";
+
+export function TerminalDemo() {
+  return (
+    <Terminal className="mx-auto w-full shadow-[0_20px_50px_rgba(255,_107,_53,_0.1)] border-ink-800">
+      <TypingAnimation>&gt; satyacheck run --guardian +elevenlabs</TypingAnimation>
+
+      <AnimatedSpan className="text-emerald-400">
+        ✔ Intercepting suspicious voice call...
+      </AnimatedSpan>
+
+      <AnimatedSpan className="text-emerald-400">
+        ✔ Voice cloned detected: ElevenLabs footprint matched.
+      </AnimatedSpan>
+
+      <AnimatedSpan className="text-emerald-400">
+        ✔ Vishing patterns identified.
+      </AnimatedSpan>
+
+      <AnimatedSpan className="text-red-400">
+        ✗ DANGER: Caller is attempting to extract financial details.
+      </AnimatedSpan>
+
+      <AnimatedSpan className="text-orange-400">
+        ⚠ Triggering real-time intervention via Text-To-Speech.
+      </AnimatedSpan>
+
+      <AnimatedSpan className="text-blue-400 flex gap-2">
+        <span>ℹ Generating audio warning stream...</span>
+      </AnimatedSpan>
+
+      <TypingAnimation className="text-ink-400">
+        Success! Audio intervention deployed.
+      </TypingAnimation>
+
+      <TypingAnimation className="text-bronze">
+        "Warning: This call is a suspected scam. Do not share your OTP."
+      </TypingAnimation>
+    </Terminal>
+  )
+}
 
 function BackendSpinUpOverlay() {
   const containerRef = useRef(null);
@@ -496,6 +538,29 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── Call Guardian Showcase ──────────────────────────────────────── */}
+      <section className="py-12 px-6 relative z-10 bg-ink-900 border-y border-ink-800 overflow-hidden">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12">
+          <div className="flex-1 text-parchment-100">
+            <p className="text-bronze font-bold tracking-[0.2em] uppercase text-xs mb-4">New Integration</p>
+            <h2 className="font-display font-black text-4xl md:text-5xl uppercase mb-6 leading-tight">
+              Call Guardian <br/>
+              <span className="text-ink-400">+ ElevenLabs</span>
+            </h2>
+            <p className="text-parchment-400 leading-relaxed font-medium mb-8">
+              We've integrated ElevenLabs ultra-realistic Text-To-Speech (TTS) engine directly into the Call Guardian platform. 
+              When the AI detects a malicious vishing attempt or a cloned voice scam in real-time, it instantly synthesizes a native-language audio warning to intercept the conversation and protect the investor before any financial damage occurs.
+            </p>
+            <Link href="/verify" className="btn-primary py-3 px-8 text-sm">
+              Experience the Demo
+            </Link>
+          </div>
+          <div className="flex-1 w-full max-w-lg">
+            <TerminalDemo />
+          </div>
+        </div>
+      </section>
+
       {/* ── Cognita AI Section (Retained for visual consistency if needed, or we can leave it out) ─────────────────────────────────────────── */}
       <CognitaAI />
 
@@ -503,8 +568,15 @@ export default function LandingPage() {
       <section id="faq" className="py-24 px-6 relative z-10 bg-ink-900 text-parchment-100">
         <div className="max-w-4xl mx-auto">
           <p className="text-bronze font-bold tracking-[0.2em] uppercase text-xs mb-4 text-center">Frequently Asked Questions</p>
-          <h2 className="font-display font-black text-5xl md:text-6xl uppercase text-center mb-6">
-            BUILT TO PLUG INTO SEBI'S EXISTING TRUST FABRIC
+          <h2 className="font-display font-black text-center mb-6 flex justify-center">
+            <TrueFocus
+              sentence="BUILT TO PLUG INTO SEBI'S EXISTING TRUST FABRIC"
+              borderColor="#ef4444"
+              glowColor="rgba(239, 68, 68, 0.6)"
+              animationDuration={0.4}
+              pauseBetweenAnimations={0.2}
+              blurAmount={4}
+            />
           </h2>
           <p className="text-center text-ink-400 mb-16 max-w-2xl mx-auto">
             A modular, API-first architecture that extends SEBI Check without duplication. Each layer is independently scalable and privacy-respecting.

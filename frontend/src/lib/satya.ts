@@ -84,6 +84,23 @@ export const satya = {
     if (!res.ok) throw new Error(json.error || "Chat failed");
     return json;
   },
+  /**
+   * ElevenLabs TTS
+   * POST /api/satyacheck/tts
+   */
+  generateTTS: async (text: string, voiceId?: string) => {
+    const res = await fetch(`${API_URL}/satyacheck/tts`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text, voiceId }),
+    });
+    if (!res.ok) {
+      const json = await res.json().catch(() => ({}));
+      throw new Error(json.error || "Failed to generate audio");
+    }
+    const blob = await res.blob();
+    return URL.createObjectURL(blob);
+  },
 };
 
 export default satya;

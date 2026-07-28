@@ -12,6 +12,7 @@ import mediaVerifyRoutes from "./modules/satyacheck/media-verify.routes";
 import claimVerifyRoutes from "./modules/satyacheck/claim-verify.routes";
 import callGuardianRoutes from "./modules/satyacheck/call-guardian.routes";
 import c2paVerifyRoutes from "./modules/satyacheck/c2pa-verify.routes";
+import { elevenlabsRoutes } from "./modules/satyacheck/elevenlabs.routes";
 import chatRoutes from "./modules/chat/chat.routes";
 
 const app = express();
@@ -61,7 +62,9 @@ app.use("/api/satyacheck", apiLimiter, mediaVerifyRoutes);
 app.use("/api/satyacheck", apiLimiter, claimVerifyRoutes);
 app.use("/api/satyacheck", apiLimiter, callGuardianRoutes);
 app.use("/api/satyacheck", apiLimiter, c2paVerifyRoutes);
+app.use("/api/satyacheck", apiLimiter, elevenlabsRoutes);
 app.use("/api/chat", apiLimiter, chatRoutes);
+
 
 app.use(notFoundHandler);
 app.use(errorHandler);

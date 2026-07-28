@@ -30,4 +30,7 @@ export const config = {
 
   // Database
   databaseUrl: process.env.DATABASE_URL || "",
+
+  // AI
+  elevenlabsApiKey: process.env.ELEVENLABS_API_KEY || "",
 };

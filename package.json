@@ -15,7 +15,13 @@
     "test:contracts": "cd contracts && npx hardhat test",
     "rebuild:chain": "cd backend && npx tsx scripts/rebuildFromChain.ts",
     "rebuild:chain:dry": "cd backend && npx tsx scripts/rebuildFromChain.ts --dry-run",
-    "install:all": "cd contracts && npm install && cd ../backend && npm install && cd ../frontend && npm install"
+    "install:all": "cd contracts && npm install && cd ../backend && npm install && cd ../frontend && npm install",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "build": "npm run build:backend && npm run build:frontend",
+    "start:backend": "cd backend && npm run start",
+    "start:frontend": "cd frontend && npm run start",
+    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\""
   },
   "keywords": [
     "blockchain",
