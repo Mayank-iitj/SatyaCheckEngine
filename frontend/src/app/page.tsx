@@ -140,6 +140,7 @@ export default function LandingPage() {
   ];
 
   const staggerSocialItems = [
+    { label: 'Socials', link: '/engines/social-scanner' },
     { label: 'Patient Zero Heatmap', link: '/heatmap' },
     { label: 'ZKP Whistleblower', link: '/whistleblower' },
     { label: 'Deepfake X-Ray', link: '/xray-sandbox' },
@@ -208,7 +209,7 @@ export default function LandingPage() {
             <Link href="/verify" className="text-xs font-bold uppercase tracking-widest hover:text-bronze transition-colors hidden md:block mr-4">
               Launch Verifier
             </Link>
-            <Link href="/sign-in" className="btn-primary">
+            <Link href="/engines/social-scanner" className="btn-primary">
               Explore Sandbox
             </Link>
             
@@ -272,7 +273,7 @@ export default function LandingPage() {
                 <Link href="/verify" className="btn-primary py-3 px-8 text-sm">
                   Launch Verifier Hub
                 </Link>
-                <Link href="/sign-in" className="btn-secondary py-3 px-8 text-sm bg-transparent border-2 border-ink-900 text-ink-900 hover:bg-ink-900 hover:text-white transition-colors uppercase tracking-widest font-bold rounded-md">
+                <Link href="/engines/social-scanner" className="btn-secondary py-3 px-8 text-sm bg-transparent border-2 border-ink-900 text-ink-900 hover:bg-ink-900 hover:text-white transition-colors uppercase tracking-widest font-bold rounded-md">
                   Explore Sandbox
                 </Link>
             </div>

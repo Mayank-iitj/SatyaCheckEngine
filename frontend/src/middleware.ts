@@ -1,24 +1,8 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-const isPublicRoute = createRouteMatcher([
-  '/',
-  '/verify(.*)',
-  '/engines(.*)',
-  '/cognita(.*)',
-  '/sign-in(.*)',
-  '/sign-up(.*)',
-  '/privacy(.*)',
-  '/terms(.*)',
-  '/api(.*)'
-]);
-
 export default clerkMiddleware(async (auth, req) => {
-  if (!isPublicRoute(req)) {
-    const authObj = await auth();
-    if (!authObj.userId) {
-      return authObj.redirectToSignIn();
-    }
-  }
+  // Permanently removed sign-in/sign-up requirements by not checking public routes
+  // and allowing all routes to pass through freely.
 });
 
 export const config = {
