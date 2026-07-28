@@ -56,7 +56,10 @@ app.get("/", (req, res) => res.send("SatyaCheck API is running."));
 app.get("/favicon.ico", (req, res) => res.status(204).end());
 
 // ── Innovation Features Routes ──────────────────────────────────────────
+import scannerRoutes from "./modules/features/scanner.routes";
+
 app.use("/api/features", apiLimiter, featuresRoutes);
+app.use("/api/scanner", apiLimiter, scannerRoutes);
 app.use("/api/satyacheck", apiLimiter, textVerifyRoutes);
 app.use("/api/satyacheck", apiLimiter, mediaVerifyRoutes);
 app.use("/api/satyacheck", apiLimiter, claimVerifyRoutes);
