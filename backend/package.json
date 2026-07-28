@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@clerk/express": "^2.1.45",
+    "@contentauth/c2pa-node": "^0.8.0",
     "@google/genai": "^2.13.0",
     "@prisma/client": "^6.0.0",
     "@signpdf/signpdf": "^3.3.0",
